@@ -74,10 +74,10 @@ test.oberauer2006(19.43, 19.445)
 # This tests test a small model (3 trees) of the take-the-best heuristic with either
 # 1 free and 1 fixed parameters (Matlab reference value: 2.38 +/- .01)
 # 1 free and 0 fixed parameters (Matlab reference value: 3.07 +/- .01)
-# 2 free and 0 fixed parameters (Matlab reference value: -13.89 +/- .01)
+# 2 free and 0 fixed parameters (Matlab reference value: -13.895 +/- .01)
 # The first of the three trees with one single parameter (Matlab reference value: 2.527 +/- .01)
 # These tests are necessary because of Rs behavior of '[' with drop = TRUE (which is the default)
-test.ttb(2.38, 3.07, -13.89, 2.527, 0.01)
+test.ttb(2.38, 3.07, -13.895, 2.527, 0.01)
 
 
 

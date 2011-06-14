@@ -1,5 +1,5 @@
 
-test.wmb.ex1 <- functions(lower, upper) {
+test.wmb.ex1 <- function(lower, upper) {
 	model.1htm <- "pkg/inst/extdata/wmb.ex1.model"
 	model.1htm.restr <- "pkg/inst/extdata/wmb.ex1.restr"
 	fia.ex1 <- get.mpt.fia(c(250,0,0,250,0,0,500,0,0), model.1htm, model.1htm.restr)

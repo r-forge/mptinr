@@ -139,6 +139,7 @@ bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05) {
 	count <- 0
 	while (sample <= Sample) {
 		theta <- rbeta(S, 0.5, 0.5)
+		if (is.vector(theta) & length(theta) == 1) theta <- as.matrix(theta)
 		count <- count +1
 		if (!is.null(ineq0)) ineqeff <- (theta%*%(t(Ineq))<0)
 		else ineqeff <- FALSE

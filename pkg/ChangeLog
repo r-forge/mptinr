@@ -1,0 +1,4 @@
+
+2011-06-14
+
+		* R/bmpt.fia.R: if theta is a scalar, it now is a matrix.
