@@ -65,9 +65,12 @@ See also \code{\link{get.mpt.fia}} which takes the same arguments but will then 
 \examples{
 \dontrun{
 # This example produces the code for the first example of how to use the function by Wu, Myung & Batchelder (2010, pp. 280):
+# Value should be around 12.61 and 12.62
 
 model.1htm <- system.file("extdata", "wmb.ex1.model", package = "MPTinR")
-prepare.mpt.fia(c(250,0,0,250,0,0,500,0,0), model.1htm)
+model.1htm.restr <- system.file("extdata", "wmb.ex1.restr", package = "MPTinR")
+
+prepare.mpt.fia(c(250,0,0,250,0,0,500,0,0), model.1htm, model.1htm.restr)
 }
 }
 
