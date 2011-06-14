@@ -5,7 +5,7 @@ for (r.file in list.files("pkg/R", full.names = TRUE)) {
 
 
 # Source testfunctions
-source("test_MPTinR.R")
+source("test_functions_fitting.R")
 numerical.accuracy <- 1e-8
 
 ################################################################
@@ -47,6 +47,37 @@ all.equal(br.2htm.res.ineq.ref[-6], br.2htm.res.ineq.test[-6], tolerance = 0.001
 all.equal(br.1htm.ref[-6], br.1htm.test[-6], tolerance = 0.001)
 all.equal(br.1htm.ineq.ref[-6], br.1htm.ineq.test[-6], tolerance = 0.001)
 
+
+
+############################################################
+## Test 3: Testing the FIA function (lengthy operations!) ##
+############################################################
+
+source("test_functions_FIA.R")
+
+# FIA Example 1: Reference
+# Compare the FIA for a 1HTM with the reference results in Wu, Myung, & Batchelder (2010, pp. 280)
+# reference value is 12.6182, CI from 12.6113 - 12.6251 (p. 281)
+# running this again in Matlab gives: 12.6252, CI: 12.6190 - 12.6313
+# a reference run in MPTinR's bmpt.fia (v 0.6.3) gives: 12.6230, CI 12.6169 - 12.6292
+# Therefore, I assume that the value should always fall within 12.61 and 12.63
+test.wmb.ex1(12.61, 12.63)
+
+# FIA Example 2: A single big tree
+# Test if bmpt.fia works for a single, rather big tree (the dual-process model from Oberauer, 2006).
+# Matlab returns a FIA of 19.4398 with a CI from 19.4260 to 19.4537
+# MPTinR reference is: 19.44 with no CI (seems to be a bug!)
+# Result should be between 19.43 and 19.445 
+test.oberauer2006(19.43, 19.445)
+
+# FIA Example 3: Single parameter models
+# This tests test a small model (3 trees) of the take-the-best heuristic with either
+# 1 free and 1 fixed parameters (Matlab reference value: 2.38 +/- .01)
+# 1 free and 0 fixed parameters (Matlab reference value: 3.07 +/- .01)
+# 2 free and 0 fixed parameters (Matlab reference value: -13.89 +/- .01)
+# The first of the three trees with one single parameter (Matlab reference value: 2.527 +/- .01)
+# These tests are necessary because of Rs behavior of '[' with drop = TRUE (which is the default)
+test.ttb(2.38, 3.07, -13.89, 2.527, 0.01)
 
 
 
