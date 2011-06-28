@@ -43,7 +43,7 @@ Number of random samples to be drawn in the Monte Carlo algorithm to estimate th
 A scalar corresponding to the size of the confidence intervals for the parameter estimates. Default is 95 which corresponds to 95\% confidence intervals.
 }
   \item{starting.values}{
-A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{0.1 - 0,9). If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2]). If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
+A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.1 - 0,9)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
 }
   \item{output}{
 If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if calculated \code{fia} not equal \code{NULL}). If "full" \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} and the output of \code{\link{optim}}.

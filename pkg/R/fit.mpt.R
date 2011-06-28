@@ -45,15 +45,15 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		return(out)
 	}
 	
-	optim.mpt <- function(data, n.data, tree, llk.tree, param.names, n.params, n.optim) {
+	optim.mpt <- function(data, n.data, tree, llk.tree, param.names, n.params, n.optim, start.params) {
 		
 		minim <- vector("list", n.data)
 		data.new <- lapply(1:n.data, function(x, data) data[x,], data = data) 
 		llks <- array(NA, dim=c(n.data, n.optim))
 		
 		if (multicore[1] == "individual") {
-			 optim.runs <- sfLapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim)
-		} else optim.runs <- lapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim)
+			 optim.runs <- sfLapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params)
+		} else optim.runs <- lapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params)
 		
 		for (c.outer in 1:n.data) {
 			least.llk <- 1e10
@@ -297,7 +297,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	t0 <- Sys.time()
 	print(paste("Model fitting begins at ", t0, sep = ""))
 	flush.console()
-	res.optim <- optim.mpt(data, n.data, tree, llk.tree, param.names, n.params, n.optim)
+	res.optim <- optim.mpt(data, n.data, tree, llk.tree, param.names, n.params, n.optim, starting.values)
 	t1 <- Sys.time()
 	print(paste("Model fitting stopped at ", t1, sep = ""))
 	print(t1-t0)
@@ -332,7 +332,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		fia.agg <- NULL
 		data.pooled <- apply(data,2,sum)
 		data.pooled <- matrix(data.pooled, 1, length(data.pooled))
-		res.optim.pooled <- optim.mpt(data.pooled, 1, tree, llk.tree, param.names, n.params, n.optim)
+		res.optim.pooled <- optim.mpt(data.pooled, 1, tree, llk.tree, param.names, n.params, n.optim, starting.values)
 		inv.hessian <- solve(res.optim.pooled[["minim"]][[1]][["hessian"]])
 		if (!is.null(fia)) fia.agg <- fia.agg.tmp
 		summed.goodness.of.fit <- data.frame(t(apply(goodness.of.fit, 2, sum)))
