@@ -1,6 +1,6 @@
 
    
-fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, output = c("standard", "fia", "full"), reparam.ineq = TRUE, sort.param = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2){
+fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, output = c("standard", "fia", "full"), reparam.ineq = TRUE, sort.param = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2){
 	
 	if (multicore[1] != "none" & sfInit) {
 		require(snowfall)
@@ -33,26 +33,27 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		return(-llk)
 	}
 	
-	optim.tree <- function(data, tree, llk.tree, param.names, length.tree, n.optim, method = "L-BFGS-B")  {
-		
-		mpt.optim <- function(x) {
-			optim(runif(length.tree, 0.1, 0.9), llk.tree, unlist.tree = tree, data = data, param.names = param.names, length.param.names = length.tree, method = method, lower = rep(0, length.tree), upper = rep(1, length.tree), hessian = TRUE)
+	optim.tree <- function(data, tree, llk.tree, param.names, n.params, n.optim, method = "L-BFGS-B", start.params)  {
+		mpt.optim <- function(x, start.params) {
+			if (is.null(start.params)) start.params <- c(0.1, 0.9)
+			if (length(start.params) == 2) startingValues <- runif(n.params, start.params[1], start.params[1])
+			optim(startingValues, llk.tree, unlist.tree = tree, data = data, param.names = param.names, length.param.names = n.params, method = method, lower = rep(0, n.params), upper = rep(1, n.params), hessian = TRUE)
 		}
 		if (multicore[1] == "n.optim") {
-			out <- sfLapply(1:n.optim, mpt.optim)
-		} else out <- lapply(1:n.optim, mpt.optim)
+			out <- sfLapply(1:n.optim, mpt.optim, start.params = start.params)
+		} else out <- lapply(1:n.optim, mpt.optim, start.params = start.params)
 		return(out)
 	}
 	
-	optim.mpt <- function(data, n.data, tree, llk.tree, param.names, length.tree, n.optim) {
+	optim.mpt <- function(data, n.data, tree, llk.tree, param.names, n.params, n.optim) {
 		
 		minim <- vector("list", n.data)
 		data.new <- lapply(1:n.data, function(x, data) data[x,], data = data) 
 		llks <- array(NA, dim=c(n.data, n.optim))
 		
 		if (multicore[1] == "individual") {
-			 optim.runs <- sfLapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, length.tree = length.tree, n.optim = n.optim)
-		} else optim.runs <- lapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, length.tree = length.tree, n.optim = n.optim)
+			 optim.runs <- sfLapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim)
+		} else optim.runs <- lapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim)
 		
 		for (c.outer in 1:n.data) {
 			least.llk <- 1e10
@@ -276,7 +277,11 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	param.names <- .find.MPT.params(tree)
 	n.params <- length(param.names)
 	
-	length.tree <- length(param.names)
+	
+	if (!is.null(starting.values)) {
+		if (length(starting.values) != 2) n.optim <- 1
+		else if (length(starting.values) != n.params) stop("length(starting.values) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
+	}
 	
 	if (n.optim != 1) message(paste("Presenting the best result out of ", n.optim, " minimization runs.", sep =""))
 	
@@ -292,7 +297,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	t0 <- Sys.time()
 	print(paste("Model fitting begins at ", t0, sep = ""))
 	flush.console()
-	res.optim <- optim.mpt(data, n.data, tree, llk.tree, param.names, length.tree, n.optim)
+	res.optim <- optim.mpt(data, n.data, tree, llk.tree, param.names, n.params, n.optim)
 	t1 <- Sys.time()
 	print(paste("Model fitting stopped at ", t1, sep = ""))
 	print(t1-t0)
@@ -327,7 +332,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		fia.agg <- NULL
 		data.pooled <- apply(data,2,sum)
 		data.pooled <- matrix(data.pooled, 1, length(data.pooled))
-		res.optim.pooled <- optim.mpt(data.pooled, 1, tree, llk.tree, param.names, length.tree, n.optim)
+		res.optim.pooled <- optim.mpt(data.pooled, 1, tree, llk.tree, param.names, n.params, n.optim)
 		inv.hessian <- solve(res.optim.pooled[["minim"]][[1]][["hessian"]])
 		if (!is.null(fia)) fia.agg <- fia.agg.tmp
 		summed.goodness.of.fit <- data.frame(t(apply(goodness.of.fit, 2, sum)))
@@ -347,7 +352,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		if (minim[[1]][["counts"]][1] < 10) warning("Number of iterations run by the optimization routine is low (i.e., < 10) indicating local minima. Try n.optim >= 5.")
 		if (minim[[1]][["convergence"]] != 0) warning(paste("Optimization routine did not converge succesfully. Error code is, ", minim[[1]][["convergence"]], ". Use output = 'full' for more information.", sep =""))
 	}
-	predictions <- get.predicted.values(minim, tree, data, df.n, param.names, length.tree, n.data)
+	predictions <- get.predicted.values(minim, tree, data, df.n, param.names, n.params, n.data)
 	data <- list(observed = data, predicted = predictions)
 	
 	if (multiFit) if (!is.null(fia.agg)) fia.df <- list(individual = fia.df, aggregated = fia.agg)

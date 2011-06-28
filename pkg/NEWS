@@ -1,9 +1,24 @@
+					**************************
+					** MPTinR VERSION 0.6.4 **
+					**************************
+					
+					Changes in MPTinR Version 0.6.5
+					Released June 2011
+
+	Significant User Visible Changes
+	
+	o 
+	
+	New Features / Bugfixes
+	
+	o	added a parameter to specify the starting values for the fitting routine (in fit.mpt)
+
 
 					**************************
 					** MPTinR VERSION 0.6.4 **
 					**************************
 					
-					Chages in MPTinR Version 0.6.4
+					Changes in MPTinR Version 0.6.4
 					Released June 2011
 
 	Significant User Visible Changes
@@ -25,7 +40,7 @@
 					** MPTinR VERSION 0.6.3 **
 					**************************
 					
-					Chages in MPTinR Version 0.6.3
+					Changes in MPTinR Version 0.6.3
 					Released April 2011
 
 	Significant User Visible Changes

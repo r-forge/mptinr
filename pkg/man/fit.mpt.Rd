@@ -14,6 +14,7 @@ fit.mpt(
 	n.optim = 5,
 	fia = NULL,
 	ci = 95, 
+	starting.values = NULL,
 	output = c("standard", "fia", "full"),
 	reparam.ineq = TRUE,
 	sort.param = TRUE,
@@ -40,6 +41,9 @@ Number of random samples to be drawn in the Monte Carlo algorithm to estimate th
 }
   \item{ci}{
 A scalar corresponding to the size of the confidence intervals for the parameter estimates. Default is 95 which corresponds to 95\% confidence intervals.
+}
+  \item{starting.values}{
+A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{0.1 - 0,9). If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2]). If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
 }
   \item{output}{
 If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if calculated \code{fia} not equal \code{NULL}). If "full" \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} and the output of \code{\link{optim}}.
@@ -100,6 +104,9 @@ Once again: If one wants to compute the FIA, it is \emph{absolutely necessary}, 
 
 Confidence intervals (CI) are based on the observed Hessian matrix returned by the minimization algorithm (\code{\link{optim}}).\cr
 For inequality restricted parameters, the CIs are computed using the parameter estimates' variance bounds (see Baldi & Batchelder, 2003; especially equation 19). Note that these bounds represent the "worst case scenario" variances, and can lead to CIs outside parameter boundaries if the set of inequalities is large and/or the variances for the reparameterized model are large (Note that CIs for nonrestricted parameters can be outside the parameter boundaries as well due to large variances).
+
+To set the starting values for the fitting process (e.g., to avoid local minima) one can set \code{starting.values} to a vector of length 2. Then, starting values are randomly drawn from a uniform distribution from \code{starting.values[1]} to \code{starting.values[2]}.\cr
+Furthermore, one can specify the starting values individually by supplying a vector with the same length as the number of parameters. Starting values must be ordered according to the alphabetical order of the parameeters. Use \code{\link{check.mpt}} for a function that returns the alphabetical order of the parameters. If one specifys the starting values like that, \code{n.optim} will be set to 1 as all other values would not make any sense (the optimization routine will produce identical results with identical starting values).
 
 Multicore fitting is achieved via the \code{snowfall} package and needs to be initialized via \code{sfInit}. As initialization needs some time, you can either initialize multicore facilities yourself using \code{sfInit()} and setting the \code{sfInit} argument to \code{FALSE} (the default) or let MPTinR initialize multicore facilities by setting the \code{sfInit} argument to \code{TRUE}. The former is recommended as initializing \code{snowfall} takes some time and only needs to be done once if you run \code{fit.mpt} multiple times. If there are any problems with multicore fitting, first try to initialize \code{snowfall} outside MPTinR (e.g., \code{sfInit( parallel=TRUE, cpus=2 )}). If this does not work, the problem is not related to MPTinR but to snowfall (for support and references visit: \url{http://www.imbi.uni-freiburg.de/parallel/}).\cr
 Note that you need to \emph{close} snowfall via \code{sfStop()} after using MPTinR.
