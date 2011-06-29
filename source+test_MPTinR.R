@@ -33,6 +33,7 @@ example.broeder.ex3(0.01, numerical.accuracy)
 #######################################################################################
 
 # current reference was calculated with MPTinR 0.6.3
+# following tests can give small differences 
 
 load("testfiles/bs_ref_063.RData")
 

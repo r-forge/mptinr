@@ -333,7 +333,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		data.pooled <- apply(data,2,sum)
 		data.pooled <- matrix(data.pooled, 1, length(data.pooled))
 		res.optim.pooled <- optim.mpt(data.pooled, 1, tree, llk.tree, param.names, n.params, n.optim, starting.values)
-		inv.hessian <- solve(res.optim.pooled[["minim"]][[1]][["hessian"]])
+		inv.hessian <- tryCatch(solve(res.optim.pooled[["minim"]][[1]][["hessian"]]), error = function(e) NA)
 		if (!is.null(fia)) fia.agg <- fia.agg.tmp
 		summed.goodness.of.fit <- data.frame(t(apply(goodness.of.fit, 2, sum)))
 		summed.goodness.of.fit[1,4] <- pchisq(summed.goodness.of.fit[1,2], summed.goodness.of.fit[1,3], lower.tail = FALSE)

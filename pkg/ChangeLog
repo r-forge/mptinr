@@ -1,4 +1,8 @@
 
+2011-06-29
+
+		* R/fit.mpt.R: fixed crashing when hessian of aggregated data was ill defined
+
 2011-06-28
 
 		* R/fit.mpt.R: added starting.values parameter.
