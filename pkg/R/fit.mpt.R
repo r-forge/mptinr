@@ -36,8 +36,8 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	optim.tree <- function(data, tree, llk.tree, param.names, n.params, n.optim, method = "L-BFGS-B", start.params)  {
 		mpt.optim <- function(x, start.params) {
 			if (is.null(start.params)) start.params <- c(0.1, 0.9)
-			if (length(start.params) == 2) startingValues <- runif(n.params, start.params[1], start.params[1])
-			optim(startingValues, llk.tree, unlist.tree = tree, data = data, param.names = param.names, length.param.names = n.params, method = method, lower = rep(0, n.params), upper = rep(1, n.params), hessian = TRUE)
+			if (length(start.params) == 2) start.params <- runif(n.params, start.params[1], start.params[1])
+			optim(start.params, llk.tree, unlist.tree = tree, data = data, param.names = param.names, length.param.names = n.params, method = method, lower = rep(0, n.params), upper = rep(1, n.params), hessian = TRUE)
 		}
 		if (multicore[1] == "n.optim") {
 			out <- sfLapply(1:n.optim, mpt.optim, start.params = start.params)
@@ -279,8 +279,10 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	
 	
 	if (!is.null(starting.values)) {
-		if (length(starting.values) != 2) n.optim <- 1
-		else if (length(starting.values) != n.params) stop("length(starting.values) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
+		if (length(starting.values) != 2) {
+			n.optim <- 1
+			if (length(starting.values) != n.params) stop("length(starting.values) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
+		}
 	}
 	
 	if (n.optim != 1) message(paste("Presenting the best result out of ", n.optim, " minimization runs.", sep =""))
