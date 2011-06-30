@@ -1,4 +1,9 @@
 
+2011-06-30
+
+		* R/fit.mpt.R: now starting value parameter works
+		* Small bug removed when fitting one row from a data.frame (now, does not set multiFit to TRUE)
+
 2011-06-29
 
 		* R/fit.mpt.R: fixed crashing when hessian of aggregated data was ill defined

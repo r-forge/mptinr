@@ -248,10 +248,15 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		data <- array(data, dim = c(1, length(data)))
 		multiFit <- FALSE
 	} else
-		if(is.matrix(data) | is.data.frame(data)) {
+		if(dim(data)[1] == 1) {
 			if (is.data.frame(data)) data <- as.matrix(data)
-			multiFit <- TRUE
-		} else stop("data is neither vector, nor matrix, nor data.frame!")
+			data <- array(data, dim = c(1,length(data)))
+			multiFit <- FALSE
+		} else 
+			if(is.matrix(data) | is.data.frame(data)) {
+				if (is.data.frame(data)) data <- as.matrix(data)
+				multiFit <- TRUE
+			} else stop("data is neither vector, nor matrix, nor data.frame!")
 	
 	if (sum(sapply(tree, length)) != length(data[1,])) stop(paste("Size of data does not correspond to size of model (i.e., model needs ", sum(sapply(tree, length)), " datapoints, data gives ", length(data[1,]), " datapoints).", sep = ""))
 	
