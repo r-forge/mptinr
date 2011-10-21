@@ -1,0 +1,14 @@
+export(
+       ## major functions
+       "fit.mpt",
+       "make.mpt",
+       "generate.data"
+)
+
+exportClasses("bmpt.model", "mpt.model", "bmpt", "mpt")
+
+exportMethods("show", "check", "initial.model.data.frame", "model.data.frame", 
+      "fit.mpt", "parameters", "default.ci", "estimates", "goodness.of.fit", "information.criteria",
+      "log.likelihhod", "predicted.data", "observed.data")
+
+useDynLib("MPTinR", "onelc", "onehess")
