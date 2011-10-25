@@ -103,8 +103,6 @@ The Fortran code was written by Karl Christoph Klauer
 
 \examples{
 
-\dontrun{
-
 # The first example fits the MPT model presented in Riefer and Batchelder (1988, Figure 1)
 # to the data presented in Riefer and Batchelder (1988, Table 1)
 # Note that Riefer and Batchelder (1988, pp. 328) did some hypotheses tests, that are not done here.
@@ -120,14 +118,13 @@ model1 <- system.file("extdata", "rb.fig1.model", package = "MPTinR")
 model1.eqn <- system.file("extdata", "rb.fig1.model.eqn", package = "MPTinR")
 
 # just fit the first "individual":
-fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
+fit.mpt(model1, rb.fig1.data[1,])
 
 #fit all "individuals":
-fit.mpt(rb.fig1.data, model1, n.optim = 1)
+fit.mpt(model1, rb.fig1.data)
 
 #fit all "individuals" using the .EQN model file:
-fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
-
+fit.mpt(model1.eqn, rb.fig1.data)
 
 
 # The second example fits the MPT model presented in Riefer and Batchelder (1988, Figure 2)
@@ -147,24 +144,25 @@ model2r.r.eq <- system.file("extdata", "rb.fig2.r.equal", package = "MPTinR")
 model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 
 # The full (i.e., unconstrained) model
-(ref.model <- fit.mpt(rb.fig2.data, model2, n.optim = 10))
+(ref.model <- fit.mpt(model2, rb.fig2.data))
 
 # All r equal
-(r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 10))
+(r.equal <- fit.mpt(model2, rb.fig2.data, model2r.r.eq))
 
 # All c equal
-(c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq, n.optim = 10))
+(c.equal <- fit.mpt(model2, rb.fig2.data, model2r.c.eq))
 
 # is setting all r equal a good idea?
-(g.sq.r.equal <- r.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
-(df.r.equal <- r.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
+(g.sq.r.equal <- goodness.of.fit(r.equal)[["G.Squared"]] - goodness.of.fit(ref.model)[["G.Squared"]])
+(df.r.equal <- goodness.of.fit(r.equal)[["df.model"]] - goodness.of.fit(ref.model)[["df.model"]])
 (p.value.r.equal <- pchisq(g.sq.r.equal, df.r.equal , lower.tail = FALSE))
 
 # is setting all c equal a good idea?
-(g.sq.c.equal <- c.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
-(df.c.equal <- c.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
+(g.sq.c.equal <- goodness.of.fit(c.equal)[["G.Squared"]] - goodness.of.fit(ref.model)[["G.Squared"]])
+(df.c.equal <- goodness.of.fit(c.equal)[["df.model"]] - goodness.of.fit(ref.model)[["df.model"]])
 (p.value.c.equal <- pchisq(g.sq.c.equal, df.c.equal , lower.tail = FALSE))
 
+\dontrun{
 
 # Example from Broeder & Schuetz (2009)
 # We fit the data from the 40 individuals from their Experiment 3
@@ -187,8 +185,8 @@ ir.2htm <- system.file("extdata", "broeder.2htm.restr.ineq", package = "MPTinR")
 ir.1htm <- system.file("extdata", "broeder.1htm.restr.ineq", package = "MPTinR")
 
 # fit the original 2HTM
-br.2htm <- fit.mpt(d.broeder, m.2htm)
-br.2htm.ineq <- fit.mpt(d.broeder, m.2htm, i.2htm)
+br.2htm <- fit.mpt(m.2htm, d.broeder)
+br.2htm.ineq <- fit.mpt(m.2htm, d.broeder, i.2htm)
 
 # do the inequalities hold for all participants?
 br.2htm.ineq[["parameters"]][["individual"]][,"estimates",]

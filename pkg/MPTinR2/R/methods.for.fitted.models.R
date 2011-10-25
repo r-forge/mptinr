@@ -143,6 +143,7 @@ setMethod("parameters", "mpt", function(object,  ci = NULL, show.equality = FALS
 			inequality.parameters <- vapply(inequality.restrictions(model(object)), parameter, "")
 			display.parameters <- c(free.parameters[free.parameters %in% original.parameters], inequality.parameters)
 		} else {
+			totally.free.parameters <- free.parameters
 			inequality.parameters <- NULL
 			display.parameters <- free.parameters
 		}
@@ -329,7 +330,7 @@ setMethod("parameters", "bmpt", function(object, type = c("nonparametric", "para
 				cat("\n")
 			}
 		}
-		return(callNextMethod())
+		return(callNextMethod(object, ci = ci, show.equality = show.equality, show.fixed = show.fixed, sort.alphabetical = sort.alphabetical, ...))
 	}
 	
 	if (multifit(object)) return(list(individual = individual, mean = mean.df, aggregated = df.last))
