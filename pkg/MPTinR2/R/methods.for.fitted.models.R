@@ -176,10 +176,10 @@ setMethod("parameters", "mpt", function(object,  ci = NULL, show.equality = FALS
 				new.estimates[parameter,2:3] <- NA
 				new.estimates[parameter,4] <- 3
 			}
-			if (show.fixed) if (!is.null(fixed.parameters)) for (parameter in fixed.restrictions(model(object))) if (parameter(parameter) %in% original.parameters) new.estimates[parameter(parameter),] <- c(value(parameter), NA, NA, 1)
+			if (show.fixed) if (!is.null(fixed.parameters)) for (parameter in rev(fixed.restrictions(model(object)))) if (parameter(parameter) %in% original.parameters) new.estimates[parameter(parameter),] <- c(value(parameter), NA, NA, 1)
 			if (show.equality) {
 				if (!is.null(equality.parameters)){
-					for (parameter in equality.restrictions(model(object))) new.estimates[parameter(parameter),] <- c(new.estimates[value(parameter),1:3],2)
+					for (parameter in rev(equality.restrictions(model(object)))) new.estimates[parameter(parameter),] <- c(new.estimates[value(parameter),1:3],2)
 				}
 			}
 			if (sort.alphabetical) new.estimates <- new.estimates[order(row.names(new.estimates)),]
