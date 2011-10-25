@@ -3,8 +3,12 @@
 \docType{class}
 \alias{bmpt.model-class}
 \alias{mpt.model-class}
+\alias{check}
 \alias{check,mpt.model-method}
+\alias{show,mpt.model-method}
+\alias{initial.model.data.frame}
 \alias{initial.model.data.frame,mpt.model-method}
+\alias{model.data.frame}
 \alias{model.data.frame,mpt.model-method}
 \alias{lbmpt,bmpt.model-method}
 

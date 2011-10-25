@@ -39,13 +39,13 @@ if(!isGeneric("predicted.data")){
 setMethod("predicted.data", "mpt", function(object) object@predicted.data)
 
 
-if(!isGeneric("log.likelihood")){
-	if (is.function("log.likelihood"))
+if(!isGeneric("logLikelihood")){
+	if (is.function("logLikelihood"))
 		fun <- data
-	else fun <- function(object) standardGeneric("log.likelihood")
-	setGeneric("log.likelihood", fun)
+	else fun <- function(object) standardGeneric("logLikelihood")
+	setGeneric("logLikelihood", fun)
 }
-setMethod("log.likelihood", "mpt", function(object) object@log.likelihood)
+setMethod("logLikelihood", "mpt", function(object) object@log.likelihood)
 
 
 if(!isGeneric("g.squared")){
@@ -215,12 +215,12 @@ if(!isGeneric("goodness.of.fit")){
 setMethod("goodness.of.fit", "mpt", function(object, ...) {
 	n.data <- dim(observed.data(object))[1]
 	if (multifit(object)) {
-		individual <- data.frame(m2.Log.Likelihood = log.likelihood(object)[-n.data], G.Squared = g.squared(object)[-n.data], df = check(model(object))[["df"]]["model"], p = pchisq(g.squared(object)[-n.data], check(model(object))[["df"]]["model"],lower.tail=FALSE), row.names = NULL)
+		individual <- data.frame(m2.Log.Likelihood = logLikelihood(object)[-n.data], G.Squared = g.squared(object)[-n.data], df = check(model(object))[["df"]]["model"], p = pchisq(g.squared(object)[-n.data], check(model(object))[["df"]]["model"],lower.tail=FALSE), row.names = NULL)
 		sum.tmp <- colSums(individual)
 		sum <- c(sum.tmp[1:3], p = pchisq(sum.tmp[2],sum.tmp[3],lower.tail = FALSE))
 		names(sum)[4] <- "p"
 	} 
-	aggregated <- c(m2.Log.Likelihood = log.likelihood(object)[n.data], G.Squared = g.squared(object)[n.data], df = check(model(object))[["df"]]["model"], p = pchisq(g.squared(object)[n.data], check(model(object))[["df"]]["model"],lower.tail=FALSE))
+	aggregated <- c(m2.Log.Likelihood = logLikelihood(object)[n.data], G.Squared = g.squared(object)[n.data], df = check(model(object))[["df"]]["model"], p = pchisq(g.squared(object)[n.data], check(model(object))[["df"]]["model"],lower.tail=FALSE))
 	
 	if (multifit(object)) return(list(individual = individual, sum = sum, aggregated = aggregated))
 	else return(aggregated)	

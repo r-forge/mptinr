@@ -3,13 +3,20 @@
 \docType{class}
 \alias{bmpt-class}
 \alias{mpt-class}
+\alias{default.ci}
 \alias{default.ci,mpt-method}
 \alias{default.ci<-,mpt-method}
+\alias{estimates}
 \alias{estimates,mpt-method}
+\alias{goodness.of.fit}
 \alias{goodness.of.fit,mpt-method}
+\alias{information.criteria}
 \alias{information.criteria,mpt-method}
-\alias{log.likelihood,mpt-method}
+\alias{logLikelihood}
+\alias{logLikelihood,mpt-method}
+\alias{observed.data}
 \alias{observed.data,mpt-method}
+\alias{predicted.data}
 \alias{predicted.data,mpt-method}
 \alias{show,mpt-method}
 
@@ -27,7 +34,7 @@ Objects can be created by a call to \code{\link{fit.mpt}}. They hold all informa
     \item{\code{predicted.data}:}{Aray. The predicted data.}
     \item{\code{C.matrix}:}{A list holding the "C" matrices which contain the relative frequency of data per branch and tree.}
     \item{\code{g2}:}{Numeric. The G^2 value of the fitted model.}
-    \item{\code{log.likelihood}:}{Numeric. The (-2*) Log-Likelihood of the fitted model.}
+    \item{\code{logLikelihood}:}{Numeric. The (-2*) Log-Likelihood of the fitted model.}
     \item{\code{estimates}:}{Matrix. The parameter estimates of the fitted model.}
     \item{\code{multifit}:}{Logical. Does the data contain more than one individual dataset?}
     \item{\code{hessian}:}{List of Hessian matrices}
@@ -53,7 +60,7 @@ Objects can be created by a call to \code{\link{fit.mpt}}. They hold all informa
     \item{default.ci}{\code{signature(object = "mpt")}: Accessor function for the default.ci slot. A replacement function exists as well!}
     \item{observed.data}{\code{signature(object = "mpt")}: Accessor function for the observed data.}
     \item{predicted.data}{\code{signature(object = "mpt")}: Accessor function for the predicted data.}
-    \item{log.likelihood}{\code{signature(object = "mpt")}: Accessor function for the (-2 *) Log-Likelihood of the fitted model.}
+    \item{logLikelihood}{\code{signature(object = "mpt")}: Accessor function for the (-2 *) Log-Likelihood of the fitted model.}
     \item{estimates}{\code{signature(object = "mpt")}: Accesor function for the parameter estimates.}
 	 }
 }
