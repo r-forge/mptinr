@@ -63,11 +63,12 @@ When calling \code{fit.mpt} with a filename as the \code{model} argument, \code{
 
 The index of each datapoint (or the column for matrices) must correspond to the row or number of this response catgeory in the model file.
 
-For models of class \code{bmpt.model} the \code{start.parameters} argument must be either \code{NULL} or a vector of at least the 
+\code{start.parameters} are used as the initial values when fitting the model.\cr
+For models of class \code{bmpt.model} the \code{start.parameters} argument must be either \code{NULL} or a numeric vector of at least length = number of free parameters. If \code{length(start.parameters)} is larger than the number of free parameters it is truncated. The \code{start.parameters} are mapped on the free parameters based on the order (see \code{check(model)[["free.parameters"]]} where model can be either a model object or fitted object).
 
 For models of class \code{mpt.model} multiple cores can be used for fitting via the \code{multicore} argument. Multicore fitting is achieved via the \code{snowfall} package and needs to be initialized via \code{sfInit}. As initialization needs some time, you can either initialize multicore facilities yourself using \code{sfInit()} and setting the \code{sfInit} argument to \code{FALSE} (the default) or let MPTinR initialize multicore facilities by setting the \code{sfInit} argument to \code{TRUE}. The former is recommended as initializing \code{snowfall} takes some time and only needs to be done once if you run \code{fit.mpt} multiple times. If there are any problems with multicore fitting, first try to initialize \code{snowfall} outside MPTinR (e.g., \code{sfInit( parallel=TRUE, cpus=2 )}). If this does not work, the problem is not related to MPTinR but to snowfall (for support and references visit: \url{http://www.imbi.uni-freiburg.de/parallel/}).\cr
 When using multicore facilties set argument \code{nCPU} to the desired (and available) number of CPUs.\cr
-Note that you need to \emph{close} snowfall via \code{sfStop()} after using MPTinR.
+Note that you should \emph{close} snowfall via \code{sfStop()} after using MPTinR.
 
 }
 \value{
@@ -162,8 +163,6 @@ model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 (df.c.equal <- goodness.of.fit(c.equal)[["df.model"]] - goodness.of.fit(ref.model)[["df.model"]])
 (p.value.c.equal <- pchisq(g.sq.c.equal, df.c.equal , lower.tail = FALSE))
 
-\dontrun{
-
 # Example from Broeder & Schuetz (2009)
 # We fit the data from the 40 individuals from their Experiment 3
 # We fit three different models:
@@ -189,59 +188,25 @@ br.2htm <- fit.mpt(m.2htm, d.broeder)
 br.2htm.ineq <- fit.mpt(m.2htm, d.broeder, i.2htm)
 
 # do the inequalities hold for all participants?
-br.2htm.ineq[["parameters"]][["individual"]][,"estimates",]
-br.2htm[["parameters"]][["individual"]][,"estimates",]
+parameters(br.2htm.ineq, sort.alphabetical = TRUE)[["individual"]][,"estimates",]
+parameters(br.2htm)[["individual"]][,"estimates",]
 # See the difference between forced and non-forced inequality restrictions:
-round(br.2htm[["parameters"]][["individual"]][,"estimates",] - br.2htm.ineq[["parameters"]][["individual"]][,"estimates",],2)
+round(parameters(br.2htm)[["individual"]][,"estimates",]-
+parameters(br.2htm.ineq, sort.alphabetical = TRUE)[["individual"]][,"estimates",],2)
 
 # The same for the other two models
 # The restricted 2HTM
-br.2htm.res <- fit.mpt(d.broeder, m.2htm, r.2htm)
-br.2htm.res.ineq <- fit.mpt(d.broeder, m.2htm, ir.2htm)
-round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
+br.2htm.res <- fit.mpt(m.2htm, d.broeder, r.2htm)
+br.2htm.res.ineq <- fit.mpt(m.2htm, d.broeder, ir.2htm)
+round(parameters(br.2htm.res, sort.alphabetical = TRUE)[["individual"]][,"estimates",]-
+parameters(br.2htm.res.ineq, sort.alphabetical = TRUE)[["individual"]][,"estimates",],2)
+
 # The 1HTM
-br.1htm <- fit.mpt(d.broeder, m.2htm, r.1htm)
-br.1htm.ineq <- fit.mpt(d.broeder, m.2htm, ir.1htm)
-round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
+br.1htm <- fit.mpt(m.2htm, d.broeder, r.1htm)
+br.1htm.ineq <- fit.mpt(m.2htm, d.broeder, ir.1htm)
+round(parameters(br.1htm, sort.alphabetical = TRUE)[["individual"]][,"estimates",]-
+parameters(br.1htm.ineq, sort.alphabetical = TRUE)[["individual"]][,"estimates",],2)
 
-# These results show that we cannot compute inequality constraints for the non inequality imposed models.
-# (It would look differently if we excluded critical cases, e.g., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)
-# Therefore, we get the FIA for the models as computed above 
-# WARNING: The following part will take a long time!
-
-br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 200000)
-br.2htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, i.2htm, fia = 200000)
-br.2htm.res.fia <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 200000 )
-br.2htm.res.ineq.fia <- fit.mpt(d.broeder, m.2htm, ir.2htm, fia = 200000)
-br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 200000)
-br.1htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, ir.1htm, fia = 200000)
-
-# Model selection using the FIA
-(br.select <- select.mpt(list(orig.2htm = br.2htm.fia, orig.2htm.ineq = br.2htm.ineq.fia, res.2htm = br.2htm.res.fia, res.2htm.ineq = br.2htm.res.ineq.fia, orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
-# The same results, ordered by FIA
-br.select[order(br.select[,"delta.FIA.sum"]),]
-
-# Compare this with the model selection not using FIA:
-select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = br.2htm.res, res.2htm.ineq = br.2htm.res.ineq, orig.1htm = br.1htm, orig.1htm.ineq = br.1htm.ineq))
-
-
-
-
-# compare speed of no multicore versus multicore for multiple optimization runs:
-
-require(snowfall)
-# change number of CPUs if more are available
-nCPU = 2
-sfInit( parallel=TRUE, cpus=nCPU, type = "SOCK" )
-
-# NO multicore
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2))
-
-# multicore:
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "n.optim"))
-
-sfStop()
-}
 
   }
 \seealso{

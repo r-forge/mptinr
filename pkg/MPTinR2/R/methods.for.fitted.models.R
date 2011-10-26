@@ -4,6 +4,14 @@
 ### MPT ###
 ###########
 
+if(!isGeneric("check")){
+	if (is.function("check"))
+		fun <- check
+	else fun <- function(object) standardGeneric("check")
+	setGeneric("check", fun)
+}
+setMethod("check", "mpt", function(object) check(MPTinR2:::model(object)))
+
 if(!isGeneric("hessian.mpt")){
 	if (is.function("hessian.mpt"))
 		fun <- hessian.mpt

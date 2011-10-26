@@ -71,7 +71,6 @@ make.C.matrix <- function(n, model, df.n, n_items) {
 
 
 .wrapper.fit <- function(data, model, start.params, C.matrix, total.n.parameters) {
-	#browser()
 	.Fortran("onelc",
 	kerncat = as.integer(check(model)[["n.categories"]]),
 	kernpar = as.integer(total.n.parameters),
@@ -95,27 +94,30 @@ make.C.matrix <- function(n, model, df.n, n_items) {
 	storage.mode(B(model)) <- "integer"
 	storage.mode(data) <- "integer"
 	total.n.parameters <- (check(model)[["n.free.parameters"]]+check(model)[["n.fixed.parameters"]])
+	n.free.parameters <- check(model)[["n.free.parameters"]]
 	fits <- vector("list", n.data)
-	if (!is.null(start.parameters)) if (length(start.parameters) != check(model)[["n.free.parameters"]]) start.parameters <- start.parameters[1:check(model)[["n.free.parameters"]]]
-	if (is.null(start.parameters)) starting.values <- c(runif(check(model)[["n.free.parameters"]], 0.1, 0.9), fixed.parameters)
-	else starting.values <- c(start.parameters, fixed.parameters)
-	
+	if (!is.null(start.parameters)) {
+		if (length(start.parameters) < n.free.parameters) stop("length(start.parameters) < number of free parameters")
+		if (length(start.parameters) > n.free.parameters) start.parameters <- start.parameters[1:n.free.parameters]
+	}
+	if (is.null(start.parameters)) starting.values <- runif(n.free.parameters, 0.1, 0.9)
+	else starting.values <- start.parameters
 	#browser()
 	#dataset <- 1
 	for (dataset in seq_len(n.data)) {
 		if (n.optim[[1]] == "auto") {
 			border <- ifelse(starting.values < 0.5, 1, 0)
-			starting.values2 <- ifelse((starting.values > (2/3)) | (starting.values < (1/3)), 1-starting.values, abs(border - runif(total.n.parameters, 0, 0.15)))
-			starting.values2 <- c(starting.values2, fixed.parameters)
+			starting.values2 <- ifelse((starting.values > (2/3)) | (starting.values < (1/3)), 1-starting.values, abs(border - runif(n.free.parameters, 0, 0.15)))
 			
-			fit1 <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = starting.values, C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
-			fit2 <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = starting.values2, C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
-			if ((fit1[["g2"]] - fit2[["g2"]]) > 0.01) {
+			fit1 <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = c(starting.values, fixed.parameters), C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
+			fit2 <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = c(starting.values2, fixed.parameters), C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
+			if (abs(fit1[["g2"]] - fit2[["g2"]]) > 0.01) {
+				print(paste("individual:", dataset, "auto fitting"))
 				if (fit1[["g2"]] < fit2[["g2"]]) fits[[dataset]] <- fit1
 				else fits[[dataset]] <- fit2
 				for (run in seq_len(n.optim[[2]])) {
-					starting.parameters <- c(runif(total.n.parameters, 0.0001, 0.9999), fixed.parameters)
-					fit.tmp <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = starting.parameters, C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
+					starting.values <- runif(n.free.parameters, 0.0001, 0.9999)
+					fit.tmp <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = c(starting.values, fixed.parameters), C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
 					if (fit.tmp[["g2"]] < fits[[dataset]][["g2"]]) fits[[dataset]] <- fit.tmp
 				}
 			} else {
@@ -123,10 +125,10 @@ make.C.matrix <- function(n, model, df.n, n_items) {
 				else fits[[dataset]] <- fit2
 			}
 		} else {
-			fits[[dataset]] <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = starting.values, C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
+			fits[[dataset]] <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = c(starting.values, fixed.parameters), C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
 			for (run in seq_len(n.optim[1]-1)) {
-				starting.parameters <- c(runif(total.n.parameters, 0.0001, 0.9999), fixed.parameters)
-				fit.tmp <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = starting.parameters, C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
+				starting.values <- runif(n.free.parameters, 0.0001, 0.9999)
+				fit.tmp <- .wrapper.fit(data[dataset,,drop = FALSE], model = model, start.params = c(starting.values, fixed.parameters), C.matrix = C.matrix[[dataset]], total.n.parameters = total.n.parameters)
 				if (fit.tmp[["g2"]] < fits[[dataset]][["g2"]]) fits[[dataset]] <- fit.tmp
 			}
 		}
