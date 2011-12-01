@@ -1,6 +1,6 @@
       subroutine onehess(kerncat,kernpar,freepar,zweig,trees,indi,
-	1      A,B,branch,C,iDaten,noc,x,hess,ifail)
-c	use numerical_libraries
+     1      A,B,branch,C,iDaten,noc,x,hess,ifail)
+c    use numerical_libraries
 c      
 c    ! ---- Subroutine export declarations.
 c
