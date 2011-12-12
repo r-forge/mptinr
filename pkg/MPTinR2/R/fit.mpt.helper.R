@@ -16,6 +16,7 @@
 
 
 .prep.data <- function(data) {
+	if (!(is.numeric(data) | is.data.frame(data))) stop("data must be a data.frame or numeric!") 
 	if(is.vector(data)) {
 		data <- array(data, dim = c(1, length(data)))
 	} else
