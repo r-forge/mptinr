@@ -108,15 +108,16 @@ The Fortran code was written by Karl Christoph Klauer
 # to the data presented in Riefer and Batchelder (1988, Table 1)
 # Note that Riefer and Batchelder (1988, pp. 328) did some hypotheses tests, that are not done here.
 # Rather, we use each condition (i.e., row in Table 1) as a different individual.
-# We try to use n.optim = 1 here, but this can lead to local minima
-# In general we recommend to set n.optim >= 5
+
 
 # load the data
-data(rb.fig1.data)
+data(rb.fig1.data, package = "MPTinR2")
 
-#get the character string with the position of the model:
-model1 <- system.file("extdata", "rb.fig1.model", package = "MPTinR")
-model1.eqn <- system.file("extdata", "rb.fig1.model.eqn", package = "MPTinR")
+#make model objects, once using the easy format, once using the eqn format.
+(model1 <- make.mpt(system.file("extdata", "rb.fig1.model", package = "MPTinR2")))
+(model1.eqn <- make.mpt(system.file("extdata", "rb.fig1.model.eqn", package = "MPTinR2")))
+#both models are identical:
+identical(model1, model1.eqn)
 
 # just fit the first "individual":
 fit.mpt(model1, rb.fig1.data[1,])
@@ -134,24 +135,26 @@ fit.mpt(model1.eqn, rb.fig1.data)
 # Next, the model with all r set equal is fitted: r.equal
 # Then, the model with all c set equal is fitted: c.equal
 # Finally, the inferential tests reported by Riefer & Batchelder, (1988, p. 332) are executed.
-# Note, that n.optim = 10, because of frequent local minima.
+
 
 # get the data
-data(rb.fig2.data)
+data(rb.fig2.data, package = "MPTinR2")
 
-# positions of model and restriction files:
-model2 <- system.file("extdata", "rb.fig2.model", package = "MPTinR")
-model2r.r.eq <- system.file("extdata", "rb.fig2.r.equal", package = "MPTinR")
-model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
+# make model objects
+model2.file <- system.file("extdata", "rb.fig2.model", package = "MPTinR2")
+model2 <- make.mpt(model2.file)
+model2.r.eq <- make.mpt(model2.file, system.file("extdata", "rb.fig2.r.equal", package = "MPTinR2"))
+model2.c.eq <- make.mpt(model2.file, system.file("extdata", "rb.fig2.c.equal", package = "MPTinR2"))
 
 # The full (i.e., unconstrained) model
 (ref.model <- fit.mpt(model2, rb.fig2.data))
 
+
 # All r equal
-(r.equal <- fit.mpt(model2, rb.fig2.data, model2r.r.eq))
+(r.equal <- fit.mpt(model2.r.eq, rb.fig2.data))
 
 # All c equal
-(c.equal <- fit.mpt(model2, rb.fig2.data, model2r.c.eq))
+(c.equal <- fit.mpt(model2.c.eq, rb.fig2.data))
 
 # is setting all r equal a good idea?
 (g.sq.r.equal <- goodness.of.fit(r.equal)[["G.Squared"]] - goodness.of.fit(ref.model)[["G.Squared"]])
@@ -172,16 +175,14 @@ model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 # We fit the models with, as well as without, applied inequality restrictions (see Details)
 # that is, for some models (.ineq) we impose: G1 < G2 < G3 < G4 < G5 
 # As will be apparent, the inequality restrictions do not hold for all individuals.
-# Finally, we compute the FIA for all models, taking inequalities into account when they are imposed.
-# Note: The following examples will take some time (> 1 hour).
 
-data(d.broeder)
-m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
-r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
-r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
-i.2htm <- system.file("extdata", "broeder.2htm.ineq", package = "MPTinR")
-ir.2htm <- system.file("extdata", "broeder.2htm.restr.ineq", package = "MPTinR")
-ir.1htm <- system.file("extdata", "broeder.1htm.restr.ineq", package = "MPTinR")
+data(d.broeder, package = "MPTinR2")
+m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR2")
+r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR2")
+r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR2")
+i.2htm <- system.file("extdata", "broeder.2htm.ineq", package = "MPTinR2")
+ir.2htm <- system.file("extdata", "broeder.2htm.restr.ineq", package = "MPTinR2")
+ir.1htm <- system.file("extdata", "broeder.1htm.restr.ineq", package = "MPTinR2")
 
 # fit the original 2HTM
 br.2htm <- fit.mpt(m.2htm, d.broeder)

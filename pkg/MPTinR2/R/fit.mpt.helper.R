@@ -85,7 +85,7 @@ make.C.matrix <- function(n, model, df.n, n_items) {
 	noc = as.integer(c(rep(TRUE, check(model)[["n.free.parameters"]]), rep(FALSE, check(model)[["n.fixed.parameters"]]))),
 	x = as.double(start.params),
 	g2 = as.double(0),
-	likeli = as.double(0))
+	likeli = as.double(0), PACKAGE = "MPTinR2")
 }
 
 

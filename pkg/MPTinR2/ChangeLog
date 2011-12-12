@@ -1,4 +1,13 @@
 
+2011-12-12
+		* fit.mpt.Rd updated examples to make use of make.mpt()
+
+		* Changed the fortran files to suppress creating output files.
+
+		* Changed DESCRIPTION to inform about the difference to MPTinR (1).
+
+		* resolved small bug that prevented using fit.mpt with a model object.
+
 2011-10-21
 
 		* First Version of the new MPTinR (for now called MPTinR2)

@@ -19,6 +19,8 @@ setMethod("fit.mpt", "character", function(model, data, restrictions.filename = 
 
 setMethod("fit.mpt", "bmpt.model", function(model, data, ci = 95, n.optim = list("auto", 5), start.parameters = NULL, ...) {
 	
+	data <- .prep.data(data)
+	
 	if (dim(data)[1] > 1) {
 		multifit <- TRUE
 		data <- rbind(data, colSums(data))
@@ -73,7 +75,7 @@ setMethod("fit.mpt", "bmpt.model", function(model, data, ci = 95, n.optim = list
 		noc = as.integer(c(rep(TRUE, check(model)[["n.free.parameters"]]), rep(FALSE, check(model)[["n.fixed.parameters"]]))),
 		x = as.double(params[n,]),
 		hess = hess.matrix,
-		ifail = as.integer(0))
+		ifail = as.integer(0), PACKAGE = "MPTinR2")
 	}
 	
 	fits <- .fit.bmpt(model, data, start.parameters = start.parameters, n.optim = n.optim, n.data = n.data, fixed.parameters = fixed.parameters, C.matrix = C)
@@ -235,6 +237,8 @@ setMethod("fit.mpt", "mpt.model", function(model, data, n.optim = 5, ci = 95, st
 	### above functions for MPTinR, below the code that calls them ################################
 	###############################################################################################
 	
+	
+	data <- .prep.data(data)
 	
 	if (dim(data)[1] > 1) {
 		multifit <- TRUE

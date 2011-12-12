@@ -77,13 +77,13 @@ c
 	 double precision xx
 c
 c	 call umach(2,nout)
-	 if (silent) then
-          nout=9
+c	 if (silent) then
+c          nout=9
 c       call umach(-2,nout)
-  	 open(nout,file='onetrans.aus')
- 	 errout=10
+c  	 open(nout,file='onetrans.aus')
+c 	 errout=10
 c 	 call umach(-3,errout)
- 	 open(errout,file='onetrans.err')
+c 	 open(errout,file='onetrans.err')
        endif
 c
 	 iseed = 0
@@ -108,8 +108,8 @@ c
        subroutine schluss(silent)
 	 logical silent
        if (silent) then
-	  close(9)
-	  close(10)
+c	  close(9)
+c	  close(10)
 	 endif
 	 end subroutine schluss
 c

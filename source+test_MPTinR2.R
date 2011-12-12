@@ -7,18 +7,7 @@ for (r.file in list.files("pkg/MPTinR2/R", pattern = "R$", full.names = TRUE)) {
 	tryCatch(source(r.file), error = function(e) print(e))
 }
 
-dyn.load("onetrans.dll")
-dyn.load("onehess.dll")
-
-
-
-
-dyn.load("onetrans.dll")
-
-dyn.load("hmmtree.dll")
-dyn.load("DFORRT.dll")
-dyn.load("qtintf70.dll")
-
+dyn.load("K:/packages/MPTinR/MPTinR2.dll")
 
 
 options(error = recover)
