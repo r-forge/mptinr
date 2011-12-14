@@ -84,7 +84,7 @@ c  	 open(nout,file='onetrans.aus')
 c 	 errout=10
 c 	 call umach(-3,errout)
 c 	 open(errout,file='onetrans.err')
-       endif
+c       endif
 c
 	 iseed = 0
 	 n=0

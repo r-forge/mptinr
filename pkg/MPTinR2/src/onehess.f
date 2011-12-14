@@ -66,10 +66,10 @@ c	 call umach(2,nout)
 	 if (silent) then
           nout=9
 c       call umach(-2,nout)
-  	 open(nout,file='onefisch.out')
- 	 errout=10
- 	 call umach(-3,errout)
- 	 open(errout,file='onefisch.err')
+c  	 open(nout,file='onefisch.out')
+c 	 errout=10
+c 	 call umach(-3,errout)
+c 	 open(errout,file='onefisch.err')
        endif
 c
 	 iseed = 0

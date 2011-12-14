@@ -1,4 +1,8 @@
 
+2011-12-14
+		* Further change to the fortran files (all open and write 
+		  statements are commented out), compiling checked on win 7
+
 2011-12-12
 		* fit.mpt.Rd updated examples to make use of make.mpt()
 
