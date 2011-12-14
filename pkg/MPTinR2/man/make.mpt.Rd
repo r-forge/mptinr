@@ -1,22 +1,27 @@
 \name{make.mpt}
+\docType{methods}
 \alias{make.mpt}
+\alias{make.mpt-methods}
+\alias{make.mpt,character-method}
 \title{Creates a MPT Model Object}
 \description{
-\code{make.mpt} in \pkg{MPTinR} takes a model filename and optional a restrictions filename to create an object of type \code{bmpt.model} or \code{mpt.model}.
+This generic function in \pkg{MPTinR} creates an object representing a MPT model and returns an object of type \code{bmpt.model} or \code{mpt.model}.
 }
 \usage{
-make.mpt(model.filename, restrictions.filename = NULL, model.type = c("easy", "eqn", "eqn2"))
+\S4method{make.mpt}{character}(model, restrictions = NULL, model.type = c("easy", "eqn", "eqn2"), ...)
 }
 \arguments{
-  \item{model.filename}{
+  \item{model}{
 A character \code{vector} specifying the location and name of the model file. 
 }
-  \item{restrictions.filename}{
+  \item{restrictions}{
 \code{NULL} or a character \code{vector} specifying the location and name of the restrictions file. Default is \code{NULL} which corresponds to no restrictions.
 }
   \item{model.type}{
 Character vector specifying whether the model file is formatted in the easy way (\code{"easy"}; i.e., each line represents all branches corresponding to a response category) or the traditional EQN syntax (\code{"eqn"} or \code{"eqn2"}; see Details and e.g., Stahl & Klauer, 2007). If \code{model.filename} ends with .eqn or .EQN, \code{model.type} is automatically set to \code{"eqn"}. Default is \code{"easy"}.
 }
+\item{...}{Currently ignored.}
+
 }
 \details{
 This functions creates an S4 object representing a MPT or BMPT model (for the distinction see, e.g., Purdy & Batchelder, 2009).

@@ -1,5 +1,10 @@
 
-make.mpt <- function(model.filename, restrictions.filename = NULL, model.type = c("easy", "eqn", "eqn2")) {
+setGeneric("make.mpt", function(model, restrictions = NULL, ...) standardGeneric("make.mpt"))
+
+setMethod("make.mpt", "character", function(model, restrictions = NULL, model.type = c("easy", "eqn", "eqn2"), ...) {
+	
+	model.filename <- model
+	restrictions.filename <- restrictions
 	
 	if (grepl("\\.eqn$", model.filename) || grepl("\\.EQN$", model.filename)) model.type <- "eqn"
 	if (model.type[1] == "eqn") {
@@ -38,7 +43,7 @@ make.mpt <- function(model.filename, restrictions.filename = NULL, model.type = 
 	
 	
 	model
-}
+})
 
 
 
