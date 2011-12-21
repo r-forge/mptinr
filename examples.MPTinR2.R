@@ -13,6 +13,14 @@ data(rb.fig1.data, package = "MPTinR2")
 #both models are identical:
 identical(model1, model1.eqn)
 
+# specify the same model via textConnection
+model1.txtCon <- make.mpt(textConnection("p * q * r
+p * q * (1-r)
+p * (1-q) * r
+p * (1-q) * (1-r) + (1-p)"))
+identical(model1, model1.txtCon)
+# see ?make.mpt for more on how to specify a model and restrictions
+
 # just fit the first "individual":
 fit.mpt(model1, rb.fig1.data[1,])
 
@@ -21,6 +29,9 @@ fit.mpt(model1, rb.fig1.data)
 
 #fit all "individuals" using the .EQN model file:
 fit.mpt(model1.eqn, rb.fig1.data)
+
+#fit all "individuals" using the .txtCon model file:
+fit.mpt(model1.txtCon, rb.fig1.data)
 
 
 # The second example fits the MPT model presented in Riefer and Batchelder (1988, Figure 2)

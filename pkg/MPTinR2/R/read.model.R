@@ -1,5 +1,15 @@
 
 
+.read.mpt <- function(model.filename, model.type) {
+	if (grepl("\\.eqn$", model.filename) || grepl("\\.EQN$", model.filename)) model.type <- "eqn"
+	if (model.type[1] == "eqn") {
+		raw.model <- .read.EQN.model(model.filename)
+	} else if (model.type[1] == "eqn2") {
+		raw.model <- .read.EQN.model.2(model.filename)
+	} else raw.model <- .read.MPT.model(model.filename)
+	raw.model
+}
+
 .read.MPT.model <- function(model.filename) {
 	whole <- readLines(model.filename)
 	model <- vector("list", length(whole))
@@ -8,7 +18,8 @@
 	s.flag <- FALSE
 	for (c1 in 1:length(whole)) {
 		if (!(grepl("^[[:space:]]*$", whole[c1]))) {
-			if (grepl("#", whole[c1])) next
+			if (grepl("^[[:space:]]*#", whole[c1])) next
+			whole[c1] <- gsub("#.*", "", whole[c1])
 			s.flag <- TRUE
 			model[[c2]][c3] <- parse(text = whole[c1])[1]
 			c3 <- c3 + 1
@@ -81,26 +92,33 @@
 # 2. At first all inequality restrictions are applied.
 # 3. Then all equality restrictions.
 # 4. Finally all fixed parameters are handled.
-# If your set of restrictions does not make sens given this procedure. Change your set of restrictions.
+# If your set of restrictions does not make sens given this procedure, change your set of restrictions.
 
-
-.read.MPT.restrictions <- function(filename) {
-	min.restriction <- c(0, 0.001) 
-	max.restriction <- 0.99999
+.read.MPT.restrictions.file <- function(filename) {
+	# filename can be a connection, there should be an see examples
 	whole <- readLines(filename)
 	model <- vector("list", length(whole))
 	c2 <- 1
 	for (c1 in 1:length(whole)) {
 		if (!(grepl("^[[:space:]]*$", whole[c1]))) {
-			if (grepl("#", whole[c1])) next
+			if (grepl("^[[:space:]]*#", whole[c1])) next
+			whole[c1] <- gsub("#.*", "", whole[c1])
 			model[[c2]] <- whole[c1]
 			fin <- c2
 			c2 <- c2 + 1
 		}
 	}
 	if(!exists("fin")) return(NULL)
-	restrictions <- list()
-	tmp.restrictions <- model[1:fin]
+	.read.MPT.restrictions(model[1:fin])
+}
+
+.read.MPT.restrictions <- function(tmp.restrictions) {
+	#min.restriction <- c(0, 0.001) 
+	#max.restriction <- 0.99999
+	
+	if (!is.list(tmp.restrictions)) stop("restrictions must be a list")
+	
+	if (!all(vapply(tmp.restrictions, class, "") == "character")) stop("The restrictions can only be of class character")
 	
 	no.white.restrictions <- lapply(tmp.restrictions, gsub, pattern = " ", replacement = "")
 	if (sum(grepl("[/\\+\\*\\!-]", unlist(tmp.restrictions)))) stop("Error getting Restrictions: Non supported operators (+, -, *, /, !) found in restriction file.")
@@ -115,11 +133,13 @@
 	c.x.all <- 1
 	c.restr <- 1
 	#for (c.restr in 1:length(no.white.restrictions)) {
+	regexp.number <- "^[[:digit:]]*\\.?[[:digit:]]+$"
 	while (c.restr  < (length(no.white.restrictions)+1)) {
 		tmp.restr <- strsplit(no.white.restrictions[[c.restr]], "[=><]")[[1]]
-		if (any(grepl("^0?\\.?[[:digit:]]+$", tmp.restr[-length(tmp.restr)]))) stop(paste("Numerical constant not the rightmost element in restriction:", tmp.restrictions[[c.restr]]))
+		if (any(grepl(regexp.number, tmp.restr[-length(tmp.restr)]))) stop(paste("Numerical constant not the rightmost element in restriction:", tmp.restrictions[[c.restr]]))
 		if (grepl("=", no.white.restrictions[[c.restr]])) {
-			if (grepl("^0?\\.?[[:digit:]]+$", tmp.restr[length(tmp.restr)])) {
+			if (grepl(regexp.number, tmp.restr[length(tmp.restr)])) {
+				if (as.numeric(tmp.restr[length(tmp.restr)]) > 1 | as.numeric(tmp.restr[length(tmp.restr)]) < 0) stop("fixed restriction / numerical constant is not inside [0,1]")
 				fixed.restrictions[[length(fixed.restrictions)+1]] <- new("fixed.restriction", parameter = tmp.restr[length(tmp.restr)-1], value = as.numeric(tmp.restr[length(tmp.restr)]))
 				tmp.restr <- tmp.restr[-length(tmp.restr)]
 			}
@@ -130,7 +150,7 @@
 			}
 		}
 		if (grepl("<", no.white.restrictions[[c.restr]])) {
-			if (grepl("^0?\\.?[[:digit:]]+$", tmp.restr[length(tmp.restr)])) {
+			if (grepl(regexp.number, tmp.restr[length(tmp.restr)])) {
 				no.white.restrictions[[length(no.white.restrictions)+1]] <- paste("hank", c.x.all, "=", tmp.restr[length(tmp.restr)], sep = "")
 				tmp.restr[length(tmp.restr)] <- paste("hank", c.x.all, sep = "")
 				c.x.all <- c.x.all + 1
@@ -142,7 +162,7 @@
 			}
 		}
 		if (grepl(">", no.white.restrictions[[c.restr]])) {
-			if (grepl("^0?\\.?[[:digit:]]+$", tmp.restr[length(tmp.restr)])) {
+			if (grepl(regexp.number, tmp.restr[length(tmp.restr)])) {
 				no.white.restrictions[[length(no.white.restrictions)+1]] <- paste("hank", c.x.all, "=", tmp.restr[length(tmp.restr)], sep = "")
 				tmp.restr[length(tmp.restr)] <- paste("hank", c.x.all, sep = "")
 				c.x.all <- c.x.all + 1

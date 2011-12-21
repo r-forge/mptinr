@@ -1,19 +1,37 @@
 
 setGeneric("make.mpt", function(model, restrictions = NULL, ...) standardGeneric("make.mpt"))
 
-setMethod("make.mpt", "character", function(model, restrictions = NULL, model.type = c("easy", "eqn", "eqn2"), ...) {
+setMethod("make.mpt", signature(model = "characterOrConnection"), function(model, restrictions = NULL, model.type = c("easy", "eqn", "eqn2"), ...) {
 	
-	model.filename <- model
-	restrictions.filename <- restrictions
+	raw.model <- .read.mpt(model.filename = model, model.type = model.type)
 	
-	if (grepl("\\.eqn$", model.filename) || grepl("\\.EQN$", model.filename)) model.type <- "eqn"
-	if (model.type[1] == "eqn") {
-		raw.model <- .read.EQN.model(model.filename)
-	} else raw.model <- .read.MPT.model(model.filename)
+	callGeneric(model = raw.model, restrictions = NULL, ...)
+})
+
+setMethod("make.mpt", signature(model = "characterOrConnection", restrictions = "characterOrConnection"), function(model, restrictions = NULL, model.type = c("easy", "eqn", "eqn2"), ...) {
 	
-	model <- new("mpt.model", initial.model = raw.model, check = list(), restrictions = NULL)
+	raw.model <- .read.mpt(model.filename = model, model.type = model.type)
 	
-	if(!is.null(restrictions.filename)) restrictions(model) <- .read.MPT.restrictions(restrictions.filename)
+	restrictions <- .read.MPT.restrictions.file(restrictions)
+	
+	callGeneric(model = raw.model, restrictions = restrictions, ...)
+})
+
+setMethod("make.mpt", signature(model = "characterOrConnection", restrictions = "list"), function(model, restrictions, model.type = c("easy", "eqn", "eqn2"), ...) {
+	
+	raw.model <- .read.mpt(model.filename = model, model.type = model.type)
+	
+	restrictions <- .read.MPT.restrictions(restrictions)
+	
+	callGeneric(model = raw.model, restrictions = restrictions, ...)
+})
+
+
+setMethod("make.mpt", signature(model = "list", restrictions = "restrictionsOrNull"), function(model, restrictions, ...) {
+	
+	initial.model.list <- model
+	
+	model <- new("mpt.model", initial.model = initial.model.list, check = list(), restrictions = restrictions)
 	
 	initial.model.data.frame(model) <- .make.model.df(initial.model(model))
 	

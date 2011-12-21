@@ -19,4 +19,11 @@ setClass("bmpt.model", representation = representation(A = "array", B = "array",
 setClass("mpt", representation(model = "mpt.model", observed.data = "array",  predicted.data = "array", C.matrix = "list", g2 = "numeric", log.likelihood = "numeric", estimates = "matrix", multifit = "logical", hessian = "list", default.ci = "numeric"))
 setClass("bmpt", representation(typeHessian = "character", hfail = "numeric", fia = "list", parametric.ci = "list", nonparametric.ci = "list"), contains = "mpt")
 
+## make.mpt helper classes
+setOldClass( c("file", "connection" ) )
+setOldClass( c("url", "connection" ) )
+setOldClass( c("textConnection", "connection" ) )
+setClassUnion("characterOrConnection", c("character", "connection"))
+setClassUnion("characterOrNull", c("character", "NULL"))
+#setClassUnion("listOrNull", c("list", "NULL"))
 
