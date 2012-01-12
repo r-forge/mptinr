@@ -1,5 +1,5 @@
 
-for (r.file in list.files("pkg/R", full.names = TRUE)) {
+for (r.file in list.files("pkg/MPTinR/R", full.names = TRUE)) {
 	source(r.file)
 }
 
@@ -37,7 +37,7 @@ example.broeder.ex3(0.01, numerical.accuracy)
 
 load("testfiles/bs_ref_063.RData")
 
-example.broeder.mptinr(5)
+example.broeder.mptinr(10)
 
 all.equal(br.2htm.ref[-6], br.2htm.test[-6], tolerance = 0.01)
 all.equal(br.2htm.ineq.ref[-6], br.2htm.ineq.test[-6], tolerance = 0.01)
