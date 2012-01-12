@@ -1,3 +1,9 @@
+2012-01-12
+		* changed .find.mpt.params to rely on all.vars()
+		* adapted fit.mpt() (creating parameters from inequality restrictions) to 
+		  deal with the new .find.mpt.params() function (i.e., inequalities are 
+		  parse()d prior to calling .find.mpt.params).
+		* added fit.model(), a copy of fit.mpt() with parameter bounds as an argument
 
 2011-06-30
 

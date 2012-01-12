@@ -1,10 +1,11 @@
 \name{fit.mpt}
 \alias{fit.mpt}
+\alias{fit.model}
 \title{
 Function to fit MPT models
 }
 \description{
-This function fits \emph{binary} multinomial processing tree models (MPT models; e.g., Riefer & Batchelder, 1988) from an external model file and (optional) external restrictions using the general-purpose quasi-Newton box-constraint optimization routine provided by Byrd et al. (1995). Additionally, measures for model selection (AIC, BIC, FIA) can be computed.
+fit.mpt() function fits \emph{binary} multinomial processing tree models (MPT models; e.g., Riefer & Batchelder, 1988) from an external model file and (optional) external restrictions using the general-purpose quasi-Newton box-constraint optimization routine provided by Byrd et al. (1995). Additionally, measures for model selection (AIC, BIC, FIA) can be computed. fit.model() is a copy of fit.mpt() that allows for user supplied bounds on the parameters to fit other models than MPTs.
 }
 \usage{
 fit.mpt(
@@ -15,6 +16,22 @@ fit.mpt(
 	fia = NULL,
 	ci = 95, 
 	starting.values = NULL,
+	output = c("standard", "fia", "full"),
+	reparam.ineq = TRUE,
+	sort.param = TRUE,
+	model.type = c("easy", "eqn", "eqn2"),
+	multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2
+)
+fit.model(
+	data,
+	model.filename, 
+	restrictions.filename = NULL, 
+	n.optim = 5,
+	fia = NULL,
+	ci = 95, 
+	starting.values = NULL,
+	lower.bound = 0,
+	upper.bound = 1,
 	output = c("standard", "fia", "full"),
 	reparam.ineq = TRUE,
 	sort.param = TRUE,
@@ -43,7 +60,7 @@ Number of random samples to be drawn in the Monte Carlo algorithm to estimate th
 A scalar corresponding to the size of the confidence intervals for the parameter estimates. Default is 95 which corresponds to 95\% confidence intervals.
 }
   \item{starting.values}{
-A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.1 - 0,9)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
+A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.05 - 0.95)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
 }
   \item{output}{
 If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if calculated \code{fia} not equal \code{NULL}). If "full" \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} and the output of \code{\link{optim}}.
@@ -65,6 +82,12 @@ Logical. Relevant if \code{multicore} is not \code{"none"}. If \code{TRUE}, \cod
 }
   \item{nCPU}{
 Scalar. Only relevant if \code{multicore} is not \code{"none"} and \code{sfInit} is TRUE. Number of CPUs used by \code{snowfall}. Default is 2.
+}
+  \item{lower.bound}{
+numeric scalar or vector. Can be used in \code{fit.model} to set the lower bounds of the parameter space. See Details.
+}
+  \item{upper.bound}{
+numeric scalar or vector. Can be used in \code{fit.model} to set the upper bounds of the parameter space. See Details.
 }
 }
 \details{
@@ -110,6 +133,15 @@ Furthermore, one can specify the starting values individually by supplying a vec
 
 Multicore fitting is achieved via the \code{snowfall} package and needs to be initialized via \code{sfInit}. As initialization needs some time, you can either initialize multicore facilities yourself using \code{sfInit()} and setting the \code{sfInit} argument to \code{FALSE} (the default) or let MPTinR initialize multicore facilities by setting the \code{sfInit} argument to \code{TRUE}. The former is recommended as initializing \code{snowfall} takes some time and only needs to be done once if you run \code{fit.mpt} multiple times. If there are any problems with multicore fitting, first try to initialize \code{snowfall} outside MPTinR (e.g., \code{sfInit( parallel=TRUE, cpus=2 )}). If this does not work, the problem is not related to MPTinR but to snowfall (for support and references visit: \url{http://www.imbi.uni-freiburg.de/parallel/}).\cr
 Note that you need to \emph{close} snowfall via \code{sfStop()} after using MPTinR.
+
+\code{fit.model()} is essentially a copy of \code{fit.mpt()} that allows the user to specify the upper and lower bounds of the parameters. This function can be used to fit other models than MPT models that can be described in a model file. That is, the model file can contain any type of valid R expressions including R functions (potentially self-written) visible in the global environment (i.e., not only +, *, and - as operators).  Currently \code{fit.model} should be viewed as experimental.
+
+Note that \code{fit.model()} is usually slower than \code{fit.mpt()} as there are some more checks in the critical function calculating the likelihood of the model. \cr
+
+
+The \code{lower.bound} and \code{upper.bound} needs to be of length 1 or equal to the number of \code{free} parameters. If length > 1, parameters are mapped to the bounds in alphabetic order of the paramaters. Use \code{\link{check.mpt}} to obtain the alphabetical order of parameters for your model.
+
+While it should be possible to specify equality or fixed restrictions it will probably lead to unforseen consequences to specify inequality restrictions for non-MPT models.
 
 }
 \value{

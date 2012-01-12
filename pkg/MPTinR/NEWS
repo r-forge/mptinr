@@ -1,5 +1,23 @@
 					**************************
-					** MPTinR VERSION 0.6.4 **
+					** MPTinR VERSION 0.7.0 **
+					**************************
+					
+					Changes in MPTinR Version 0.7.0
+					Released January 2012
+
+	Significant User Visible Changes
+	
+	o	now contains fit.model() a copy of fit.mpt() with arguments for lower and upper bounds
+		for the parameters. You should be able to fit a lot more models with this function.
+		(fit.model() is slightly slower than fit.mpt() for MPTs)
+	
+	New Features / Bugfixes
+	
+	o	MPTinR should now allow easy model files with all types of operators (not only + - *) 
+		and even R functions (e.g., pnorm, ...) via the function fit.model()
+
+					**************************
+					** MPTinR VERSION 0.6.5 **
 					**************************
 					
 					Changes in MPTinR Version 0.6.5

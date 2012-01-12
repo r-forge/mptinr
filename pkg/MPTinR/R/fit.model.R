@@ -1,15 +1,23 @@
 
    
-fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, output = c("standard", "fia", "full"), reparam.ineq = TRUE, sort.param = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2){
+fit.model <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), reparam.ineq = TRUE, sort.param = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2){
 	
 	if (multicore[1] != "none" & sfInit) {
 		require(snowfall)
 		sfInit( parallel=TRUE, cpus=nCPU )
 	}
 	
-	llk.tree <- function(Q, unlist.tree, data, param.names, length.param.names){
-		Q[Q > 1] <- 1
-		Q[Q < 0] <- 0
+	llk.tree <- function(Q, unlist.tree, data, param.names, length.param.names, lower.bound, upper.bound){
+		if (length(upper.bound) == 1) {
+			Q[Q > upper.bound] <- upper.bound
+		} else {
+			Q[Q > upper.bound] <- upper.bound[Q > upper.bound]
+		}
+		if (length(lower.bound) == 1) {
+			Q[Q < lower.bound] <- lower.bound
+		} else {
+			Q[Q < lower.bound] <- lower.bound[Q < lower.bound]
+		}
 		#tmpllk.env <- new.env()
 		for (i in 1:length.param.names)  assign(param.names[i],Q[i], envir = tmpllk.env)
 		
@@ -33,27 +41,27 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		return(-llk)
 	}
 	
-	optim.tree <- function(data, tree, llk.tree, param.names, n.params, n.optim, method = "L-BFGS-B", start.params)  {
-		mpt.optim <- function(x, start.params, llk.tree, tree, data, param.names, n.params, method) {
+	optim.tree <- function(data, tree, llk.tree, param.names, n.params, n.optim, method = "L-BFGS-B", start.params, lower.bound, upper.bound)  {
+		mpt.optim <- function(x, start.params, llk.tree, tree, data, param.names, n.params, method, lower.bound, upper.bound) {
 			if (is.null(start.params)) start.params <- c(0.05, 0.95)
 			if (length(start.params) == 2) start.params <- runif(n.params, start.params[1], start.params[1])
-			optim(start.params, llk.tree, unlist.tree = tree, data = data, param.names = param.names, length.param.names = n.params, method = method, lower = 0, upper = 1, hessian = TRUE)
+			optim(start.params, llk.tree, unlist.tree = tree, data = data, param.names = param.names, length.param.names = n.params, method = method, lower = lower.bound, upper = upper.bound, hessian = TRUE, lower.bound = lower.bound, upper.bound = upper.bound)
 		}
 		if (multicore[1] == "n.optim") {
-			out <- sfLapply(1:n.optim, mpt.optim, start.params = start.params, llk.tree = llk.tree, tree = tree, data = data, param.names = param.names, n.params = n.params, method = method)
-		} else out <- lapply(1:n.optim, mpt.optim, start.params = start.params, llk.tree = llk.tree, tree = tree, data = data, param.names = param.names, n.params = n.params, method = method)
+			out <- sfLapply(1:n.optim, mpt.optim, start.params = start.params, llk.tree = llk.tree, tree = tree, data = data, param.names = param.names, n.params = n.params, method = method, lower.bound = lower.bound, upper.bound = upper.bound)
+		} else out <- lapply(1:n.optim, mpt.optim, start.params = start.params, llk.tree = llk.tree, tree = tree, data = data, param.names = param.names, n.params = n.params, method = method, lower.bound = lower.bound, upper.bound = upper.bound)
 		return(out)
 	}
 	
-	optim.mpt <- function(data, n.data, tree, llk.tree, param.names, n.params, n.optim, start.params) {
+	optim.mpt <- function(data, n.data, tree, llk.tree, param.names, n.params, n.optim, start.params, lower.bound, upper.bound) {
 		
 		minim <- vector("list", n.data)
 		data.new <- lapply(1:n.data, function(x, data) data[x,], data = data) 
 		llks <- array(NA, dim=c(n.data, n.optim))
 		
 		if (multicore[1] == "individual") {
-			 optim.runs <- sfLapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params)
-		} else optim.runs <- lapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params)
+			 optim.runs <- sfLapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound)
+		} else optim.runs <- lapply(data.new, optim.tree, tree = unlist(tree), llk.tree = llk.tree, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound)
 		
 		for (c.outer in 1:n.data) {
 			least.llk <- 1e10
@@ -290,6 +298,9 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		}
 	}
 	
+	if (length(lower.bound) != 1 && length(lower.bound != n.params)) stop("length(lower.bound) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
+	if (length(upper.bound) != 1 && length(upper.bound != n.params)) stop("length(upper.bound) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
+	
 	if (n.optim != 1) message(paste("Presenting the best result out of ", n.optim, " minimization runs.", sep =""))
 	
 	df.n <- apply(data, 1, .DF.N.get, tree = tree)
@@ -304,7 +315,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	t0 <- Sys.time()
 	print(paste("Model fitting begins at ", t0, sep = ""))
 	flush.console()
-	res.optim <- optim.mpt(data, n.data, tree, llk.tree, param.names, n.params, n.optim, starting.values)
+	res.optim <- optim.mpt(data, n.data, tree, llk.tree, param.names, n.params, n.optim, starting.values, lower.bound = lower.bound, upper.bound = upper.bound)
 	t1 <- Sys.time()
 	print(paste("Model fitting stopped at ", t1, sep = ""))
 	print(t1-t0)
@@ -339,7 +350,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		fia.agg <- NULL
 		data.pooled <- apply(data,2,sum)
 		data.pooled <- matrix(data.pooled, 1, length(data.pooled))
-		res.optim.pooled <- optim.mpt(data.pooled, 1, tree, llk.tree, param.names, n.params, n.optim, starting.values)
+		res.optim.pooled <- optim.mpt(data.pooled, 1, tree, llk.tree, param.names, n.params, n.optim, starting.values, lower.bound = lower.bound, upper.bound = upper.bound)
 		inv.hessian <- tryCatch(solve(res.optim.pooled[["minim"]][[1]][["hessian"]]), error = function(e) NA)
 		if (!is.null(fia)) fia.agg <- fia.agg.tmp
 		summed.goodness.of.fit <- data.frame(t(apply(goodness.of.fit, 2, sum)))
