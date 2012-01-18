@@ -298,8 +298,8 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 		}
 	}
 	
-	if (length(lower.bound) != 1 && length(lower.bound != n.params)) stop("length(lower.bound) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
-	if (length(upper.bound) != 1 && length(upper.bound != n.params)) stop("length(upper.bound) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
+	if ((length(lower.bound) != 1) && (length(lower.bound) != n.params)) stop("length(lower.bound) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
+	if ((length(upper.bound) != 1) && (length(upper.bound) != n.params)) stop("length(upper.bound) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
 	
 	if (n.optim != 1) message(paste("Presenting the best result out of ", n.optim, " minimization runs.", sep =""))
 	

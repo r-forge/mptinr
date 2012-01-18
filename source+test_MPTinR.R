@@ -3,6 +3,8 @@ for (r.file in list.files("pkg/MPTinR/R", full.names = TRUE)) {
 	source(r.file)
 }
 
+options(error = recover)
+options(error = NULL)
 
 # Source testfunctions
 source("test_functions_fitting.R")

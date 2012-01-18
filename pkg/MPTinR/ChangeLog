@@ -1,3 +1,6 @@
+2012-01-18
+		* fixed but in fit.model()'s lower and upper.bound arguments. Now works
+
 2012-01-12
 		* changed .find.mpt.params to rely on all.vars()
 		* adapted fit.mpt() (creating parameters from inequality restrictions) to 
