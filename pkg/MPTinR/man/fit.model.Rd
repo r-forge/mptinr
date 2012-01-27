@@ -1,0 +1,176 @@
+\name{fit.model}
+\alias{fit.model}
+\title{
+Fit cognitive models for categorical data
+}
+\description{
+fit.model() function fits MPT and other cognitive models for categorical data (e.g., SDT models) that can be specified in a model file.
+}
+\usage{
+
+fit.model(
+	data,
+	model.filename, 
+	restrictions.filename = NULL, 
+	n.optim = 5,
+	fia = NULL,
+	ci = 95, 
+	starting.values = NULL,
+	lower.bound = 0,
+	upper.bound = 1,
+	output = c("standard", "fia", "full"),
+	reparam.ineq = TRUE,
+	sort.param = TRUE,
+	model.type = c("easy", "eqn", "eqn2"),
+	multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2,
+	control = list(),
+	use.gradient = TRUE, use.hessian = FALSE
+)
+}
+
+\arguments{
+  \item{data}{
+Either a \emph{numeric} \code{vector} for individual fit or a \emph{numeric} \code{matrix} or \code{data.frame} for multi-individual fit. The data on each position (column for multi-individual fit) must correspond to the respective line in the model file. Fitting for multiple individuals can be parallelized via \code{multicore}.
+}
+  \item{model.filename}{
+A character \code{vector} specifying the location and name of the model file. 
+}
+  \item{restrictions.filename}{
+\code{NULL} or a character \code{vector} specifying the location and name of the restrictions file. Default is \code{NULL} which corresponds to no restrictions.
+}
+  \item{n.optim}{
+Number of optimization runs. Can be parallelized via \code{multicore}. Default is 5. If the number is high, fitting can take long for \emph{large} models.
+}
+\item{fia}{
+Number of random samples to be drawn in the Monte Carlo algorithm to estimate the Fisher Information Approximation (FIA) for MPTs only. See Details at \code{\link{fit.mpt}}
+}
+  \item{ci}{
+A scalar corresponding to the size of the confidence intervals for the parameter estimates. Default is 95 which corresponds to 95\% confidence intervals.
+}
+  \item{starting.values}{
+A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.05 - 0.95)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
+}
+  \item{output}{
+If "full" \code{fit.mpt} will additionally return the return values of \code{\link{nlminb}} and the Hessian matrices. (If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if \code{fia} not equal \code{NULL}).)
+}
+\item{reparam.ineq}{
+  Logical. Indicates whether or not inequality restrictions (when present in the model file) should be enforced while fitting the model. If \code{TRUE} (the default) inequality restricted parameters will be reparamertized, if \code{FALSE} not. Probably irrelevant for none MPTs.
+}
+\item{sort.param}{
+Logical. If TRUE, parameters are alphabetically sorted in the parameter table. If FALSE, the first parameters in the parameter table are the nonrestricted ones, followed by the restricted parameters. Default is TRUE.
+}
+  \item{model.type}{
+Character vector specifying whether the model file is formatted in the easy way (\code{"easy"}; i.e., each line represents all branches corresponding to a response category) or the traditional EQN syntax (\code{"eqn"} or \code{"eqn2"}; see Details and e.g., Stahl & Klauer, 2007). If \code{model.filename} ends with .eqn or .EQN, \code{model.type} is automatically set to \code{"eqn"}. Default is \code{"easy"}.
+}
+  \item{multicore}{
+Character vector. If not \code{"none"}, uses \code{snowfall} for parallelization (which needs to be installed separately via \code{install.packages(snowfall)}). If \code{"individual"}, parallelizes the optimization for each individual (i.e., data needs to be a \code{matrix} or \code{data.frame}). If \code{"n.optim"}, parallelizes the \code{n.optim} optimization runs. Default is \code{"none"} which corresponds to no parallelization. Note that you need to initialize \code{snowfall} in default settings. See \code{sfInit} and Details.
+}
+  \item{sfInit}{
+Logical. Relevant if \code{multicore} is not \code{"none"}. If \code{TRUE}, \code{fit.mpt} will initialize and close the multicore support. If \code{FALSE}, (the default) assumes that \code{sfInit()} was initialized before. See Details.
+}
+  \item{nCPU}{
+Scalar. Only relevant if \code{multicore} is not \code{"none"} and \code{sfInit} is TRUE. Number of CPUs used by \code{snowfall}. Default is 2.
+}
+  \item{lower.bound}{
+numeric scalar or vector. Can be used in \code{fit.model} to set the lower bounds of the parameter space. See Details.
+}
+  \item{upper.bound}{
+numeric scalar or vector. Can be used in \code{fit.model} to set the upper bounds of the parameter space. See Details.
+}
+  \item{control}{
+list containing control arguments passed on to \code{\link{nlminb}}. See there.
+}
+  \item{use.gradient}{
+logical. Whether or not the symbomlically derived function returning the gradient should be used for fitting. Default is \code{TRUE} meaning gradient function is used.
+}
+  \item{use.hessian}{
+logical. Whether or not the symbomlically derived function returning the Hessian matrix should be used for fitting. Default is \code{FALSE} meaning hessian function is not used.
+}
+}
+\details{
+This functions should be used when fitting a model that is not an MPT or when fitting using \code{fit.mpt} fails. For fitting MPTs and information on fitting MPTs see \code{\link{fit.mpt}}.
+
+The model file for non MPT models should be of the easy format. That is the ordinal number of each line should correspond to this column/position in the data object. Model files can contain any visible function. However, note that the derivation that is needed for the gradient and Hessian function can only be done for those functions that \code{\link{D}} can handle. If derivation fails a warning will be given and fitting will be done without those functions.
+
+Equations that correspond to one item type/category must be not be separated by an empty line. Equations that do not correspond to the same item type/category must be separated by at least one empty line (lines with comments are not empty).
+
+Note that names of parameters in the model file should not start with \code{hank}. Variables with these names can lead to unforeseen problems as variables starting with these letters are internally used.
+
+The restrictions file may contain (sequential) equality (i.e., =) and inequality (i.e., <) restrictions (see \code{\link{fit.mpt}} for more general info on the restrictions files). Note that inequality restrictions usually will lead to catatstrophical results when used for non MPT models. Our recommendation: Do never use inequality restrictions for non MPT models. Equality restrictions or fixing paramters should be no problem though.
+
+For equality restrictions, the equality restricted parameters are simply exchanged with their restrictions (i.e., another parameter or a number) before the fitting.
+
+Lines in a restrictions file or model containing a hash (#) \emph{at any position} will be skipped/ignored.
+
+Confidence intervals (CI) are based on the observed Hessian matrix produced by the symobilically derived function for the Hessian (i.e., the second derivative of the likelihood function). If it is based on a numerically estimated Hessian, a warning will be given. \cr
+
+To set the starting values for the fitting process (e.g., to avoid local minima) one can set \code{starting.values} to a vector of length 2 and \code{n.optim > 1} both of which is strongly ecnouraged. Then, starting values are randomly drawn from a uniform distribution from \code{starting.values[1]} to \code{starting.values[2]}.\cr
+Alternatively, one can specify the starting values individually by supplying a vector with the same length as the number of parameters. Starting values must be ordered according to the alphabetical order of the parameeters. Use \code{\link{check.mpt}} for a function that returns the alphabetical order of the parameters. If one specifys the starting values like that, \code{n.optim} will be set to 1 as all other values would not make any sense (the optimization routine will produce identical results with identical starting values).
+
+The \code{lower.bound} and \code{upper.bound} needs to be of length 1 or equal to the number of \code{free} parameters. If length > 1, parameters are mapped to the bounds in alphabetic order of the paramaters. Use \code{\link{check.mpt}} to obtain the alphabetical order of parameters for your model.
+
+This function is basically a comfortable wrapper for \code{\link{fit.mptinr}} producing the appropriate objective function, gradient function, hessian function and preidction function from the model file whilst allowing for custom lower or upper bounds on the paramaters. You can specify wether or not gradient or hessian function should be used for fitting with \code{use.gradient} or \code{use.hessian}, respectively.
+
+Multicore fitting is achieved via the \code{snowfall} package and needs to be initialized via \code{sfInit}. As initialization needs some time, you can either initialize multicore facilities yourself using \code{sfInit()} and setting the \code{sfInit} argument to \code{FALSE} (the default) or let MPTinR initialize multicore facilities by setting the \code{sfInit} argument to \code{TRUE}. The former is recommended as initializing \code{snowfall} takes some time and only needs to be done once if you run \code{fit.mpt} multiple times. If there are any problems with multicore fitting, first try to initialize \code{snowfall} outside MPTinR (e.g., \code{sfInit( parallel=TRUE, cpus=2 )}). If this does not work, the problem is not related to MPTinR but to snowfall (for support and references visit: \url{http://www.imbi.uni-freiburg.de/parallel/}).\cr
+Note that you need to \emph{close} snowfall via \code{sfStop()} after using MPTinR.
+
+}
+\value{
+For individual fits (i.e., \code{data} is a \code{vector}) a \code{list} containing one or more of the following components from the best fitting model:
+\item{goodness.of.fit}{A \code{data.frame} containing the goodness of fit values for the model. \code{Log.Likelihood} is the Log-Likelihood value. \code{G.Squared}, \code{df}, and \code{p.value} are the \eqn{G^2}{G^2} goodness of fit statistic.}
+\item{information.criteria}{A \code{data.frame} containing model information criteria based on the G^2 value. The FIA values(s) are presented if \code{fia} is not \code{NULL}.}
+\item{model.info}{A \code{data.frame} containing other information about the model. If the rank of the Hessian matrix (\code{rank.hessian}) \emph{does not} correspond to the number of parameters in the model (\code{n.parameters}) this indicates a serious issue with the identifiability of the model.}
+\item{parameters}{A data.frame containing the parameter estimates and corresponding confidence intervals. If a restriction file was present, the restricted parameters are marked.}
+\item{data}{A \code{list} of two matrices; the first one (\code{observed}) contains the entered data, the second one (\code{predicted}) contains the predicted values.}
+
+For multi-dataset fits (i.e., \code{data} is a \code{matrix} or \code{data.frame}) a \code{list} with similar elements, but the following differences.\cr
+The first elements, \code{goodness.of.fit}, \code{information.criteria}, and \code{model.info}, contain the same information as for individual fits, but each are \code{lists} with three elements containing the respective values for: each individual in the list element \code{individual}, the sum of the individual values in the list element \code{sum}, and the values corresponding to the fit for the aggregated data in the list element \code{aggregated}.\cr
+\code{parameters} is a list containing:
+\item{individual}{A 3-dimensional array containing the parameter estimates ([,1,]), confidence intervals [,2:3,], and, if restrictions not \code{NULL}, column 4 [,4,] is 0 for non-restricted parameters, 1 for equality restricted parameters, and 2 for inequality restricted parameters. The first dimension refers to the paramemters, the second to the information on each parameter, and the third to the individuals.}
+\item{mean}{A \code{data.frame} with the mean parameter estimates from the individual estimates. No confidence intervals can be provided for these values.}
+\item{aggregated}{A data.frame containing the parameter estimates and corresponding confidence intervals for the aggregated data. If a restriction file was present, the restricted parameters are marked.}
+The element \code{data} contains two matrices, one with the \code{observed}, and one with the \code{predicted} data.
+
+If \code{n.optim} > 1, the \code{\link{summary}} of the vector (matrix for multi-individual fit) containing the Log-Likelihood values returned by each run of \code{optim} is added to the output.
+
+When \code{output == "full"} the list contains the additional items:\cr
+\item{optim.runs}{A list containing the outputs from all runs by \code{nlminb} (including those runs produced when fitting did not converge)}
+\item{best.fits}{A list containg the outputs from the runs by \code{nlminb} that had the lowest likelihood (i.e., the succesful runs)}
+\item{hessian}{A list containing the Hessian matrix or matrices of the final parameter estimates.}
+
+}
+\note{
+There may be several warnings \code{fit.mpt} throws while fitting MPT models. Most of them are not problematic and related to matrix operations needed for confidence intervals. Examples:\cr
+\code{In sqrt(var.params) : NaNs produced}\cr
+\code{In sqrt(min(var.bound.tmp)) : NaNs produced}\cr
+These warnings are not critical.
+
+Other warnings may relate to the optimization routine (e.g., \code{Optimization routine [...] did not converge succesfully}).\cr
+In these cases it is recommended to rerun fit.mpt to check if the results are stable.
+}
+\references{
+none
+}
+\author{
+Henrik Singmann and David Kellen.
+}
+\note{
+All (model or restriction) files should end with an empty line, otherwise a warning will be shown.
+}
+
+\examples{
+# Make example to fit Broder and Schutz with an SDT
+}
+
+
+\seealso{
+\code{\link{check.mpt}} for a function that can help in constructing models.
+
+\code{\link{fit.mptinr}} for a function that can fit arbitrary objective functions.
+
+\code{\link{fit.mpt}} for the function to fit MPTs (it should be slightly faster for MPTs).
+}
+  
+\keyword{models}
+\keyword{tree}
+

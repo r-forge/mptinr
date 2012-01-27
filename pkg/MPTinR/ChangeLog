@@ -1,3 +1,9 @@
+2012-01-27
+		* first release of MPTinR 0.8.x. changed fit.mpt and fit.model to be wrappers 
+		  around fit.mptinr, which now uses nlminb.
+		* fit.mpt.old is the old version of fit.mpt using otpim.
+		* changed the rd files accordingly to reflect the changes above.
+
 2012-01-18
 		* fixed but in fit.model()'s lower and upper.bound arguments. Now works
 

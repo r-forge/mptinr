@@ -1,14 +1,13 @@
-\name{fit.mpt}
-\alias{fit.mpt}
+\name{fit.mpt.old}
+\alias{fit.mpt.old}
 \title{
-Function to fit MPT models
+Function to fit MPT models (old)
 }
 \description{
-fit.mpt() function fits \emph{binary} multinomial processing tree models (MPT models; e.g., Riefer & Batchelder, 1988) from an external model file and (optional) external restrictions using the general-purpose quasi-Newton box-constraint optimization routine provided by Byrd et al. (1995). Additionally, measures for model selection (AIC, BIC, FIA) can be computed. 
-
+\code{fit.mpt.old} function fits \emph{binary} multinomial processing tree models (MPT models; e.g., Riefer & Batchelder, 1988). However, this function is an old version  using the L-BFGS-B optimization routine. See \code{\link{fit.mpt}} for the new version. 
 }
 \usage{
-fit.mpt(
+fit.mpt.old(
 	data,
 	model.filename, 
 	restrictions.filename = NULL, 
@@ -20,8 +19,7 @@ fit.mpt(
 	reparam.ineq = TRUE,
 	sort.param = TRUE,
 	model.type = c("easy", "eqn", "eqn2"),
-	multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2,
-	control = list()
+	multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2
 )
 }
 
@@ -48,9 +46,9 @@ A scalar corresponding to the size of the confidence intervals for the parameter
 A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.05 - 0.95)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
 }
   \item{output}{
-If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if \code{fia} not equal \code{NULL}). If "full" \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} and the output of \code{\link{nlminb}} and the Hessian matrix/matrices.
+If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if calculated \code{fia} not equal \code{NULL}). If "full" \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} and the output of \code{\link{optim}}.
 }
-\item{reparam.ineq}{
+  \item{reparam.ineq}{
   Logical. Indicates whether or not inequality restrictions (when present in the model file) should be enforced while fitting the model. If \code{TRUE} (the default) inequality restricted parameters will be reparamertized, if \code{FALSE} not. See Details.
 }
   \item{sort.param}{
@@ -68,11 +66,10 @@ Logical. Relevant if \code{multicore} is not \code{"none"}. If \code{TRUE}, \cod
   \item{nCPU}{
 Scalar. Only relevant if \code{multicore} is not \code{"none"} and \code{sfInit} is TRUE. Number of CPUs used by \code{snowfall}. Default is 2.
 }
-  \item{control}{
-list containing control arguments passed on to \code{\link{nlminb}}. See there.
-}
 }
 \details{
+There is a new version of this function using \code{\link{nlminb}} and the analytically derived gradient and hessian. See \code{\link{fit.mpt}}. We recommend using the new version \code{\link{fit.mpt}}, only use this version if you are sure on what to do.
+
 The model file is either of the easy format (see \url{http://www.psychologie.uni-freiburg.de/Members/singmann/R/mptinr}) or the "classical" EQN format (see below).\cr
 In the easy format (the default) the model file contains all trees of the model. Trees are separated by at least one empty line. Lines that contain a hash (#) \emph{at any position} will be skipped. Each line in each tree corresponds to all branches of this tree (concatenated by a +) that correspond to one of the possible response categories. The position of each line must correspond to the position of this response category in the data object (for multi-individudal fit to the respective column).
 
@@ -97,32 +94,33 @@ For equality restrictions, the equality restricted parameters are simply exchang
 For inequality restricted parameters, the model is reparametrized so that only the rightmost parameter of an inequality restriction remains the original parameter. Each instance of the other parameters in this restriction is replaced by the product of the rightmost parameter and dummy parameters (see Knapp & Batchelder, 2004). This procedure (which is equivalent to method A desribed in Knapp & Batchelder, 2004) leads to an equivalent model (although the binary MPT structure is not apparent in the resulting equations).\cr
 To prohibit this reparametrization (i.e., if the inequality restrictions hold without reparametrization), you can set \code{reparam.ineq} to \code{FALSE}. This can be useful for obtaining the FIA (see examples in Wu, Myung, & Batchelder, 2010).
 
+The fitting/optimization is achieved via \code{\link{optim}}'s L-BFGS-B method by Byrd et al. (1995) with random starting values. To avoid local minima it is useful to set \code{n.optim} > 1. If \code{n.optim} > 1, the \code{\link{summary}} of the vector containing the Log-Likelihood values returned by each run of \code{optim} is added to the output (to check whether local minima were present). If the model is rather big, \code{n.optim} > 1 can be slow.
+
 To obtain a measure of the model's complexity beyond the number of parameters (and taking inequality restrictions into account), set \code{fia} to a (reasonably high) scalar integer (i.e., a number). Then, \code{fit.mpt} will obtain the Fisher information approximation (FIA), a minimum description based measure of model complexity, using the algorithm provided by Wu, Myung, & Batchelder (2010a, 2010b) ported from Matlab to R. When performing model-selection, this measure is superior to other methods such as the Akaike information criterion (AIC) or Bayesian information criterion (BIC) which basically only take the number of parameters into account.\cr
-To get the FIA, \code{fit.mpt} performs the following steps:\cr
+To get the FIA, \code{fit.mpt.old} performs the following steps:\cr
 1. The representation of the model as equations is transformed into the string representation of the model in the context-free language of MPT models (L-BMPT; Purdy & Batchelder, 2009). For this step to be successful it is \emph{absolutely necessary} that the equations representing the model perfectly map the tree structure of the MPT. That is, the model file is only allowed to contain parameters, their negations (e.g., \code{Dn} and \code{(1 - Dn)}) and the operators + and *, but nothing else. Simplifications of the equations will seriously distort this step. This step is achieved by \code{\link{make.mpt.cf}}.\cr
 2. The context free representation of the model is then fed into the MCMC function computing the FIA (the port of BMPTFIA provided by Wu, Myung & Batchelder (2010a), see \code{\link{bmpt.fia}}).\cr
 (Actually, both steps are achieved by a call to \code{\link{get.mpt.fia}})
 
 Once again: If one wants to compute the FIA, it is \emph{absolutely necessary}, that the representation of the model via equations in the model file exactly maps on the structure of the binary MPT (see \code{\link{make.mpt.cf}} for more details).
 
-Confidence intervals (CI) are based on the observed Hessian matrix produced by the symobilically derived function for the Hessian (i.e., the second derivative of the likelihood function). If it is based on a numerically estimated Hessian, a warning will be given. \cr
+Confidence intervals (CI) are based on the observed Hessian matrix returned by the minimization algorithm (\code{\link{optim}}).\cr
 For inequality restricted parameters, the CIs are computed using the parameter estimates' variance bounds (see Baldi & Batchelder, 2003; especially equation 19). Note that these bounds represent the "worst case scenario" variances, and can lead to CIs outside parameter boundaries if the set of inequalities is large and/or the variances for the reparameterized model are large (Note that CIs for nonrestricted parameters can be outside the parameter boundaries as well due to large variances).
 
-To avoid local minima it is useful to set \code{n.optim} > 1 with random starting values (see below). If \code{n.optim} > 1, the \code{\link{summary}} of the vector containing the Log-Likelihood values returned by each run of \code{nlminb} is added to the output (to check whether local minima were present). If the model is rather big, \code{n.optim} > 1 can be slow.
+To set the starting values for the fitting process (e.g., to avoid local minima) one can set \code{starting.values} to a vector of length 2. Then, starting values are randomly drawn from a uniform distribution from \code{starting.values[1]} to \code{starting.values[2]}.\cr
+Furthermore, one can specify the starting values individually by supplying a vector with the same length as the number of parameters. Starting values must be ordered according to the alphabetical order of the parameeters. Use \code{\link{check.mpt}} for a function that returns the alphabetical order of the parameters. If one specifys the starting values like that, \code{n.optim} will be set to 1 as all other values would not make any sense (the optimization routine will produce identical results with identical starting values).
 
-To set the starting values for the fitting process (e.g., to avoid local minima) one can set \code{starting.values} to a vector of length 2. Then, starting values are randomly drawn from a uniform distribution from \code{starting.values[1]} to \code{starting.values[2]}. We stringly recommend using multiple fitting runs with random starting values.\cr
-Alternatively, one can specify the starting values individually by supplying a vector with the same length as the number of parameters. Starting values must be ordered according to the alphabetical order of the parameeters. Use \code{\link{check.mpt}} for a function that returns the alphabetical order of the parameters. If one specifys the starting values like that, \code{n.optim} will be set to 1 as all other values would not make any sense (the optimization routine is deterministc in that it will produce identical results with identical starting values).
+Multicore fitting is achieved via the \code{snowfall} package and needs to be initialized via \code{sfInit}. As initialization needs some time, you can either initialize multicore facilities yourself using \code{sfInit()} and setting the \code{sfInit} argument to \code{FALSE} (the default) or let MPTinR initialize multicore facilities by setting the \code{sfInit} argument to \code{TRUE}. The former is recommended as initializing \code{snowfall} takes some time and only needs to be done once if you run \code{fit.mpt.old} multiple times. If there are any problems with multicore fitting, first try to initialize \code{snowfall} outside MPTinR (e.g., \code{sfInit( parallel=TRUE, cpus=2 )}). If this does not work, the problem is not related to MPTinR but to snowfall (for support and references visit: \url{http://www.imbi.uni-freiburg.de/parallel/}).\cr
+Note that you need to \emph{close} snowfall via \code{sfStop()} after using MPTinR.
 
-Multicore fitting is achieved via the \code{snowfall} package and needs to be initialized via \code{sfInit}. As initialization needs some time, you can either initialize multicore facilities yourself using \code{sfInit()} and setting the \code{sfInit} argument to \code{FALSE} (the default) or let MPTinR initialize multicore facilities by setting the \code{sfInit} argument to \code{TRUE}. The former is recommended as initializing \code{snowfall} takes some time and only needs to be done once if you run \code{fit.mpt} multiple times. If there are any problems with multicore fitting, first try to initialize \code{snowfall} outside MPTinR (e.g., \code{sfInit( parallel=TRUE, cpus=2 )}). If this does not work, the problem is not related to MPTinR but to snowfall (for support and references visit: \url{http://www.imbi.uni-freiburg.de/parallel/}).\cr
-Note that you should  \emph{close} snowfall via \code{sfStop()} after using MPTinR.
+\code{fit.model()} is essentially a copy of \code{fit.mpt.old} that allows the user to specify the upper and lower bounds of the parameters. This function can be used to fit other models than MPT models that can be described in a model file. That is, the model file can contain any type of valid R expressions including R functions (potentially self-written) visible in the global environment (i.e., not only +, *, and - as operators).  Currently \code{fit.model} should be viewed as experimental.
 
-The fitting/optimization is achieved via \code{\link{nlminb}}(Fox, 1997) a Newton based algorithm using the analytically derived gradient. In some cases (usually caused by a high number of zero cells) \code{nlminb} will not converge succesfully in which \code{fit.mpt} will retry fitting using a numerically estimated gradient (with warning). 
+Note that \code{fit.model()} is usually slower than \code{fit.mpt.old} as there are some more checks in the critical function calculating the likelihood of the model. \cr
 
-\code{fit.mpt} is just a comfortable wrapper around the workhorse \code{\link{fit.mptinr}}. \code{fit.mpt} produces the appropriate objective function, gradient function, hessian function, and prodecition function that are handed over to \code{fit.mptinr} (functions are produced by symolical derivation, see \code{\link{D}}). A function similar to \code{fit.mpt} is \code{\link{fit.model}} which has the additional arguments \code{lower.bound} and \code{upper.bound} allowing to fit other models than just MPTs and the possibility to indicate whether or not to use the analytically derived gradient or hessian for fitting (here this is automatically handled). Note that for MPTs (where upper and lower bounds of paramaters are set to 0 and 1, respectively) \code{fit.mpt} is probably faster as the objective function is slightly faster (i.e., more optimized). However, for datasets with many empty cells trying \code{\link{fit.model}} with or without gradient or hessian can be worth a try.
 
-Note that \code{\link{fit.mptinr}} can fit models with arbitrary (i.e., custom) objective functions.
+The \code{lower.bound} and \code{upper.bound} needs to be of length 1 or equal to the number of \code{free} parameters. If length > 1, parameters are mapped to the bounds in alphabetic order of the paramaters. Use \code{\link{check.mpt}} to obtain the alphabetical order of parameters for your model.
 
-The old version of this function using \code{\link{optim}}'s L-BFGS-B algorithm is \code{\link{fit.mpt.old}}.
+While it should be possible to specify equality or fixed restrictions it will probably lead to unforseen consequences to specify inequality restrictions for non-MPT models.
 
 }
 \value{
@@ -143,27 +141,21 @@ The element \code{data} contains two matrices, one with the \code{observed}, and
 
 If \code{n.optim} > 1, the \code{\link{summary}} of the vector (matrix for multi-individual fit) containing the Log-Likelihood values returned by each run of \code{optim} is added to the output.
 
-When \code{output == "full"} the list contains the additional items:\cr
-\item{optim.runs}{A list containing the outputs from all runs by \code{nlminb} (including those runs produced when fitting did not converge)}
-\item{best.fits}{A list containg the outputs from the runs by \code{nlminb} that had the lowest likelihood (i.e., the succesful runs)}
-\item{hessian}{A list containing the Hessian matrix or matrices of the final parameter estimates.}
-
+When using R (>= 2.13.0) compiling \code{fit.mpt.old} using \code{compilers} \code{cmpfun} can significantly improve fitting time.
 }
 \note{
-There may be several warnings \code{fit.mpt} throws while fitting MPT models. Most of them are not problematic and related to matrix operations needed for confidence intervals. Examples:\cr
+There may be several warnings \code{fit.mpt.old} throws while fitting MPT models. Most of them are not problematic and related to matrix operations needed for confidence intervals. Examples:\cr
 \code{In sqrt(var.params) : NaNs produced}\cr
 \code{In sqrt(min(var.bound.tmp)) : NaNs produced}\cr
 These warnings are not critical.
 
 Other warnings may relate to the optimization routine (e.g., \code{Optimization routine [...] did not converge succesfully}).\cr
-In these cases it is recommended to rerun fit.mpt to check if the results are stable.
+In these cases it is recommended to rerun \code{fit.mpt.old} to check if the results are stable.
 }
 \references{
 Baldi, P. & Batchelder, W. H. (2003). Bounds on variances of estimators for multinomial processing tree models. \emph{Journal of Mathematical Psychology}, 47, 467-470. 
 
 Byrd, R. H., Lu, P., Nocedal, J., & Zhu, C. (1995). A limited memory algorithm for bound constrained optimization. \emph{SIAM J. Scientific Computing}, 16, 1190-1208.
-
-Fox P (1997). \emph{The Port Mathematical Subroutine Library, Version 3}. AT&T Bell Laboratories, Murray Hill, NJ. URL \url{http://www.bell-labs.com/project/PORT/}.
 
 Knapp, B. R., & Batchelder, W. H. (2004). Representing parametric order constraints in multi-trial applications of multinomial processing tree models. \emph{Journal of Mathematical Psychology}, 48, 215-229.
 
@@ -180,7 +172,7 @@ Wu, H., Myung, J.I., & Batchelder, W.H. (2010a). Minimum description length mode
 Wu, H., Myung, J.I., & Batchelder, W.H. (2010b). On the minimum description length complexity of multinomial processing trees. \emph{Journal of Mathematical Psychology}, 54, 291-303.
 }
 \author{
-Henrik Singmann and David Kellen with help from Karl Christoph Klauer.
+Henrik Singmann and David Kellen with help from Karl Christoph Klauer and Fabian Hoelzenbein.
 }
 \note{
 All (model or restriction) files should end with an empty line, otherwise a warning will be shown.
@@ -202,13 +194,13 @@ model1 <- system.file("extdata", "rb.fig1.model", package = "MPTinR")
 model1.eqn <- system.file("extdata", "rb.fig1.model.eqn", package = "MPTinR")
 
 # just fit the first "individual":
-fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
+fit.mpt.old(rb.fig1.data[1,], model1, n.optim = 1)
 
 #fit all "individuals":
-fit.mpt(rb.fig1.data, model1, n.optim = 1)
+fit.mpt.old(rb.fig1.data, model1, n.optim = 1)
 
 #fit all "individuals" using the .EQN model file:
-fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
+fit.mpt.old(rb.fig1.data, model1.eqn, n.optim = 1)
 
 
 
@@ -229,13 +221,13 @@ model2r.r.eq <- system.file("extdata", "rb.fig2.r.equal", package = "MPTinR")
 model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 
 # The full (i.e., unconstrained) model
-(ref.model <- fit.mpt(rb.fig2.data, model2, n.optim = 10))
+(ref.model <- fit.mpt.old(rb.fig2.data, model2, n.optim = 10))
 
 # All r equal
-(r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 10))
+(r.equal <- fit.mpt.old(rb.fig2.data, model2, model2r.r.eq, n.optim = 10))
 
 # All c equal
-(c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq, n.optim = 10))
+(c.equal <- fit.mpt.old(rb.fig2.data, model2, model2r.c.eq, n.optim = 10))
 
 # is setting all r equal a good idea?
 (g.sq.r.equal <- r.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
@@ -250,7 +242,7 @@ model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 
 \dontrun{
 
-# Example from Broder & Schutz (2009)
+# Example from Broeder & Schuetz (2009)
 # We fit the data from the 40 individuals from their Experiment 3
 # We fit three different models:
 # 1. Their 2HTM model: br.2htm
@@ -271,8 +263,8 @@ ir.2htm <- system.file("extdata", "broeder.2htm.restr.ineq", package = "MPTinR")
 ir.1htm <- system.file("extdata", "broeder.1htm.restr.ineq", package = "MPTinR")
 
 # fit the original 2HTM
-br.2htm <- fit.mpt(d.broeder, m.2htm)
-br.2htm.ineq <- fit.mpt(d.broeder, m.2htm, i.2htm)
+br.2htm <- fit.mpt.old(d.broeder, m.2htm)
+br.2htm.ineq <- fit.mpt.old(d.broeder, m.2htm, i.2htm)
 
 # do the inequalities hold for all participants?
 br.2htm.ineq[["parameters"]][["individual"]][,"estimates",]
@@ -295,12 +287,12 @@ round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.i
 # Therefore, we get the FIA for the models as computed above 
 # WARNING: The following part will take a long time!
 
-br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 200000)
-br.2htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, i.2htm, fia = 200000)
-br.2htm.res.fia <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 200000 )
-br.2htm.res.ineq.fia <- fit.mpt(d.broeder, m.2htm, ir.2htm, fia = 200000)
-br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 200000)
-br.1htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, ir.1htm, fia = 200000)
+br.2htm.fia <- fit.mpt.old(d.broeder, m.2htm, fia = 200000)
+br.2htm.ineq.fia <- fit.mpt.old(d.broeder, m.2htm, i.2htm, fia = 200000)
+br.2htm.res.fia <- fit.mpt.old(d.broeder, m.2htm, r.2htm, fia = 200000 )
+br.2htm.res.ineq.fia <- fit.mpt.old(d.broeder, m.2htm, ir.2htm, fia = 200000)
+br.1htm.fia <- fit.mpt.old(d.broeder, m.2htm, r.1htm, fia = 200000)
+br.1htm.ineq.fia <- fit.mpt.old(d.broeder, m.2htm, ir.1htm, fia = 200000)
 
 # Model selection using the FIA
 (br.select <- select.mpt(list(orig.2htm = br.2htm.fia, orig.2htm.ineq = br.2htm.ineq.fia, res.2htm = br.2htm.res.fia, res.2htm.ineq = br.2htm.res.ineq.fia, orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
@@ -321,23 +313,17 @@ nCPU = 2
 sfInit( parallel=TRUE, cpus=nCPU, type = "SOCK" )
 
 # NO multicore
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2))
+system.time(fit.mpt.old(rb.fig2.data, model2, model2r.r.eq, n.optim = 2))
 
 # multicore:
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "n.optim"))
+system.time(fit.mpt.old(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "n.optim"))
 
 sfStop()
 }
 
   }
 \seealso{
-\code{\link{check.mpt}} for a function that can help in constructing models.
-
-\code{\link{select.mpt}} for the function that performs model selection on results from \code{fit.mpt}.
-
-\code{\link{fit.model}} for a similar wrapper for which you can specify upper and lower bounds of paramaters (and whether or not \code{nlminb} uses the symbolically derived gradient and hessian)
-
-\code{\link{fit.mptinr}} is the workhorse with which you can also fit your own objective functions.
+\code{\link{fit.mpt}} for the current and recommended function fot fitting MPTs
 
 \url{http://www.psychologie.uni-freiburg.de/Members/singmann/R/mptinr} for additional information on model files and restriction files
 }
