@@ -45,7 +45,7 @@ Number of random samples to be drawn in the Monte Carlo algorithm to estimate th
 A scalar corresponding to the size of the confidence intervals for the parameter estimates. Default is 95 which corresponds to 95\% confidence intervals.
 }
   \item{starting.values}{
-A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.05 - 0.95)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
+A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.1 - 0.9)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
 }
   \item{output}{
 If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if \code{fia} not equal \code{NULL}). If "full" \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} and the output of \code{\link{nlminb}} and the Hessian matrix/matrices.
@@ -96,6 +96,8 @@ Lines in a restrictions file containing a hash (#) \emph{at any position} will b
 For equality restrictions, the equality restricted parameters are simply exchanged with their restrictions before the fitting.\cr
 For inequality restricted parameters, the model is reparametrized so that only the rightmost parameter of an inequality restriction remains the original parameter. Each instance of the other parameters in this restriction is replaced by the product of the rightmost parameter and dummy parameters (see Knapp & Batchelder, 2004). This procedure (which is equivalent to method A desribed in Knapp & Batchelder, 2004) leads to an equivalent model (although the binary MPT structure is not apparent in the resulting equations).\cr
 To prohibit this reparametrization (i.e., if the inequality restrictions hold without reparametrization), you can set \code{reparam.ineq} to \code{FALSE}. This can be useful for obtaining the FIA (see examples in Wu, Myung, & Batchelder, 2010).
+
+Both models and restrictions can be specified as \code{\link{textConnection}}s instead of as external files. \code{\link{fit.model}} contains additional examples showing the use. Note that textConnections get "consumed" so you need to specify them each time you fit a model using a connection.
 
 To obtain a measure of the model's complexity beyond the number of parameters (and taking inequality restrictions into account), set \code{fia} to a (reasonably high) scalar integer (i.e., a number). Then, \code{fit.mpt} will obtain the Fisher information approximation (FIA), a minimum description based measure of model complexity, using the algorithm provided by Wu, Myung, & Batchelder (2010a, 2010b) ported from Matlab to R. When performing model-selection, this measure is superior to other methods such as the Akaike information criterion (AIC) or Bayesian information criterion (BIC) which basically only take the number of parameters into account.\cr
 To get the FIA, \code{fit.mpt} performs the following steps:\cr
@@ -210,6 +212,12 @@ fit.mpt(rb.fig1.data, model1, n.optim = 1)
 #fit all "individuals" using the .EQN model file:
 fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
 
+#fit using a textConnection (i.e., you can specify the model in the code):
+model1.connection <- textConnection("p * q * r
+p * q * (1-r)
+p * (1-q) * r
+p * (1-q) * (1-r) + (1-p)")
+fit.mpt(rb.fig1.data, model1.connection, n.optim = 1)
 
 
 # The second example fits the MPT model presented in Riefer and Batchelder (1988, Figure 2)

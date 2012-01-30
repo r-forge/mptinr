@@ -16,7 +16,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		return(-llk)
 	}
 	
-	model.predictions <- function(Q, unlist.model, data, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env){
+	model.predictions <- function(Q, unlist.model, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env){
 		#tmpllk.env <- new.env()
 		for (i in seq_len(n.params))  assign(param.names[i],Q[i], envir = tmp.env)
 		vapply(unlist.model, eval, envir = tmp.env, 0)
@@ -98,7 +98,19 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	llk.gradient <- tryCatch(.make.llk.gradient(llk.function, param.names, length.param.names), error = function(e) {warning("gradient function cannot be build (probably derivation failure, see ?D"); NULL})
 	llk.hessian <- tryCatch(.make.llk.hessian(llk.function, param.names, length.param.names), error = function(e) {warning("hessian function cannot be build (probably derivation failure, see ?D"); NULL})
 	
+	if (!is.null(fia)) {
+		if (multiFit) {
+			data.new <- rbind(data, apply(data,2,sum))
+			fia.tmp <- get.mpt.fia(data.new, model.filename, restrictions.filename, fia, model.type)
+			fia.df <- fia.tmp[-dim(fia.tmp)[1],]
+			fia.agg.tmp <- fia.tmp[dim(fia.tmp)[1],]
+			fia.df <- list(fia.df, fia.agg.tmp)
+		} else {
+			fia.df <- get.mpt.fia(data, model.filename, restrictions.filename, fia, model.type)
+		}
+	}
+	
 	# call the workhorse:	
-	fit.mptinr(data = data, objective = llk.model, param.names = param.names, categories.per.type = categories.per.type, gradient = llk.gradient.funct, use.gradient = TRUE, hessian = llk.hessian.funct, use.hessian = TRUE, prediction = model.predictions, n.optim = n.optim, fia = fia, ci = ci, starting.values = starting.values, lower.bound = 0, upper.bound = 1, output = output, orig.params = orig.params, sort.param = sort.param, use.restrictions = use.restrictions, restrictions = restrictions, multicore = multicore, sfInit = sfInit, nCPU = nCPU, control = control, unlist.model = unlist(tree), llk.gradient = llk.gradient, llk.hessian = llk.hessian)
+	fit.mptinr(data = data, objective = llk.model, param.names = param.names, categories.per.type = categories.per.type, gradient = llk.gradient.funct, use.gradient = TRUE, hessian = llk.hessian.funct, use.hessian = TRUE, prediction = model.predictions, n.optim = n.optim, fia.df = if(!is.null(fia)) fia.df, ci = ci, starting.values = starting.values, lower.bound = 0, upper.bound = 1, output = output, orig.params = orig.params, sort.param = sort.param, use.restrictions = use.restrictions, restrictions = restrictions, multicore = multicore, sfInit = sfInit, nCPU = nCPU, control = control, unlist.model = unlist(tree), llk.gradient = llk.gradient, llk.hessian = llk.hessian)
 	
 }

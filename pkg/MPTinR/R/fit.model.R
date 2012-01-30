@@ -25,7 +25,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 		return(-llk)
 	}
 	
-	model.predictions <- function(Q, unlist.model, data, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env){
+	model.predictions <- function(Q, unlist.model, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env){
 		#tmpllk.env <- new.env()
 		for (i in seq_len(n.params))  assign(param.names[i],Q[i], envir = tmp.env)
 		vapply(unlist.model, eval, envir = tmp.env, 0)
@@ -125,13 +125,25 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	llk.gradient <- tryCatch(.make.llk.gradient(llk.function, param.names, length.param.names), error = function(e) {warning("gradient function cannot be build (probably derivation failure, see ?D"); NULL})
 	llk.hessian <- tryCatch(.make.llk.hessian(llk.function, param.names, length.param.names), error = function(e) {warning("hessian function cannot be build (probably derivation failure, see ?D"); NULL})
 	
+	if (!is.null(fia)) {
+		if (multiFit) {
+			data.new <- rbind(data, apply(data,2,sum))
+			fia.tmp <- get.mpt.fia(data.new, model.filename, restrictions.filename, fia, model.type)
+			fia.df <- fia.tmp[-dim(fia.tmp)[1],]
+			fia.agg.tmp <- fia.tmp[dim(fia.tmp)[1],]
+			fia.df <- list(fia.df, fia.agg.tmp)
+		} else {
+			fia.df <- get.mpt.fia(data, model.filename, restrictions.filename, fia, model.type)
+		}
+	}
+	
 	# call the workhorse:	
-	fit.mptinr(data = data, objective = llk.model, param.names = param.names, categories.per.type = categories.per.type, gradient = llk.gradient.funct, use.gradient = use.gradient, hessian = llk.hessian.funct, use.hessian = use.hessian, prediction = model.predictions, n.optim = n.optim, fia = fia, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = output, orig.params = orig.params, sort.param = sort.param, use.restrictions = use.restrictions, restrictions = restrictions, multicore = multicore, sfInit = sfInit, nCPU = nCPU, control = control, unlist.model = unlist(tree), llk.gradient = llk.gradient, llk.hessian = llk.hessian)
+	fit.mptinr(data = data, objective = llk.model, param.names = param.names, categories.per.type = categories.per.type, gradient = llk.gradient.funct, use.gradient = use.gradient, hessian = llk.hessian.funct, use.hessian = use.hessian, prediction = model.predictions, n.optim = n.optim, fia.df = if(!is.null(fia)) fia.df, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = output, orig.params = orig.params, sort.param = sort.param, use.restrictions = use.restrictions, restrictions = restrictions, multicore = multicore, sfInit = sfInit, nCPU = nCPU, control = control, unlist.model = unlist(tree), llk.gradient = llk.gradient, llk.hessian = llk.hessian)
 	
 }
 
 
-fit.mptinr <- function(data, objective, param.names, categories.per.type, gradient = NULL, use.gradient = TRUE, hessian = NULL, use.hessian = FALSE, prediction = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), sort.param = TRUE, use.restrictions = FALSE, orig.params = NULL, restrictions = NULL, multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2, control = list(), ...) {
+fit.mptinr <- function(data, objective, param.names, categories.per.type, gradient = NULL, use.gradient = TRUE, hessian = NULL, use.hessian = FALSE, prediction = NULL, n.optim = 5, fia.df = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), sort.param = TRUE, use.restrictions = FALSE, orig.params = NULL, restrictions = NULL, multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2, control = list(), ...) {
 	
 	if (multicore[1] != "none" & sfInit) {
 		require(snowfall)
@@ -160,7 +172,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	
 	optim.tree <- function(data, objective, gradient, use.gradient, hessian, use.hessian, tmp.env, param.names, n.params, n.optim, start.params, lower.bound, upper.bound, control, ...)  {
 		wrapper.nlminb <- function(x, data, objective, gradient, use.gradient, hessian, use.hessian, tmp.env, param.names, n.params, n.optim, start.params, lower.bound, upper.bound, control, ...) {
-			if (is.null(start.params)) start.params <- c(0.05, 0.95)
+			if (is.null(start.params)) start.params <- c(0.1, 0.9)
 			if (length(start.params) == 2) start.params <- runif(n.params, start.params[1], start.params[2])
 			nlminb(start.params, objective = objective, gradient = if(use.gradient) gradient, hessian = if(use.hessian) hessian, tmp.env = tmp.env, lower = lower.bound, upper = upper.bound, control = control, data = data, param.names = param.names, n.params = n.params, lower.bound = lower.bound, upper.bound = upper.bound,  ...)
 		}
@@ -220,7 +232,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	}
 	
 	get.model.info <- function(hessian.list, n.params, dgf) {
-		rank_hessian <- sapply(hessian.list, function(x) qr(x)$rank)
+		rank_hessian <- sapply(hessian.list, function(x) tryCatch(qr(x)$rank, error = function(e) NA))
 		return(data.frame(rank.hessian = rank_hessian, n.parameters = n.params, n.independent.categories = dgf))
 	}
 	
@@ -352,7 +364,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		predictions <- array(0, dim = dim(data))
 		for (c in 1:n.data){
 			for (d in seq_along(data[c,])) assign(paste("hank.data.", d, sep = ""), data[c,d], envir = tmpllk.env)
-			tree.eval <- do.call(prediction, args  = list(minim[[c]][["par"]], data = data[c,], param.names = param.names, n.params = n.params, tmp.env = tmp.env, ... ))
+			tree.eval <- do.call(prediction, args  = list(minim[[c]][["par"]], param.names = param.names, n.params = n.params, tmp.env = tmp.env, ... ))
 			frequencies <- n_items.per.type[c,]
 			predictions[c,] <- tree.eval * frequencies
 		}
@@ -398,6 +410,13 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	
 	if (n.optim != 1) message(paste("Presenting the best result out of ", n.optim, " minimization runs.", sep =""))
 	
+	if (is.null(fia.df)) fia <- NULL
+	else {
+		fia <- TRUE
+		fia.df.tmp <- fia.df
+		fia.df <- fia.df.tmp[[1]]
+		fia.agg.tmp <- fia.df.tmp[[2]]
+	}
 	
 	#n_items <- n.items.per.type(categories.per.type, data)
 	n_items <- rowSums(data)
@@ -431,7 +450,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 				warning(paste("Optimization routine for dataset ", c.n, " did not converge succesfully. Error code: ", minim[[c.n]][["convergence"]], ". Try use.gradient == TRUE or use output = 'full' for more information.", sep =""))
 			} else {
 				warning(paste("Optimization routine for dataset ", c.n, " did not converge succesfully. Error code: ", minim[[c.n]][["convergence"]], ". Will try again with use.gradient == FALSE.", sep =""))
-				tmp.results <- suppressWarnings(fit.mptinr(data[c.n,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = "none", sfInit = FALSE, nCPU = 2, control = control, ...))
+				tmp.results <- suppressWarnings(fit.mptinr(data[c.n,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia.df = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = "none", sfInit = FALSE, nCPU = 2, control = control, ...))
 				if (tmp.results[["best.fits"]][[1]][["objective"]] < minim[[c.n]][["objective"]]) {
 					warning(paste("Optimization for dataset", c.n, "using numerical estimated gradients produced better results. Using those results. Old results saved in output == 'full' [['optim.runs']]"))
 					minim[[c.n]] <- tmp.results[["best.fits"]][[1]]
@@ -444,19 +463,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		}
 	}
 	
-	best.fits <- minim
-	
-	if (!is.null(fia)) {
-		if (multiFit) {
-			data.new <- rbind(data, apply(data,2,sum))
-			fia.tmp <- get.mpt.fia(data.new, model.filename, restrictions.filename, fia, model.type)
-			fia.df <- fia.tmp[-dim(fia.tmp)[1],]
-			fia.agg.tmp <- fia.tmp[dim(fia.tmp)[1],]
-		} else {
-			fia.df <- get.mpt.fia(data, model.filename, restrictions.filename, fia, model.type)
-		}
-	}
-	
+	best.fits <- minim	
 	
 	
 	hessian.list <- vector("list", n.data)
@@ -466,7 +473,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	for (c in 1:n.data) {
 		for (d in seq_along(data[c,])) assign(paste("hank.data.", d, sep = ""), data[c,d], envir = tmpllk.env)
 		if (!is.null(hessian)) hessian.list[[c]] <- do.call(hessian, args  = list(minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ))
-		else hessian.list[[c]] <- tryCatch(numDeriv::hessian(func = hessian, x = minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ), error = function(e) NA)
+		else hessian.list[[c]] <- tryCatch(numDeriv::hessian(func = objective, x = minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ), error = function(e) NA)
 	}
 	
 	inv.hess.list <- lapply(hessian.list, function(x) tryCatch(solve(x), error = function(e) NA))
@@ -488,7 +495,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		
 		for (d in seq_along(data.pooled)) assign(paste("hank.data.", d, sep = ""), data.pooled[d], envir = tmpllk.env)
 		if (!is.null(hessian)) hessian.pooled <- do.call(hessian, args  = list(res.optim.pooled[["minim"]][[1]][["par"]], upper.bound = upper.bound, lower.bound = lower.bound, data = data.pooled, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ))
-		else hessian.pooled <- tryCatch(numDeriv::hessian(func = hessian, x = res.optim.pooled[["minim"]][[1]][["par"]], upper.bound = upper.bound, lower.bound = lower.bound, data = data.pooled, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ), error = function(e) NA)
+		else hessian.pooled <- tryCatch(numDeriv::hessian(func = objective, x = res.optim.pooled[["minim"]][[1]][["par"]], upper.bound = upper.bound, lower.bound = lower.bound, data = data.pooled, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ), error = function(e) NA)
 		
 		inv.hessian <- tryCatch(solve(hessian.pooled), error = function(e) NA)
 		if (!is.null(fia)) fia.agg <- fia.agg.tmp

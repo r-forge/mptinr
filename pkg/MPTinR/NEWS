@@ -2,14 +2,17 @@
 					** MPTinR VERSION 0.8.x **
 					**************************
 					
-					Changes in MPTinR Version 0.7.0
+					Changes in MPTinR Version 0.8.x
 					Released February 2012
 
 	Significant User Visible Changes and new Features
 	
+	o	fit.model now contains an example of how to fit a SDT. see ?fit.model. 
+		Dont forget to set lower.bound and upper.bound when fitting non-MPT models.
+	
 	o	fit.mptinr is a new function that takes an arbitrary objective function and 
 		possibly a gradient, hessian and prediction function to fit categorical
-		data (examples still needed).
+		data (see examples in ?fit.model).
 	
 	o	fit.mpt and fit.model (see version 0.7.0) are now just wrappers around 
 		the new function fit.mptinr. They produce the appropirate objective, gradient,
@@ -21,10 +24,16 @@
 		
 	o	The Hessian Matrix for MPTs and similar models is now symbolically 
 		derived yielding an exact Hessian matrix (before it was numerically estimated 
-		leading to incorrect Hessians whean paramaters were exactly at the boundary) .
+		leading to incorrect Hessians whean paramaters were exactly at the boundary).
 		
 	o	fitting is now based on nlminb instead of optim's L-BFGS-B
 		(using L-BFGS-B is available in fit.mpt.old)
+	
+	o	models and restrictions can now be specified using textConnections instead of 
+		only external files. See examples in ?fit.mpt and especially ?fit.model.
+	
+	o	added makie.mdt, a function to make .mdt data files which can be read by multiTree 
+		or HMMTree.
 	
 	Bugfixes
 	

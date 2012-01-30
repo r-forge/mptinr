@@ -17,7 +17,7 @@ fit.mptinr(
 	hessian = NULL, use.hessian = FALSE,
 	prediction = NULL,
 	n.optim = 5,
-	fia = NULL,
+	fia.df = NULL,
 	ci = 95, 
 	starting.values = NULL,
 	lower.bound = 0,
@@ -64,14 +64,14 @@ the prediction function. Needs to return a vector of equal length as the respons
   \item{n.optim}{
 Number of optimization runs. Can be parallelized via \code{multicore}. Default is 5. 
 }
-\item{fia}{
-needed for handling MPTs coming from \code{\link{fit.mpt}}. Do not use, unless you are sure what you are doing.
+\item{fia.df}{
+needed for handling MPTs with computation of FIA coming from \code{\link{fit.mpt}} or \code{fit.model}. Do not use.
 }
   \item{ci}{
 A scalar corresponding to the size of the confidence intervals for the parameter estimates. Default is 95 which corresponds to 95\% confidence intervals.
 }
   \item{starting.values}{
-A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.05 - 0.95)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
+A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.1 - 0.9)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
 } 
   \item{lower.bound}{
 numeric scalar or vector. Can be used in \code{fit.model} to set the lower bounds of the parameter space. See Details.
@@ -118,6 +118,7 @@ This functions can be used to fit any model for categorical data that can be spe
 The only mandatory arguments are: \code{data}, \code{objective}, \code{param.names}, and \code{categories.per.type}. Adding a function calcultating the \code{gradient} will usually signifcantly speed up the fitting, however, in extreme cases (i.e., many empty cells) using the gradient can interefere with finding the global minima. Adding the function computing the \code{hessian} matrix is usually only useful for obtaining the accurate confidence intervals (usually the numerically estimated Hessian matrix is equivalent unless there are many empty cells or paramaters at the boundary).
 
 The \code{objective} (and \code{gradient} and \code{hessian}) function need to take as the first argument a numerical vector of \code{length(param.names)} representing the paramaters. The other mandatory arguments for these functions are:\cr
+\code{data}: A vector containing the data for the dataset being fitted.\cr
 \code{param.names}: The character vector containing the paramater names is handed over to the objective.\cr
 \code{n.params}: = \code{length(param.names)}. To speed up computation the number of paramaters is also handed over to the objective on each iteration.\cr
 \code{tmp.env}: A \code{\link{environment}} (created with \code{new.env}). The objective function produced by \code{fit.mpt} assign the paramater values into this environment using the following statement:\cr
@@ -132,6 +133,9 @@ Usage of \code{gradient} and/or \code{hessian} can be controlled with \code{use.
 \code{prediction} is a function similar to \code{objective} with the difference that it should return a vector of length \code{sum(categories.per.type} giving the probabilities for each item type. This function needs to take the same arguments as \code{objective} with the only exception that it does not take \code{lower.bound} and \code{upper.bound} (but \code{...} is passed on to it).
 
 Note that parameters names should not start with \code{hank.}. 
+
+To set the starting values for the fitting process (e.g., to avoid local minima) one can set \code{starting.values} to a vector of length 2 and \code{n.optim > 1} both of which is strongly ecnouraged. Then, starting values are randomly drawn from a uniform distribution from \code{starting.values[1]} to \code{starting.values[2]}.\cr
+Alternatively, one can specify the starting values individually by supplying a vector with the same length as the number of parameters. Starting values must be ordered according to the alphabetical order of the parameeters. Use \code{\link{check.mpt}} for a function that returns the alphabetical order of the parameters. If one specifys the starting values like that, \code{n.optim} will be set to 1 as all other values would not make any sense (the optimization routine will produce identical results with identical starting values).
 
 Multicore fitting is achieved via the \code{snowfall} package and needs to be initialized via \code{sfInit}. As initialization needs some time, you can either initialize multicore facilities yourself using \code{sfInit()} and setting the \code{sfInit} argument to \code{FALSE} (the default) or let MPTinR initialize multicore facilities by setting the \code{sfInit} argument to \code{TRUE}. The former is recommended as initializing \code{snowfall} takes some time and only needs to be done once if you run \code{fit.mpt} multiple times. If there are any problems with multicore fitting, first try to initialize \code{snowfall} outside MPTinR (e.g., \code{sfInit( parallel=TRUE, cpus=2 )}). If this does not work, the problem is not related to MPTinR but to snowfall (for support and references visit: \url{http://www.imbi.uni-freiburg.de/parallel/}).\cr
 Note that you need to \emph{close} snowfall via \code{sfStop()} after using MPTinR.
@@ -181,7 +185,81 @@ All (model or restriction) files should end with an empty line, otherwise a warn
 }
 
 \examples{
-# Make example to fit Broder and Schutz with an SDT
+\dontrun{
+# the example is in a not run block as it may occasionally fail due to a starting values - integration mismatch.
+
+# Fit an SDT for a 4 alternative ranking task (Kellen, Klauer, & Singmann, under review).
+
+ranking.data <- structure(c(39, 80, 75, 35, 61, 54, 73, 52, 44, 63, 40, 48, 80,
+49, 43, 80, 68, 53, 81, 60, 60, 65, 49, 58, 69, 75, 71, 47, 44,
+85, 23, 9, 11, 21, 12, 21, 14, 20, 19, 15, 29, 13, 14, 15, 22,
+11, 12, 16, 13, 20, 20, 9, 26, 19, 13, 9, 14, 15, 24, 9, 19,
+7, 9, 26, 16, 14, 6, 17, 21, 14, 20, 18, 5, 19, 17, 5, 11, 21,
+4, 9, 15, 17, 7, 17, 11, 11, 9, 19, 20, 3, 19, 4, 5, 18, 11,
+11, 7, 11, 16, 8, 11, 21, 1, 17, 18, 4, 9, 10, 2, 11, 5, 9, 18,
+6, 7, 5, 6, 19, 12, 3), .Dim = c(30L, 4L))
+
+expSDTrank <- function(Q, param.names, n.params, tmp.env){
+   
+    e <- vector("numeric",4)
+
+    mu <- Q[1]
+    ss <- Q[2]
+       
+    G1<-function(x){
+        ((pnorm(x)^3)*dnorm(x,mean=mu,sd=ss))
+    }
+
+    G2<-function(x){
+        ((pnorm(x)^2)*dnorm(x,mean=mu,sd=ss)*(1-pnorm(x)))*3
+    }
+
+     G3<-function(x){
+        (pnorm(x)*dnorm(x,mean=mu,sd=ss)*(1-pnorm(x))^2)*3
+    }
+ 
+
+    e[1] <- integrate(G1,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value    
+    e[2] <- integrate(G2,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value
+    e[3] <- integrate(G3,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value
+    e[4] <- 1-e[1]-e[2]-e[3]  
+   
+    return(e)
+}
+
+
+
+SDTrank <- function(Q, data, param.names, n.params, tmp.env, lower.bound, upper.bound){
+   
+    e<-vector("numeric",4)
+
+    mu <- Q[1]
+    ss <- Q[2]
+       
+    G1<-function(x){
+        ((pnorm(x)^3)*dnorm(x,mean=mu,sd=ss))
+    }
+
+    G2<-function(x){
+        ((pnorm(x)^2)*dnorm(x,mean=mu,sd=ss)*(1-pnorm(x)))*3
+    }
+
+     G3<-function(x){
+        (pnorm(x)*dnorm(x,mean=mu,sd=ss)*(1-pnorm(x))^2)*3
+    }
+ 
+
+    e[1] <- integrate(G1,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value    
+    e[2] <- integrate(G2,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value
+    e[3] <- integrate(G3,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value
+    e[4] <- 1-e[1]-e[2]-e[3]  
+   
+    LL <- -sum(data[data!=0]*log(e[data!=0]))
+    return(LL)
+}
+
+fit.mptinr(ranking.data, SDTrank, c("mu", "sigma"), 4, prediction = expSDTrank, lower.bound = c(0,0.1), upper.bound = Inf)
+ }
 }
 
 \seealso{

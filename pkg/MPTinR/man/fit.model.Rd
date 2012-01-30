@@ -48,7 +48,7 @@ Number of random samples to be drawn in the Monte Carlo algorithm to estimate th
 A scalar corresponding to the size of the confidence intervals for the parameter estimates. Default is 95 which corresponds to 95\% confidence intervals.
 }
   \item{starting.values}{
-A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.05 - 0.95)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
+A \code{vector} or \code{NULL}. If \code{NULL} (the default), starting values for parameters are randomly drawn from a uniform distribution with the interval \code{(0.1 - 0.9)}. If \code{length(starting.values)==2}, starting values  are randomly drawn from a uniform distribution with the interval \code{starting.values[1] - starting.values[2])}. If \code{length(starting.values)} matches the number of parameters in the model, \code{starting.values} will be used as the starting values for fitting and \code{n.optim} will be set to 1. See Details.
 }
   \item{output}{
 If "full" \code{fit.mpt} will additionally return the return values of \code{\link{nlminb}} and the Hessian matrices. (If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if \code{fia} not equal \code{NULL}).)
@@ -101,6 +101,8 @@ The restrictions file may contain (sequential) equality (i.e., =) and inequality
 For equality restrictions, the equality restricted parameters are simply exchanged with their restrictions (i.e., another parameter or a number) before the fitting.
 
 Lines in a restrictions file or model containing a hash (#) \emph{at any position} will be skipped/ignored.
+
+Both models and restrictions can be specified as \code{\link{textConnection}}s instead of as external files (see examples). Note that textConnections get "consumed" so you need to specify them each time you fit a model using a connection.
 
 Confidence intervals (CI) are based on the observed Hessian matrix produced by the symobilically derived function for the Hessian (i.e., the second derivative of the likelihood function). If it is based on a numerically estimated Hessian, a warning will be given. \cr
 
@@ -159,7 +161,67 @@ All (model or restriction) files should end with an empty line, otherwise a warn
 }
 
 \examples{
-# Make example to fit Broder and Schutz with an SDT
+
+# Example from Broder & Schutz (2009)
+# We fit the data from the 40 individuals from their Experiment 3
+# We fit three different models:
+# 1. Their SDT Model: br.sdt
+# 2. Their 2HTM model: br.2htm
+# 3. A restricted 2HTM model with Dn = Do: br.2htm.res
+# 4. A 1HTM model (i.e., Dn = 0): br.1htm
+
+data(d.broeder, package = "MPTinR")
+m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
+
+
+# We specify the SDT model in the code using a textConnection.
+# Note that a textCconnection can only be used once. Then you need to call it again (e.g., after calling check.mpt)!
+
+m.sdt <- textConnection("
+1-pnorm((cr1-mu)/ss)
+pnorm((cr1-mu)/ss)
+
+1-pnorm(cr1)
+pnorm(cr1)
+
+1-pnorm((cr2-mu)/ss)
+pnorm((cr2-mu)/ss)
+
+1-pnorm(cr2)
+pnorm(cr2)
+
+1-pnorm((cr3-mu)/ss)
+pnorm((cr3-mu)/ss)
+
+1-pnorm(cr3)
+pnorm(cr3)
+
+1-pnorm((cr4-mu)/ss)
+pnorm((cr4-mu)/ss)
+
+1-pnorm(cr4)
+pnorm(cr4)
+
+1-pnorm((cr5-mu)/ss)
+pnorm((cr5-mu)/ss)
+
+1-pnorm(cr5)
+pnorm(cr5)
+")
+
+# fit the SDT
+br.sdt <- fit.model(d.broeder, m.sdt, lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
+
+# fit the MPTs (see also ?fit.mpt).
+# In contrast to ?fit.mpt we specify the restrictions using textConnections!
+br.2htm <- fit.mpt(d.broeder, m.2htm)
+br.2htm.res <- fit.mpt(d.broeder, m.2htm, textConnection("Do = Dn"))
+br.1htm <- fit.mpt(d.broeder, m.2htm, textConnection("Dn = 0"))
+
+select.mpt(list(sdt = br.sdt, two.htm = br.2htm, two.htm.res = br.2htm.res, one.htm = br.1htm), output = "full")
+
+# the restricted 2HTM "wins" for individual data, but the 2htm and restricted 2htm restricted "win" for aggregated data.
+
 }
 
 

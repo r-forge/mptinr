@@ -25,6 +25,13 @@ fit.model(rb.fig1.data, model1, n.optim = 1)
 #fit all "individuals" using the .EQN model file:
 fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
 
+#fit using a textConnection (i.e., you can specify the model in the code):
+model1.connection <- textConnection("p * q * r
+p * q * (1-r)
+p * (1-q) * r
+p * (1-q) * (1-r) + (1-p)")
+fit.mpt(rb.fig1.data, model1.connection, n.optim = 1)
+
 
 
 # The second example fits the MPT model presented in Riefer and Batchelder (1988, Figure 2)
