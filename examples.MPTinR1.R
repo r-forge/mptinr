@@ -142,7 +142,6 @@ select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = b
 
 
 
-
 # compare speed of no multicore versus multicore for multiple optimization runs:
 
 require(snowfall)
@@ -156,7 +155,30 @@ system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2))
 # multicore:
 system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "n.optim"))
 
+system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "individual"))
+
 sfStop()
+
+# fitting the bröder data using multicore:
+
+
+data(d.broeder, package = "MPTinR")
+m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
+r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
+r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
+i.2htm <- system.file("extdata", "broeder.2htm.ineq", package = "MPTinR")
+ir.2htm <- system.file("extdata", "broeder.2htm.restr.ineq", package = "MPTinR")
+ir.1htm <- system.file("extdata", "broeder.1htm.restr.ineq", package = "MPTinR")
+
+# fit the original 2HTM
+system.time(br.2htm.noMC <- fit.mpt(d.broeder, m.2htm))
+system.time(br.2htm.n.optim <- fit.mpt(d.broeder, m.2htm, multicore = "n.optim"))
+system.time(br.2htm.indiv <- fit.mpt(d.broeder, m.2htm, multicore = "individual"))
+
+system.time(br.2htm.ineq.noMC <- fit.mpt(d.broeder, m.2htm, i.2htm))
+system.time(br.2htm.ineq.n.optim <- fit.mpt(d.broeder, m.2htm, i.2htm, multicore = "n.optim"))
+system.time(br.2htm.ineq.indiv <- fit.mpt(d.broeder, m.2htm, i.2htm, multicore = "individual"))
+
 
 ## End(Not run)
 

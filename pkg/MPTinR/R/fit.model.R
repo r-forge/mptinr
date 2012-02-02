@@ -189,7 +189,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		data.new <- lapply(1:n.data, function(x, data) data[x,], data = data) 
 		llks <- array(NA, dim=c(n.data, n.optim))
 		
-		if (multicore[1] == "individual") {
+		if (multicore[1] == "individual" & length(data.new) > 1) {
 			 optim.runs <- sfLapply(data.new, optim.tree, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmp.env, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound, control = control, ...)
 		} else optim.runs <- lapply(data.new, optim.tree, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmp.env, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound, control = control, ...)
 		
@@ -240,7 +240,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		#recover()
 		var.params <- sapply(inv.hess.list, function(x) tryCatch(diag(x), error = function(e) rep(NA, n.params)))
 		rownames(var.params) <- param.names
-		confidence.interval <- qnorm(1-((100-ci)/2)/100)*sqrt(var.params)
+		suppressWarnings(confidence.interval <- qnorm(1-((100-ci)/2)/100)*sqrt(var.params))
 		estimates <- sapply(minim, function(x) x$par)
 		upper.conf <- estimates + confidence.interval
 		lower.conf <- estimates - confidence.interval
@@ -292,7 +292,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 						# Bounds of confindence intervals are computed by the formula given in Baldi & Batchelder (2003, JMP) Equation 19.
 						var.bound.tmp <- rep(NA,length.var.tmp)
 						for (j in 1:length.var.tmp) var.bound.tmp[j] <- 2*var.tmp[j] + sum(2^(length.var.tmp-1)*(var.tmp[-j]))
-						ineq.ci <- qnorm(1-((100-ci)/2)/100)*sqrt(min(var.bound.tmp))
+						suppressWarnings(ineq.ci <- qnorm(1-((100-ci)/2)/100)*sqrt(min(var.bound.tmp)))
 						parameter_table <- rbind(parameter_table, data.frame(param.names = restrictions[[c]][1], estimates = new.param, lower.conf = new.param - ineq.ci, upper.conf = new.param + ineq.ci, restricted.parameter = 2))
 					}
 				}
@@ -345,7 +345,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 					# Bounds of confindence intervals are computed by the formula given in Baldi & Batchelder (2003, JMP) Equation 19.
 					var.bound.tmp <- rep(NA,length.var.tmp)
 					for (j in 1:length.var.tmp) var.bound.tmp[j] <- 2*var.tmp[j] + sum(2^(length.var.tmp-1)*(var.tmp[-j]))
-					ineq.ci <- qnorm(1-((100-ci)/2)/100)*sqrt(min(var.bound.tmp))
+					suppressWarnings(ineq.ci <- qnorm(1-((100-ci)/2)/100)*sqrt(min(var.bound.tmp)))
 					parameter_table <- rbind(parameter_table, data.frame(parameter.names = restrictions[[c]][1], estimates = new.param, lower.conf = new.param - ineq.ci, upper.conf = new.param + ineq.ci, restricted.parameter = "<"))
 				}
 			}
@@ -441,30 +441,52 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	optim.runs <- res.optim$optim.runs
 	llks <- res.optim$llks
 	
+	not.converged <- vector("numeric", n.data)
+	better.approx <- vector("numeric", n.data)
+	better.analytic <- vector("numeric", n.data)
+	convergence.second <- vector("numeric", n.data)
+	
 	# the following loop checks if the optimization routine converged succesfully.
 	for (c.n in 1:n.data) {
 		# warning based on counts not needed, changed to nlminb (HS 26-01-2012)
 		#if (minim[[c.n]][["counts"]][1] < 10) warning(paste("Number of iterations run by the optimization routine for individual ", c.n, " is low (i.e., < 10) indicating local minima. Try n.optim >= 5.", sep = ""))
 		if (minim[[c.n]][["convergence"]] != 0) {
-			if (use.gradient == FALSE) {
-				warning(paste("Optimization routine for dataset ", c.n, " did not converge succesfully. Error code: ", minim[[c.n]][["convergence"]], ". Try use.gradient == TRUE or use output = 'full' for more information.", sep =""))
-			} else {
-				warning(paste("Optimization routine for dataset ", c.n, " did not converge succesfully. Error code: ", minim[[c.n]][["convergence"]], ". Will try again with use.gradient == FALSE.", sep =""))
+			not.converged[c.n] <- c.n
+			if (use.gradient) {
 				tmp.results <- suppressWarnings(fit.mptinr(data[c.n,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia.df = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = "none", sfInit = FALSE, nCPU = 2, control = control, ...))
+				optim.runs[[c.n]] <- c(optim.runs[[c.n]], tmp.results[["optim.runs"]][[1]])
+				if (n.optim > 1) llks[c.n,] <- vapply(tmp.results[["optim.runs"]][[1]], "[[", 0, i = "objective")
 				if (tmp.results[["best.fits"]][[1]][["objective"]] < minim[[c.n]][["objective"]]) {
-					warning(paste("Optimization for dataset", c.n, "using numerical estimated gradients produced better results. Using those results. Old results saved in output == 'full' [['optim.runs']]"))
+					if (tmp.results[["best.fits"]][[1]][["convergence"]] != 0) convergence.second[c.n] <- tmp.results[["best.fits"]][[1]][["convergence"]]
 					minim[[c.n]] <- tmp.results[["best.fits"]][[1]]
-					optim.runs[[c.n]] <- c(optim.runs[[c.n]], tmp.results[["optim.runs"]][[1]])
-					if (n.optim > 1) llks[c.n,] <- vapply(tmp.results[["optim.runs"]][[1]], "[[", 0, i = "objective")
+					better.approx[c.n] <- c.n
 				} else {
-					warning(paste("Optimization for dataset", c.n, "using numerical estimated gradients did NOT produce better results. Keeping original results. Use output = 'full' for more details"))
+					better.analytic[c.n] <- c.n
 				}
 			}
 		}
 	}
-	
+	error.codes <- vapply(minim, "[[", 0, i = "convergence")
+	if (sum(not.converged != 0)) {
+		if (use.gradient == FALSE) {
+			warning(paste("Optimization routine for dataset(s) ", not.converged[not.converged != 0], " did not converge succesfully.
+			Error code(s): ", sort(unique(vapply(minim, "[[", 0, i = "convergence")))[-1], ". Try use.gradient == TRUE or use output = 'full' for more information.", sep =""))
+		} else {
+			warning(paste("Optimization routine for dataset(s) ", paste(not.converged[not.converged != 0], collapse = " "), "
+			  did not converge succesfully. Tried again with use.gradient == FALSE.", sep =""))
+			if (sum(better.approx) != 0) warning(paste("Optimization for dataset(s) ", paste(better.approx[better.approx != 0], collapse = " "), "
+			  using numerically estimated gradients produced better results. Using those results.
+			  Old results saved in output == 'full' [['optim.runs']].", sep =""))
+			if (sum(better.analytic) != 0) warning(paste("Optimization for dataset(s) ", paste(better.analytic[better.analytic != 0], collapse = " "), "
+			  using numerical estimated gradients did NOT produce better results.
+			  Keeping original results. Use output = 'full' for more details.", sep =""))
+			if (sum(error.codes) != 0) {
+				warning(paste("Error code(s) in final results: ", paste(sort(unique(error.codes)), collapse = " "),  ". The following dataset(s) did not converge succesfully in the best fitting optimization run:
+				  ", paste(which(error.codes != 0), collapse = " "), sep =""))
+			 }
+		}
+	}
 	best.fits <- minim	
-	
 	
 	hessian.list <- vector("list", n.data)
 	

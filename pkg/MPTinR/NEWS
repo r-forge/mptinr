@@ -37,7 +37,9 @@
 	
 	Bugfixes
 	
-	o	
+	o	resolved small bug when fitting using multicore = "individual"
+	
+	o	no more warning message if CIs cannot be computed.
 
 		
 					**************************

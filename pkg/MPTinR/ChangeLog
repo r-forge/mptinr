@@ -1,3 +1,10 @@
+2012-01-31
+		* resolved small bug when fitting using mutlicore = "individual" 
+		
+		* changed Description
+		
+		* changed warning messages when optimization did not converge successfully.
+
 2012-01-30
 		* resolved small bug in calculating the FIA (moved routine to calculate 
 		  the FIA to the wrapper functions fit.mpt and fit.model, changed argument

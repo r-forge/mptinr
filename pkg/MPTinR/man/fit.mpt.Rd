@@ -152,12 +152,7 @@ When \code{output == "full"} the list contains the additional items:\cr
 
 }
 \note{
-There may be several warnings \code{fit.mpt} throws while fitting MPT models. Most of them are not problematic and related to matrix operations needed for confidence intervals. Examples:\cr
-\code{In sqrt(var.params) : NaNs produced}\cr
-\code{In sqrt(min(var.bound.tmp)) : NaNs produced}\cr
-These warnings are not critical.
-
-Other warnings may relate to the optimization routine (e.g., \code{Optimization routine [...] did not converge succesfully}).\cr
+Warnings may relate to the optimization routine (e.g., \code{Optimization routine [...] did not converge succesfully}).\cr
 In these cases it is recommended to rerun fit.mpt to check if the results are stable.
 }
 \references{
