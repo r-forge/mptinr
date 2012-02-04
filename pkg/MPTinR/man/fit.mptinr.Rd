@@ -1,7 +1,7 @@
 \name{fit.mptinr}
 \alias{fit.mptinr}
 \title{
-Fit cognitive models for categorical data
+Fit cognitive models for categorical data using and objective function
 }
 \description{
 fitting function for package MPTinR. Can fit any model for categorical data specified in an objective function. Fitting can be enhanced with gradient and or Hessian. Predicted values with be added when prediction function is present.

@@ -1,7 +1,7 @@
 \name{fit.model}
 \alias{fit.model}
 \title{
-Fit cognitive models for categorical data
+Fit cognitive models for categorical data using model files
 }
 \description{
 fit.model() function fits MPT and other cognitive models for categorical data (e.g., SDT models) that can be specified in a model file.

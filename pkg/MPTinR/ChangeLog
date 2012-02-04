@@ -1,3 +1,6 @@
+2012-02-04
+		* small changes in Rd files for fit.model and fit.mptinr
+
 2012-01-31
 		* resolved small bug when fitting using mutlicore = "individual" 
 		
