@@ -71,7 +71,7 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 		df.out <- data.frame(model = m.names, n.parameters)
 		if (any(c.fia)) {
 			df.out <- cbind(df.out, delta.FIA.sum, FIA.best)
-			if (output[1] != "standard") df.out <- cbind(df.out, FIA.sum)
+			if (output[1] != "standard") df.out <- cbind(df.out, FIA.sum, delta.FIA.aggregated, FIA.aggregated)
 		}
 		if (output[1] == "standard") {
 			df.out <- cbind(df.out, delta.AIC.sum, wAIC.sum, AIC.best, delta.BIC.sum, wBIC.sum, BIC.best)   
