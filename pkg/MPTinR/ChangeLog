@@ -1,6 +1,9 @@
 2012-02-06
 		* resolved small bug for select.mpt (wouldn't show aggregated FIA results
 		when output = "full")
+		
+		* added show.messages parameter to fit.model, fit.mptinr and fit.mpt
+		(including their documentation)
 
 2012-02-04
 		* small changes in Rd files for fit.model and fit.mptinr

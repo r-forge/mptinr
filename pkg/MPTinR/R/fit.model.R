@@ -1,5 +1,5 @@
    
-fit.model <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), reparam.ineq = TRUE, sort.param = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2, control = list(), use.gradient = TRUE, use.hessian = FALSE){
+fit.model <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), reparam.ineq = TRUE, sort.param = TRUE, show.messages = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2, control = list(), use.gradient = TRUE, use.hessian = FALSE){
 	
 	llk.model <- function(Q, unlist.model, data, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env){
 		if (length(upper.bound) == 1) {
@@ -138,12 +138,12 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	}
 	
 	# call the workhorse:	
-	fit.mptinr(data = data, objective = llk.model, param.names = param.names, categories.per.type = categories.per.type, gradient = llk.gradient.funct, use.gradient = use.gradient, hessian = llk.hessian.funct, use.hessian = use.hessian, prediction = model.predictions, n.optim = n.optim, fia.df = if(!is.null(fia)) fia.df, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = output, orig.params = orig.params, sort.param = sort.param, use.restrictions = use.restrictions, restrictions = restrictions, multicore = multicore, sfInit = sfInit, nCPU = nCPU, control = control, unlist.model = unlist(tree), llk.gradient = llk.gradient, llk.hessian = llk.hessian)
+	fit.mptinr(data = data, objective = llk.model, param.names = param.names, categories.per.type = categories.per.type, gradient = llk.gradient.funct, use.gradient = use.gradient, hessian = llk.hessian.funct, use.hessian = use.hessian, prediction = model.predictions, n.optim = n.optim, fia.df = if(!is.null(fia)) fia.df, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = output, orig.params = orig.params, sort.param = sort.param, show.messages = show.messages, use.restrictions = use.restrictions, restrictions = restrictions, multicore = multicore, sfInit = sfInit, nCPU = nCPU, control = control, unlist.model = unlist(tree), llk.gradient = llk.gradient, llk.hessian = llk.hessian)
 	
 }
 
 
-fit.mptinr <- function(data, objective, param.names, categories.per.type, gradient = NULL, use.gradient = TRUE, hessian = NULL, use.hessian = FALSE, prediction = NULL, n.optim = 5, fia.df = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), sort.param = TRUE, use.restrictions = FALSE, orig.params = NULL, restrictions = NULL, multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2, control = list(), ...) {
+fit.mptinr <- function(data, objective, param.names, categories.per.type, gradient = NULL, use.gradient = TRUE, hessian = NULL, use.hessian = FALSE, prediction = NULL, n.optim = 5, fia.df = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), sort.param = TRUE, show.messages = TRUE, use.restrictions = FALSE, orig.params = NULL, restrictions = NULL, multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2, control = list(), ...) {
 	
 	if (multicore[1] != "none" & sfInit) {
 		require(snowfall)
@@ -430,12 +430,11 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	tmpllk.env <- new.env()
 	#attach(tmpllk.env)
 	t0 <- Sys.time()
-	print(paste("Model fitting begins at ", t0, sep = ""))
-	flush.console()
+	if (show.messages) {
+		print(paste("Model fitting begins at ", t0, sep = ""))
+		flush.console()
+	}
 	res.optim <- optim.mpt(data = data, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmpllk.env, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, control = control, n.data = n.data, ...)
-	t1 <- Sys.time()
-	print(paste("Model fitting stopped at ", t1, sep = ""))
-	print(t1-t0)
 	
 	minim <- res.optim$minim
 	optim.runs <- res.optim$optim.runs
@@ -453,7 +452,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		if (minim[[c.n]][["convergence"]] != 0) {
 			not.converged[c.n] <- c.n
 			if (use.gradient) {
-				tmp.results <- suppressWarnings(fit.mptinr(data[c.n,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia.df = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = "none", sfInit = FALSE, nCPU = 2, control = control, ...))
+				tmp.results <- suppressWarnings(fit.mptinr(data[c.n,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia.df = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, show.messages = FALSE, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = "none", sfInit = FALSE, nCPU = 2, control = control, ...))
 				optim.runs[[c.n]] <- c(optim.runs[[c.n]], tmp.results[["optim.runs"]][[1]])
 				if (n.optim > 1) llks[c.n,] <- vapply(tmp.results[["optim.runs"]][[1]], "[[", 0, i = "objective")
 				if (tmp.results[["best.fits"]][[1]][["objective"]] < minim[[c.n]][["objective"]]) {
@@ -487,6 +486,12 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		}
 	}
 	best.fits <- minim	
+	
+	if (show.messages) {
+		t1 <- Sys.time()
+		print(paste("Model fitting stopped at ", t1, sep = ""))
+		print(t1-t0)
+	}
 	
 	hessian.list <- vector("list", n.data)
 	

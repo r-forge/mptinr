@@ -32,8 +32,11 @@
 	o	models and restrictions can now be specified using textConnections instead of 
 		only external files. See examples in ?fit.mpt and especially ?fit.model.
 	
-	o	added makie.mdt, a function to make .mdt data files which can be read by multiTree 
+	o	added make.mdt, a function to make .mdt data files which can be read by multiTree 
 		or HMMTree.
+		
+	o	new argument show.messages added to the fitting function (default = TRUE). If 
+		FALSE the time messeages around the fitting algorithm are suppressed. 
 	
 	Bugfixes
 	

@@ -24,6 +24,7 @@ fit.mptinr(
 	upper.bound = 1,
 	output = c("standard", "fia", "full"),
 	sort.param = TRUE,
+	show.messages = TRUE,
 	use.restrictions = FALSE,
 	orig.params = NULL,
 	restrictions = NULL,	
@@ -84,6 +85,9 @@ If "full" \code{fit.mpt} will additionally return the return values of \code{\li
 }
 \item{sort.param}{
 Logical. If TRUE, parameters are alphabetically sorted in the parameter table. If FALSE, the first parameters in the parameter table are the nonrestricted ones, followed by the restricted parameters. Default is TRUE.
+}
+    \item{show.messages}{
+Logical. If TRUE the time the fitting algorithms takes is printed to the console.
 }
 \item{use.restrictions}{
 needed for handling MPTs coming from \code{\link{fit.mpt}}. Do not use, unless you are sure what you are doing.

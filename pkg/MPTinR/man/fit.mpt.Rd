@@ -19,6 +19,7 @@ fit.mpt(
 	output = c("standard", "fia", "full"),
 	reparam.ineq = TRUE,
 	sort.param = TRUE,
+	show.messages = TRUE,
 	model.type = c("easy", "eqn", "eqn2"),
 	multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2,
 	control = list()
@@ -55,6 +56,9 @@ If "fia", \code{fit.mpt} will additionally return the results from \code{\link{g
 }
   \item{sort.param}{
 Logical. If TRUE, parameters are alphabetically sorted in the parameter table. If FALSE, the first parameters in the parameter table are the nonrestricted ones, followed by the restricted parameters. Default is TRUE.
+}
+  \item{show.messages}{
+Logical. If TRUE the time the fitting algorithms takes is printed to the console.
 }
   \item{model.type}{
 Character vector specifying whether the model file is formatted in the easy way (\code{"easy"}; i.e., each line represents all branches corresponding to a response category) or the traditional EQN syntax (\code{"eqn"} or \code{"eqn2"}; see Details and e.g., Stahl & Klauer, 2007). If \code{model.filename} ends with .eqn or .EQN, \code{model.type} is automatically set to \code{"eqn"}. Default is \code{"easy"}.
