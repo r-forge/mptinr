@@ -4,6 +4,8 @@
 		
 		* added show.messages parameter to fit.model, fit.mptinr and fit.mpt
 		(including their documentation)
+		
+		* refitting for failed nlminb now uses multicore.
 
 2012-02-04
 		* small changes in Rd files for fit.model and fit.mptinr
@@ -21,7 +23,7 @@
 		  fia to fia.df in fit.mptinr). Changed fit.mptinr.Rd accordingly.
 		
 		* reading models should now work with connections (changed .get.mpt.model so that
-		   connectionsa re always read as "easy").
+		   connections are always read as "easy").
 		
 		* added function make.dt with help page (in make.eqn,.Rd)
 		

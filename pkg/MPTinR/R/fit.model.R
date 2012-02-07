@@ -408,7 +408,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	if ((length(lower.bound) != 1) && (length(lower.bound) != n.params)) stop("length(lower.bound) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
 	if ((length(upper.bound) != 1) && (length(upper.bound) != n.params)) stop("length(upper.bound) does not match number of parameters.\nUse check.mpt() to find number and order of parameters!")
 	
-	if (n.optim != 1) message(paste("Presenting the best result out of ", n.optim, " minimization runs.", sep =""))
+	if (n.optim != 1 & show.messages) message(paste("Presenting the best result out of ", n.optim, " minimization runs.", sep =""))
 	
 	if (is.null(fia.df)) fia <- NULL
 	else {
@@ -444,44 +444,65 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	better.approx <- vector("numeric", n.data)
 	better.analytic <- vector("numeric", n.data)
 	convergence.second <- vector("numeric", n.data)
+	counter.fit.anew <- 1
+	mapping.fit.anew <- vector("numeric", n.data)
 	
-	# the following loop checks if the optimization routine converged succesfully.
+	# the following loop checks if the optimization routine converged succesfully, if not, result is added to another list
 	for (c.n in 1:n.data) {
 		# warning based on counts not needed, changed to nlminb (HS 26-01-2012)
 		#if (minim[[c.n]][["counts"]][1] < 10) warning(paste("Number of iterations run by the optimization routine for individual ", c.n, " is low (i.e., < 10) indicating local minima. Try n.optim >= 5.", sep = ""))
 		if (minim[[c.n]][["convergence"]] != 0) {
 			not.converged[c.n] <- c.n
-			if (use.gradient) {
-				tmp.results <- suppressWarnings(fit.mptinr(data[c.n,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia.df = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, show.messages = FALSE, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = "none", sfInit = FALSE, nCPU = 2, control = control, ...))
-				optim.runs[[c.n]] <- c(optim.runs[[c.n]], tmp.results[["optim.runs"]][[1]])
-				if (n.optim > 1) llks[c.n,] <- vapply(tmp.results[["optim.runs"]][[1]], "[[", 0, i = "objective")
-				if (tmp.results[["best.fits"]][[1]][["objective"]] < minim[[c.n]][["objective"]]) {
-					if (tmp.results[["best.fits"]][[1]][["convergence"]] != 0) convergence.second[c.n] <- tmp.results[["best.fits"]][[1]][["convergence"]]
-					minim[[c.n]] <- tmp.results[["best.fits"]][[1]]
-					better.approx[c.n] <- c.n
+			mapping.fit.anew[counter.fit.anew] <- c.n
+			counter.fit.anew <- counter.fit.anew + 1
+		}
+	}
+	
+	if (use.gradient & counter.fit.anew > 1) {
+		mapping.fit.anew <- mapping.fit.anew[seq_len(counter.fit.anew-1)]
+		new.fits <- suppressWarnings(fit.mptinr(data[mapping.fit.anew,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia.df = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, show.messages = FALSE, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = multicore, sfInit = FALSE, nCPU = 2, control = control, ...))
+		if (length(mapping.fit.anew) > 1) {
+			for (c.n in seq_along(mapping.fit.anew)) {
+				optim.runs[[mapping.fit.anew[c.n]]] <- c(optim.runs[[mapping.fit.anew[c.n]]], new.fits[["optim.runs"]][["individual"]][[c.n]])
+				if (n.optim > 1) llks[mapping.fit.anew[c.n],] <- vapply(new.fits[["optim.runs"]][["individual"]][[c.n]], "[[", 0, i = "objective")
+				if (new.fits[["best.fits"]][["individual"]][[c.n]][["objective"]] < minim[[mapping.fit.anew[c.n]]][["objective"]]) {
+					if (new.fits[["best.fits"]][["individual"]][[c.n]][["convergence"]] != 0) convergence.second[mapping.fit.anew[c.n]] <- new.fits[["best.fits"]][["individual"]][[c.n]][["convergence"]]
+					minim[[mapping.fit.anew[c.n]]] <- new.fits[["best.fits"]][["individual"]][[c.n]]
+					better.approx[mapping.fit.anew[c.n]] <- mapping.fit.anew[c.n]
 				} else {
-					better.analytic[c.n] <- c.n
+					better.analytic[mapping.fit.anew[c.n]] <- mapping.fit.anew[c.n]
 				}
+			}
+		} else {
+			optim.runs[[mapping.fit.anew[1]]] <- c(optim.runs[[mapping.fit.anew[1]]], new.fits[["optim.runs"]][[1]])
+			if (n.optim > 1) llks[mapping.fit.anew[1],] <- vapply(new.fits[["optim.runs"]][[1]], "[[", 0, i = "objective")
+			if (new.fits[["best.fits"]][[1]][["objective"]] < minim[[mapping.fit.anew[1]]][["objective"]]) {
+				if (new.fits[["best.fits"]][[1]][["convergence"]] != 0) convergence.second[mapping.fit.anew[1]] <- new.fits[["best.fits"]][[1]][["convergence"]]
+				minim[[mapping.fit.anew[1]]] <- new.fits[["best.fits"]][[1]]
+				better.approx[mapping.fit.anew[1]] <- mapping.fit.anew[1]
+			} else {
+				better.analytic[mapping.fit.anew[1]] <- mapping.fit.anew[1]
 			}
 		}
 	}
+
 	error.codes <- vapply(minim, "[[", 0, i = "convergence")
 	if (sum(not.converged != 0)) {
 		if (use.gradient == FALSE) {
 			warning(paste("Optimization routine for dataset(s) ", not.converged[not.converged != 0], " did not converge succesfully.
-			Error code(s): ", sort(unique(vapply(minim, "[[", 0, i = "convergence")))[-1], ". Try use.gradient == TRUE or use output = 'full' for more information.", sep =""))
+  Error code(s): ", sort(unique(vapply(minim, "[[", 0, i = "convergence")))[-1], ". Try use.gradient == TRUE or use output = 'full' for more information.", sep =""))
 		} else {
 			warning(paste("Optimization routine for dataset(s) ", paste(not.converged[not.converged != 0], collapse = " "), "
-			  did not converge succesfully. Tried again with use.gradient == FALSE.", sep =""))
+  did not converge succesfully. Tried again with use.gradient == FALSE.", sep =""))
 			if (sum(better.approx) != 0) warning(paste("Optimization for dataset(s) ", paste(better.approx[better.approx != 0], collapse = " "), "
-			  using numerically estimated gradients produced better results. Using those results.
-			  Old results saved in output == 'full' [['optim.runs']].", sep =""))
+  using numerically estimated gradients produced better results. Using those results.
+  Old results saved in output == 'full' [['optim.runs']].", sep =""))
 			if (sum(better.analytic) != 0) warning(paste("Optimization for dataset(s) ", paste(better.analytic[better.analytic != 0], collapse = " "), "
-			  using numerical estimated gradients did NOT produce better results.
-			  Keeping original results. Use output = 'full' for more details.", sep =""))
+  using numerical estimated gradients did NOT produce better results.
+  Keeping original results. Use output = 'full' for more details.", sep =""))
 			if (sum(error.codes) != 0) {
 				warning(paste("Error code(s) in final results: ", paste(sort(unique(error.codes)), collapse = " "),  ". The following dataset(s) did not converge succesfully in the best fitting optimization run:
-				  ", paste(which(error.codes != 0), collapse = " "), sep =""))
+", paste(which(error.codes != 0), collapse = " "), sep =""))
 			 }
 		}
 	}
@@ -536,7 +557,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		if (output[1] == "full") {
 			optim.runs <- c(individual = list(optim.runs), aggregated = res.optim.pooled$optim.runs)
 			best.fits <- c(individual = list(minim), aggregated = res.optim.pooled$minim)
-			hessian.list <- c(individual = hessian.list, aggregated = hessian.pooled)
+			hessian.list <- c(individual = hessian.list, aggregated = list(hessian.pooled))
 		}
 	} else {
 		parameters <- get.parameter.table.single(minim[[1]], param.names, n.params, use.restrictions, inv.hess.list[[1]], ci, sort.param = sort.param, orig.params)
