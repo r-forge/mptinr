@@ -46,7 +46,7 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 			FIA.aggregated <- vapply(mpt.results, function(x) {if (any(grepl("^FIA$", colnames(x[["information.criteria"]][["aggregated"]])))) x[["information.criteria"]][["aggregated"]][["FIA"]] else NA}, 0)
 			delta.FIA.aggregated <- FIA.aggregated - min(FIA.aggregated, na.rm = TRUE)
 			FIAs <- vapply(mpt.results, function(x) {if (any(grepl("^FIA$", colnames(x[["information.criteria"]][["individual"]])))) x[["information.criteria"]][["individual"]][["FIA"]] else rep(NA, n.data)}, rep(0, n.data))
-			FIA.best <- rowSums(apply(FIAs, 1, function(x) x == min(x, na.rm = TRUE)))
+			FIA.best <- rowSums(apply(FIAs, 1, function(x) round(x, round.digit) == min(round(x, round.digit), na.rm = TRUE)))
 		}
 		AIC.sum <- sapply(mpt.results, function(x) x[["information.criteria"]][["sum"]][["AIC"]])
 		BIC.sum <- sapply(mpt.results, function(x) x[["information.criteria"]][["sum"]][["BIC"]])
@@ -65,9 +65,9 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 		denom.wBIC.aggregated <- sum(exp(-0.5*(delta.BIC.aggregated)))
 		wBIC.aggregated <- sapply(delta.BIC.aggregated, function(x) exp(-0.5*(x))/denom.wBIC.aggregated)
 		AICs <- sapply(mpt.results, function(x) x[["information.criteria"]][["individual"]][["AIC"]])
-		AIC.best <- rowSums(apply(AICs, 1, function(x) x == min(x)))
+		AIC.best <- rowSums(apply(AICs, 1, function(x) round(x, round.digit) == min(round(x, round.digit))))
 		BICs <- sapply(mpt.results, function(x) x[["information.criteria"]][["individual"]][["BIC"]])
-		BIC.best <- rowSums(apply(BICs, 1, function(x) x == min(x)))
+		BIC.best <- rowSums(apply(BICs, 1, function(x) round(x, round.digit) == min(round(x, round.digit))))
 		df.out <- data.frame(model = m.names, n.parameters)
 		if (any(c.fia)) {
 			df.out <- cbind(df.out, delta.FIA.sum, FIA.best)

@@ -45,6 +45,9 @@
 	o	no more warning message if CIs cannot be computed.
 	
 	o	select.mpt now compares aggregated FIA for output = "full"
+	
+	o	select.mpt now rounds information criteria before determining number of 
+		best fits
 
 		
 					**************************

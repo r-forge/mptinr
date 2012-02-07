@@ -1,3 +1,7 @@
+2012-02-07
+		* select.mpt now rounds information criteria before determining number of 
+		 best fits (also added this to select.mpt.Rd)
+
 2012-02-06
 		* resolved small bug for select.mpt (wouldn't show aggregated FIA results
 		when output = "full")
