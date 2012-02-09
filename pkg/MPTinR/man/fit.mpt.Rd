@@ -192,8 +192,6 @@ All (model or restriction) files should end with an empty line, otherwise a warn
 # to the data presented in Riefer and Batchelder (1988, Table 1)
 # Note that Riefer and Batchelder (1988, pp. 328) did some hypotheses tests, that are not done here.
 # Rather, we use each condition (i.e., row in Table 1) as a different individual.
-# We try to use n.optim = 1 here, but this can lead to local minima
-# In general we recommend to set n.optim >= 5
 
 # load the data
 data(rb.fig1.data)
@@ -203,20 +201,20 @@ model1 <- system.file("extdata", "rb.fig1.model", package = "MPTinR")
 model1.eqn <- system.file("extdata", "rb.fig1.model.eqn", package = "MPTinR")
 
 # just fit the first "individual":
-fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
+fit.mpt(rb.fig1.data[1,], model1)
 
 #fit all "individuals":
-fit.mpt(rb.fig1.data, model1, n.optim = 1)
+fit.mpt(rb.fig1.data, model1)
 
 #fit all "individuals" using the .EQN model file:
-fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
+fit.mpt(rb.fig1.data, model1.eqn)
 
 #fit using a textConnection (i.e., you can specify the model in the code):
 model1.connection <- textConnection("p * q * r
 p * q * (1-r)
 p * (1-q) * r
 p * (1-q) * (1-r) + (1-p)")
-fit.mpt(rb.fig1.data, model1.connection, n.optim = 1)
+fit.mpt(rb.fig1.data, model1.connection)
 
 
 # The second example fits the MPT model presented in Riefer and Batchelder (1988, Figure 2)
@@ -225,7 +223,6 @@ fit.mpt(rb.fig1.data, model1.connection, n.optim = 1)
 # Next, the model with all r set equal is fitted: r.equal
 # Then, the model with all c set equal is fitted: c.equal
 # Finally, the inferential tests reported by Riefer & Batchelder, (1988, p. 332) are executed.
-# Note, that n.optim = 10, because of frequent local minima.
 
 # get the data
 data(rb.fig2.data)
@@ -236,13 +233,13 @@ model2r.r.eq <- system.file("extdata", "rb.fig2.r.equal", package = "MPTinR")
 model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 
 # The full (i.e., unconstrained) model
-(ref.model <- fit.mpt(rb.fig2.data, model2, n.optim = 10))
+(ref.model <- fit.mpt(rb.fig2.data, model2))
 
 # All r equal
-(r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 10))
+(r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq))
 
 # All c equal
-(c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq, n.optim = 10))
+(c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq))
 
 # is setting all r equal a good idea?
 (g.sq.r.equal <- r.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
@@ -320,7 +317,7 @@ select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = b
 
 
 
-# compare speed of no multicore versus multicore for multiple optimization runs:
+# compare speed of no multicore versus multicore for multiple datasets:
 
 require(snowfall)
 # change number of CPUs if more are available
@@ -328,10 +325,10 @@ nCPU = 2
 sfInit( parallel=TRUE, cpus=nCPU, type = "SOCK" )
 
 # NO multicore
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2))
+system.time(fit.mpt(d.broeder, m.2htm))
 
 # multicore:
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "n.optim"))
+system.time(fit.mpt(d.broeder, m.2htm, multicore = "individual"))
 
 sfStop()
 }

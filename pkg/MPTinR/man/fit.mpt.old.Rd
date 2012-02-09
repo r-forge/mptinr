@@ -313,10 +313,10 @@ nCPU = 2
 sfInit( parallel=TRUE, cpus=nCPU, type = "SOCK" )
 
 # NO multicore
-system.time(fit.mpt.old(rb.fig2.data, model2, model2r.r.eq, n.optim = 2))
+system.time(fit.mpt.old(d.broeder, m.2htm))
 
 # multicore:
-system.time(fit.mpt.old(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "n.optim"))
+system.time(fit.mpt.old(d.broeder, m.2htm, multicore = "n.optim"))
 
 sfStop()
 }
