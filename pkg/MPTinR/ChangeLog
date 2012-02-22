@@ -1,4 +1,9 @@
 2012-02-07
+		* check.mpt now also displays number of categories and number of df for the model.
+		
+		* MPTinR-package.Rd updated to current version number and more functions.
+
+2012-02-07
 		* select.mpt now rounds information criteria before determining number of 
 		 best fits (also added this to select.mpt.Rd)
 

@@ -37,6 +37,8 @@
 		
 	o	new argument show.messages added to the fitting function (default = TRUE). If 
 		FALSE the time messeages around the fitting algorithm are suppressed. 
+		
+	o	expanded check.mpt functionality (now gives number of categories and df)
 	
 	Bugfixes
 	
