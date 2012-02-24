@@ -12,8 +12,8 @@ The package provides a user-friendly way for analysis of multinomial processing 
 \tabular{ll}{
 Package: \tab MPTinR\cr
 Type: \tab Package\cr
-Version: \tab 0.8.4\cr
-Date: \tab 2012-02-22\cr
+Version: \tab 0.8.5\cr
+Date: \tab 2012-02-25\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }

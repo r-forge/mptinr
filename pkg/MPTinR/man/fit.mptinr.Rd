@@ -23,6 +23,7 @@ fit.mptinr(
 	lower.bound = 0,
 	upper.bound = 1,
 	output = c("standard", "fia", "full"),
+	fit.aggregated = TRUE,
 	sort.param = TRUE,
 	show.messages = TRUE,
 	use.restrictions = FALSE,
@@ -82,6 +83,9 @@ numeric scalar or vector. Can be used in \code{fit.model} to set the upper bound
 }
   \item{output}{
 If "full" \code{fit.mpt} will additionally return the return values of \code{\link{nlminb}} and the Hessian matrices. (If "fia", \code{fit.mpt} will additionally return the results from \code{\link{get.mpt.fia}} (if \code{fia} not equal \code{NULL}).)
+}
+\item{fit.aggregated}{
+logical. Only relevant for multiple datasets (i.e., \code{matrix} or \code{data.frame}). Should the aggregated dataset (i.e., data summed over rows) be additionally fitted? Default (\code{TRUE}) fits the aggregated data. 
 }
 \item{sort.param}{
 Logical. If TRUE, parameters are alphabetically sorted in the parameter table. If FALSE, the first parameters in the parameter table are the nonrestricted ones, followed by the restricted parameters. Default is TRUE.

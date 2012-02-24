@@ -40,6 +40,9 @@
 		
 	o	expanded check.mpt functionality (now gives number of categories and df)
 	
+	o	all fitting functions have the argument fit.aggregated to indicate whether or not
+		the aggregated data (for multiple datasets) should be fitted.
+	
 	Bugfixes
 	
 	o	resolved small bug when fitting using multicore = "individual"

@@ -20,6 +20,7 @@ fit.model(
 	upper.bound = 1,
 	output = c("standard", "fia", "full"),
 	reparam.ineq = TRUE,
+	fit.aggregated = TRUE,
 	sort.param = TRUE,
 	show.messages = TRUE,
 	model.type = c("easy", "eqn", "eqn2"),
@@ -56,6 +57,9 @@ If "full" \code{fit.mpt} will additionally return the return values of \code{\li
 }
 \item{reparam.ineq}{
   Logical. Indicates whether or not inequality restrictions (when present in the model file) should be enforced while fitting the model. If \code{TRUE} (the default) inequality restricted parameters will be reparamertized, if \code{FALSE} not. Probably irrelevant for none MPTs.
+}
+\item{fit.aggregated}{
+Logical. Only relevant for multiple datasets (i.e., \code{matrix} or \code{data.frame}). Should the aggregated dataset (i.e., data summed over rows) be fitted? Default (\code{TRUE}) fits the aggregated data. 
 }
 \item{sort.param}{
 Logical. If TRUE, parameters are alphabetically sorted in the parameter table. If FALSE, the first parameters in the parameter table are the nonrestricted ones, followed by the restricted parameters. Default is TRUE.

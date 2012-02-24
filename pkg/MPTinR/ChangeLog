@@ -1,4 +1,8 @@
-2012-02-07
+2012-02-25
+		* fitting functions(fit.mptinr, fit.mpt, fit.model) contain the option to not
+		  fit the aggregated data for multiple datasets.
+
+2012-02-22
 		* check.mpt now also displays number of categories and number of df for the model.
 		
 		* MPTinR-package.Rd updated to current version number and more functions.

@@ -39,7 +39,7 @@ example.broeder.ex3(0.01, numerical.accuracy)
 
 load("testfiles/bs_ref_063.RData")
 
-example.broeder.mptinr(10)
+example.broeder.mptinr(20)
 
 all.equal(br.2htm.ref[-6], br.2htm.test[-6], tolerance = 0.01)
 all.equal(br.2htm.ineq.ref[-6], br.2htm.ineq.test[-6], tolerance = 0.01)
