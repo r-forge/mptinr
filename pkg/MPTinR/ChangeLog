@@ -1,3 +1,7 @@
+2012-03-19
+		* model.info does now return the rank of the Fisher Matrix.
+		* summary.llks was renamed to fitting.runs
+
 2012-02-25
 		* fitting functions(fit.mptinr, fit.mpt, fit.model) contain the option to not
 		  fit the aggregated data for multiple datasets.

@@ -43,6 +43,10 @@
 	o	all fitting functions have the argument fit.aggregated to indicate whether or not
 		the aggregated data (for multiple datasets) should be fitted.
 	
+	o	summary.llks was renamed to fitting.runs
+	
+	o	model.info now gives the rank of the Fisher Matrix (instead of the rank of the Hessian Matrix).
+	
 	Bugfixes
 	
 	o	resolved small bug when fitting using multicore = "individual"

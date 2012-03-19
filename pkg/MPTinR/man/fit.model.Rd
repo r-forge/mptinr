@@ -129,7 +129,7 @@ Note that you need to \emph{close} snowfall via \code{sfStop()} after using MPTi
 For individual fits (i.e., \code{data} is a \code{vector}) a \code{list} containing one or more of the following components from the best fitting model:
 \item{goodness.of.fit}{A \code{data.frame} containing the goodness of fit values for the model. \code{Log.Likelihood} is the Log-Likelihood value. \code{G.Squared}, \code{df}, and \code{p.value} are the \eqn{G^2}{G^2} goodness of fit statistic.}
 \item{information.criteria}{A \code{data.frame} containing model information criteria based on the G^2 value. The FIA values(s) are presented if \code{fia} is not \code{NULL}.}
-\item{model.info}{A \code{data.frame} containing other information about the model. If the rank of the Hessian matrix (\code{rank.hessian}) \emph{does not} correspond to the number of parameters in the model (\code{n.parameters}) this indicates a serious issue with the identifiability of the model.}
+\item{model.info}{A \code{data.frame} containing other information about the model. If the rank of the Fisher matrix (\code{rank.fisher}) \emph{does not} correspond to the number of parameters in the model (\code{n.parameters}) this indicates a serious issue with the identifiability of the model.}
 \item{parameters}{A data.frame containing the parameter estimates and corresponding confidence intervals. If a restriction file was present, the restricted parameters are marked.}
 \item{data}{A \code{list} of two matrices; the first one (\code{observed}) contains the entered data, the second one (\code{predicted}) contains the predicted values.}
 
@@ -141,7 +141,7 @@ The first elements, \code{goodness.of.fit}, \code{information.criteria}, and \co
 \item{aggregated}{A data.frame containing the parameter estimates and corresponding confidence intervals for the aggregated data. If a restriction file was present, the restricted parameters are marked.}
 The element \code{data} contains two matrices, one with the \code{observed}, and one with the \code{predicted} data.
 
-If \code{n.optim} > 1, the \code{\link{summary}} of the vector (matrix for multi-individual fit) containing the Log-Likelihood values returned by each run of \code{optim} is added to the output.
+If \code{n.optim} > 1, the \code{\link{summary}} of the vector (matrix for multi-individual fit) containing the Log-Likelihood values returned by each run of \code{optim} is added to the output: \code{fitting.runs}
 
 When \code{output == "full"} the list contains the additional items:\cr
 \item{optim.runs}{A list containing the outputs from all runs by \code{nlminb} (including those runs produced when fitting did not converge)}

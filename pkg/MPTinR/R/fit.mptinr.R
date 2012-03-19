@@ -88,8 +88,8 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	}
 	
 	get.model.info <- function(hessian.list, n.params, dgf) {
-		rank_hessian <- sapply(hessian.list, function(x) tryCatch(qr(x)$rank, error = function(e) NA))
-		return(data.frame(rank.hessian = rank_hessian, n.parameters = n.params, n.independent.categories = dgf))
+		rank_hessian <- sapply(hessian.list, function(x) tryCatch(qr(solve(x))$rank, error = function(e) NA))
+		return(data.frame(rank.fisher = rank_hessian, n.parameters = n.params, n.independent.categories = dgf))
 	}
 	
 	get.parameter.table.multi <- function(minim, param.names, n.params, n.data, use.restrictions, inv.hess.list, ci, orig.params){
@@ -439,7 +439,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	outlist <- list(goodness.of.fit = goodness.of.fit, information.criteria = information.criteria, model.info = model.info, parameters = parameters, data = data)
 	#if (!is.null(fia)) outlist <- c(outlist, FIA = fia)
 	
-	if (n.optim > 1) outlist <- c(outlist, summary.llks = list(summary.llks))
+	if (n.optim > 1) outlist <- c(outlist, fitting.runs = list(summary.llks))
 	if (output[1] == "fia" | (output[1] == "full" & !is.null(fia))) outlist <- c(outlist, FIA = list(fia.df))
 	if (output[1] == "full") outlist <- c(outlist, optim.runs = list(optim.runs), best.fits = list(best.fits), hessian = list(hessian.list))
 	
