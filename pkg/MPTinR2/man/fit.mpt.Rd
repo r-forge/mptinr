@@ -72,7 +72,7 @@ Note that you should \emph{close} snowfall via \code{sfStop()} after using MPTin
 
 }
 \value{
-An object of class \code{bmpt} or \code{mpt}. See \code{\link{bmpt-class}} for methods.
+An object of class \code{bmpt} or \code{mpt}. See \code{\link{bmpt-class}} for corresponding methods.
 }
 \note{
 Whenever possible try to write your model as a member of L-BMPT (Purdy & Batchelder, 2009) to use the full functionality of \pkg{MPTinR}.
