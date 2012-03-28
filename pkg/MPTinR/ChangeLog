@@ -1,3 +1,6 @@
+2012-03-28
+		* fixed bug when restricted parameters were not present in the model
+
 2012-03-19
 		* model.info does now return the rank of the Fisher Matrix.
 		* summary.llks was renamed to fitting.runs

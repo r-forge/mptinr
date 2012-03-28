@@ -101,9 +101,17 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	
 	if (!is.null(restrictions.filename)) {
 		use.restrictions <- TRUE
-		restrictions <- .read.MPT.restrictions(restrictions.filename)
+		restrictions.tmp <- .read.MPT.restrictions(restrictions.filename)
+		restricted.parameter <- vapply(restrictions.tmp, "[", "", i = 1)
 		orig.tree <- tree
 		orig.params <- .find.MPT.params(tree)
+		if (any(!restricted.parameter %in% orig.params)) {
+			warning(paste("Restricted parameter(s)",  paste(restricted.parameter[!restricted.parameter %in% orig.params], collapse = ", "), "are not in the original model."))
+			restrictions <- restrictions.tmp[restricted.parameter %in% orig.params]
+			if (length(restrictions) == 0) {
+				use.restrictions <- FALSE
+			}
+		} else restrictions <- restrictions.tmp
 		if (!reparam.ineq) {
 			res.no.ineq <- restrictions
 			for (res in 1:length(restrictions)) if (restrictions[[res]][3] == "<") res.no.ineq[[1]] <- NULL

@@ -57,6 +57,9 @@
 	
 	o	select.mpt now rounds information criteria before determining number of 
 		best fits
+		
+	o	fixed bug when resttricted parameters were not in the original model
+		(now throws a warning, thanks to Alex)
 
 		
 					**************************
