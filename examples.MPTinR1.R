@@ -1,11 +1,11 @@
+##############################################################
+# Example: fit.mpt
 
-
+\examples{
 # The first example fits the MPT model presented in Riefer and Batchelder (1988, Figure 1)
 # to the data presented in Riefer and Batchelder (1988, Table 1)
 # Note that Riefer and Batchelder (1988, pp. 328) did some hypotheses tests, that are not done here.
 # Rather, we use each condition (i.e., row in Table 1) as a different individual.
-# We try to use n.optim = 1 here, but this can lead to local minima
-# In general we recommend to set n.optim >= 5
 
 # load the data
 data(rb.fig1.data, package = "MPTinR")
@@ -25,7 +25,7 @@ fit.model(rb.fig1.data, model1, n.optim = 1)
 #fit all "individuals" using the .EQN model file:
 fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
 
-#fit using a textConnection (i.e., you can specify the model in the code):
+#fit using a textConnection (i.e., you can specify the model in your script/code):
 model1.txt <- "p * q * r
 p * q * (1-r)
 p * (1-q) * r
@@ -78,11 +78,9 @@ c.equal.2 <- fit.mpt(rb.fig2.data, model2, list("c0 = c1 = c2 = c3= c4"))
 all.equal(c.equal, c.equal.2)
 
 
+\dontrun{
 
-
-## Not run: 
-
-# Example from Broeder & Schuetz (2009)
+# Example from Broder & Schutz (2009)
 # We fit the data from the 40 individuals from their Experiment 3
 # We fit three different models:
 # 1. Their 2HTM model: br.2htm
@@ -94,7 +92,7 @@ all.equal(c.equal, c.equal.2)
 # Finally, we compute the FIA for all models, taking inequalities into account when they are imposed.
 # Note: The following examples will take some time (> 1 hour).
 
-data(d.broeder, package = "MPTinR")
+data(d.broeder)
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
 r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
@@ -104,12 +102,7 @@ ir.1htm <- system.file("extdata", "broeder.1htm.restr.ineq", package = "MPTinR")
 
 # fit the original 2HTM
 br.2htm <- fit.mpt(d.broeder, m.2htm)
-br.2htm.2 <- fit.model(d.broeder, m.2htm, n.optim = 5, control = list(), use.hessian = TRUE, output = "full")
-round(br.2htm[["parameters"]][["individual"]] - br.2htm.2[["parameters"]][["individual"]], 2)
-round(br.2htm[["goodness.of.fit"]][["individual"]] - br.2htm.2[["goodness.of.fit"]][["individual"]], 2)
-
 br.2htm.ineq <- fit.mpt(d.broeder, m.2htm, i.2htm)
-br.2htm.ineq <- fit.model(d.broeder, m.2htm, i.2htm)
 
 # do the inequalities hold for all participants?
 br.2htm.ineq[["parameters"]][["individual"]][,"estimates",]
@@ -126,6 +119,10 @@ round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.i
 br.1htm <- fit.mpt(d.broeder, m.2htm, r.1htm)
 br.1htm.ineq <- fit.mpt(d.broeder, m.2htm, ir.1htm)
 round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
+
+# identical to the last fit of the 1HTM (using a list as restriction):
+br.1htm.ineq.list <- fit.mpt(d.broeder, m.2htm, list("G1 < G2 < G3 < G4 < G5", "Dn = 0"))
+all.equal(br.1htm.ineq, br.1htm.ineq.list)  # TRUE
 
 # These results show that we cannot compute inequality constraints for the non inequality imposed models.
 # (It would look differently if we excluded critical cases, e.g., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)
@@ -149,7 +146,8 @@ select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = b
 
 
 
-# compare speed of no multicore versus multicore for multiple optimization runs:
+
+# compare speed of no multicore versus multicore for multiple datasets:
 
 require(snowfall)
 # change number of CPUs if more are available
@@ -157,42 +155,24 @@ nCPU = 2
 sfInit( parallel=TRUE, cpus=nCPU, type = "SOCK" )
 
 # NO multicore
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2))
+system.time(fit.mpt(d.broeder, m.2htm))
 
 # multicore:
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "n.optim"))
-
-system.time(fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 2, multicore = "individual"))
+system.time(fit.mpt(d.broeder, m.2htm, multicore = "individual"))
 
 sfStop()
+}
 
-# fitting the bröder data using multicore:
-
-
-data(d.broeder, package = "MPTinR")
-m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
-r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
-r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
-i.2htm <- system.file("extdata", "broeder.2htm.ineq", package = "MPTinR")
-ir.2htm <- system.file("extdata", "broeder.2htm.restr.ineq", package = "MPTinR")
-ir.1htm <- system.file("extdata", "broeder.1htm.restr.ineq", package = "MPTinR")
-
-# fit the original 2HTM
-system.time(br.2htm.noMC <- fit.mpt(d.broeder, m.2htm))
-system.time(br.2htm.n.optim <- fit.mpt(d.broeder, m.2htm, multicore = "n.optim"))
-system.time(br.2htm.indiv <- fit.mpt(d.broeder, m.2htm, multicore = "individual"))
-
-system.time(br.2htm.ineq.noMC <- fit.mpt(d.broeder, m.2htm, i.2htm))
-system.time(br.2htm.ineq.n.optim <- fit.mpt(d.broeder, m.2htm, i.2htm, multicore = "n.optim"))
-system.time(br.2htm.ineq.indiv <- fit.mpt(d.broeder, m.2htm, i.2htm, multicore = "individual"))
-
-
-## End(Not run)
+  }
 
 ##############################################################
 # Example: fit.model
   
   
+\examples{
+
+\dontrun{
+
 # Example from Broder & Schutz (2009)
 # We fit the data from the 40 individuals from their Experiment 3
 # We fit three different models:
@@ -266,11 +246,18 @@ select.mpt(list(uvsdt = br.uvsdt, evsdt = br.evsdt, two.htm = br.2htm, two.htm.r
 
 # the restricted 2HTM "wins" for individual data (although evsdt does not perform too bad), but the 2htm and restricted 2htm restricted "win" for aggregated data.
 
+}
+
+}
+
 
 
 ##############################################################
 # Example: fit.mptinr
 
+\examples{
+\dontrun{
+# the example may occasionally fail due to a starting values - integration mismatch.
 
 # Fit an SDT for a 4 alternative ranking task (Kellen, Klauer, & Singmann, 2012).
 
@@ -343,4 +330,5 @@ SDTrank <- function(Q, data, param.names, n.params, tmp.env, lower.bound, upper.
 }
 
 fit.mptinr(ranking.data, SDTrank, c("mu", "sigma"), 4, prediction = expSDTrank, lower.bound = c(0,0.1), upper.bound = Inf)
-  
+ }
+}
