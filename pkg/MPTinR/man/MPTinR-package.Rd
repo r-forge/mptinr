@@ -6,7 +6,7 @@
 Fit Multinomial Processing Tree Models
 }
 \description{
-The package provides a user-friendly way for analysis of multinomial processing tree (MPT) models (e.g.,  Riefer, D. M., and Batchelder, W. H. [1988]. Multinomial modeling and the measurement of cognitive processes. Psychological Review, 95, 318-339) for individual and multi-individual data. The main functions perform model fitting and model selection. Model selection can be done using AIC or BIC or the minimum description length measure based on the Fischer information approximation (FIA) for MPT models. The model and restrictions can easily be specified in external files or within an R script. The 'classical' .EQN file format for model files is also supported. Besides MPTs MPTinR can fit a wide variety of other cognitive models such as SDT models (see fit.model). MPTinR supports multicore fitting using the snowfall package.
+The package provides a user-friendly way for analysis of multinomial processing tree (MPT) models (e.g.,  Riefer, D. M., and Batchelder, W. H. [1988]. Multinomial modeling and the measurement of cognitive processes. Psychological Review, 95, 318-339) for individual and multi-individual data. The main functions perform model fitting and model selection. Model selection can be done using AIC or BIC or the minimum description length measure based on the Fischer information approximation (FIA) for MPT models. The model and restrictions can easily be specified in external files or within an R script. The 'classical' .EQN file format for model files is also supported. Besides MPTs, MPTinR can fit a wide variety of other cognitive models such as SDT models (see fit.model). MPTinR supports multicore fitting using the snowfall package.
 }
 \details{
 \tabular{ll}{
@@ -17,7 +17,7 @@ Date: \tab 2012-04-13\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
-To fit MPT Models use \code{fit.mpt}, to fit other models use \code{\link{fit.model}} or \code{\link{fit.mptinr}} (which is called by the other two functions).
+To fit MPT Models use \code{\link{fit.mpt}}, to fit other models use \code{\link{fit.model}} or \code{\link{fit.mptinr}} (which is called by the other two functions).
 
 For model selection use \code{\link{select.mpt}}.
 
