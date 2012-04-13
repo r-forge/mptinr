@@ -169,6 +169,8 @@ In these cases it is recommended to rerun fit.mpt to check if the results are st
 \references{
 Baldi, P. & Batchelder, W. H. (2003). Bounds on variances of estimators for multinomial processing tree models. \emph{Journal of Mathematical Psychology}, 47, 467-470. 
 
+Broder, A., & Schutz, J. (2009). Recognition ROCs are curvilinear-or are they? On premature arguments against the two-high-threshold model of recognition. \emph{Journal of Experimental Psychology: Learning, Memory, and Cognition}, 35(3), 587. doi:10.1037/a0015279
+
 Byrd, R. H., Lu, P., Nocedal, J., & Zhu, C. (1995). A limited memory algorithm for bound constrained optimization. \emph{SIAM J. Scientific Computing}, 16, 1190-1208.
 
 Fox P (1997). \emph{The Port Mathematical Subroutine Library, Version 3}. AT&T Bell Laboratories, Murray Hill, NJ. URL \url{http://www.bell-labs.com/project/PORT/}.
