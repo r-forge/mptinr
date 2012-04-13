@@ -281,7 +281,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	dgf <- sum(categories.per.type) - length(categories.per.type)
 	
 	data.smaller.5 <- t(apply(data, 1, function(x) x < 5))
-	if (any(data.smaller.5)) warning(paste("Categories have n < 5! Do NOT trust these CIs. Dataset:", paste((1:n.data)[apply(data.smaller.5, 1, any)], collapse = " "), sep = ""))
+	# if (any(data.smaller.5)) warning(paste("Categories have n < 5! Do NOT trust these CIs. Dataset:", paste((1:n.data)[apply(data.smaller.5, 1, any)], collapse = " "), sep = ""))
 	
 	tmpllk.env <- new.env()
 	#attach(tmpllk.env)

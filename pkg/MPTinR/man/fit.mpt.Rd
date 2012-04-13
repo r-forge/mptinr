@@ -35,7 +35,7 @@ Either a \emph{numeric} \code{vector} for individual fit or a \emph{numeric} \co
 A character \code{vector} specifying the location and name of the model file. 
 }
   \item{restrictions.filename}{
-\code{NULL} or a character \code{vector} specifying the location and name of the restrictions file. Default is \code{NULL} which corresponds to no restrictions.
+\code{NULL} or a character \code{vector} or a \code{list} of characters. The default is \code{NULL} which corresponds to no restrictions. A character \code{vector} specifies the location or name of the restrictions file. A \code{list} of characters contains the restrictions directly. See Details and Examples.
 }
   \item{n.optim}{
 Number of optimization runs. Can be parallelized via \code{multicore}. Default is 5. If the number is high, fitting can take long for \emph{large} models.
@@ -99,13 +99,16 @@ Examples of restrictions are (the following could all appear in one restrictions
 \code{D4 = D3}\cr
 \code{B1 = B3 = 0.3333}\cr
 \code{X4 = X5 = D3}\cr
-Lines in a restrictions file containing a hash (#) \emph{at any position} will be skipped/ignored.
+Lines in a restrictions file containing a hash (#) \emph{at any position} will be skipped/ignored.\cr
+The same restrictions as a \code{list} would be \code{list("D1 < D2 < D3", "D4 = D3", "B1 = B3 = 0.3333", "X4 = X5 = D3")} (simply use this \code{list} as the \code{restrictions.filename} argument).
 
 For equality restrictions, the equality restricted parameters are simply exchanged with their restrictions before the fitting.\cr
 For inequality restricted parameters, the model is reparametrized so that only the rightmost parameter of an inequality restriction remains the original parameter. Each instance of the other parameters in this restriction is replaced by the product of the rightmost parameter and dummy parameters (see Knapp & Batchelder, 2004). This procedure (which is equivalent to method A desribed in Knapp & Batchelder, 2004) leads to an equivalent model (although the binary MPT structure is not apparent in the resulting equations).\cr
 To prohibit this reparametrization (i.e., if the inequality restrictions hold without reparametrization), you can set \code{reparam.ineq} to \code{FALSE}. This can be useful for obtaining the FIA (see examples in Wu, Myung, & Batchelder, 2010).
 
-Both models and restrictions can be specified as \code{\link{textConnection}}s instead of as external files. \code{\link{fit.model}} contains additional examples showing the use. Note that textConnections get "consumed" so you need to specify them each time you fit a model using a connection.
+Both models and restrictions can be specified as \code{\link{textConnection}}s instead of as external files.\cr
+Furthermore, restrictions can be specified directly as a \code{list} containing the restrictions (quoted, i.e. as characters).\cr
+\code{\link{fit.model}} contains additional examples showing model and restrictions specification within the code.
 
 To obtain a measure of the model's complexity beyond the number of parameters (and taking inequality restrictions into account), set \code{fia} to a (reasonably high) scalar integer (i.e., a number). Then, \code{fit.mpt} will obtain the Fisher information approximation (FIA), a minimum description based measure of model complexity, using the algorithm provided by Wu, Myung, & Batchelder (2010a, 2010b) ported from Matlab to R. When performing model-selection, this measure is superior to other methods such as the Akaike information criterion (AIC) or Bayesian information criterion (BIC) which basically only take the number of parameters into account.\cr
 To get the FIA, \code{fit.mpt} performs the following steps:\cr
@@ -198,27 +201,30 @@ All (model or restriction) files should end with an empty line, otherwise a warn
 # Rather, we use each condition (i.e., row in Table 1) as a different individual.
 
 # load the data
-data(rb.fig1.data)
+data(rb.fig1.data, package = "MPTinR")
 
 #get the character string with the position of the model:
 model1 <- system.file("extdata", "rb.fig1.model", package = "MPTinR")
 model1.eqn <- system.file("extdata", "rb.fig1.model.eqn", package = "MPTinR")
 
 # just fit the first "individual":
-fit.mpt(rb.fig1.data[1,], model1)
+fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
+fit.model(rb.fig1.data[1,], model1, n.optim = 1)
 
 #fit all "individuals":
-fit.mpt(rb.fig1.data, model1)
+fit.mpt(rb.fig1.data, model1, n.optim = 1)
+fit.model(rb.fig1.data, model1, n.optim = 1)
 
 #fit all "individuals" using the .EQN model file:
-fit.mpt(rb.fig1.data, model1.eqn)
+fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
 
-#fit using a textConnection (i.e., you can specify the model in the code):
-model1.connection <- textConnection("p * q * r
+#fit using a textConnection (i.e., you can specify the model in your script/code):
+model1.txt <- "p * q * r
 p * q * (1-r)
 p * (1-q) * r
-p * (1-q) * (1-r) + (1-p)")
-fit.mpt(rb.fig1.data, model1.connection)
+p * (1-q) * (1-r) + (1-p)"
+fit.mpt(rb.fig1.data, textConnection(model1.txt), n.optim = 1)
+
 
 
 # The second example fits the MPT model presented in Riefer and Batchelder (1988, Figure 2)
@@ -254,6 +260,15 @@ model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 (g.sq.c.equal <- c.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
 (df.c.equal <- c.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
 (p.value.c.equal <- pchisq(g.sq.c.equal, df.c.equal , lower.tail = FALSE))
+
+# You can specify restrictions also via a list instead of an external file:
+# All r equal
+r.equal.2 <- fit.mpt(rb.fig2.data, model2, list("r0 = r1 = r2= r3 = r4"), n.optim = 5)
+all.equal(r.equal, r.equal.2)
+
+# All c equal
+c.equal.2 <- fit.mpt(rb.fig2.data, model2, list("c0 = c1 = c2 = c3= c4"))
+all.equal(c.equal, c.equal.2)
 
 
 \dontrun{
@@ -297,6 +312,10 @@ round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.i
 br.1htm <- fit.mpt(d.broeder, m.2htm, r.1htm)
 br.1htm.ineq <- fit.mpt(d.broeder, m.2htm, ir.1htm)
 round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
+
+# identical to the last fit of the 1HTM (using a list as restriction):
+br.1htm.ineq.list <- fit.mpt(d.broeder, m.2htm, list("G1 < G2 < G3 < G4 < G5", "Dn = 0"))
+all.equal(br.1htm.ineq, br.1htm.ineq.list)  # TRUE
 
 # These results show that we cannot compute inequality constraints for the non inequality imposed models.
 # (It would look differently if we excluded critical cases, e.g., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)

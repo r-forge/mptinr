@@ -31,7 +31,7 @@ Either a \emph{numeric} \code{vector} for individual fit or a \emph{numeric} \co
 A character \code{vector} specifying the location and name of the model file. 
 }
   \item{restrictions.filename}{
-\code{NULL} or a character \code{vector} specifying the location and name of the restrictions file. Default is \code{NULL} which corresponds to no restrictions.
+\code{NULL} or a character \code{vector} or a \code{list} of characters. The default is \code{NULL} which corresponds to no restrictions. A character \code{vector} specifies the location or name of the restrictions file. A \code{list} of characters contains the restrictions directly.
 }
   \item{n.optim}{
 Number of optimization runs. Can be parallelized via \code{multicore}. Default is 5. If the number is high, fitting can take long for \emph{large} models.
@@ -155,6 +155,9 @@ In these cases it is recommended to rerun \code{fit.mpt.old} to check if the res
 \references{
 Baldi, P. & Batchelder, W. H. (2003). Bounds on variances of estimators for multinomial processing tree models. \emph{Journal of Mathematical Psychology}, 47, 467-470. 
 
+Broeder, A., & Schuetz, J. (2009). Recognition ROCs are curvilinear-or are they? On premature arguments against the two-high-threshold model of recognition. \emph{Journal of Experimental Psychology: Learning, Memory, and Cognition}, 35(3), 587. doi:10.1037/a0015279
+
+
 Byrd, R. H., Lu, P., Nocedal, J., & Zhu, C. (1995). A limited memory algorithm for bound constrained optimization. \emph{SIAM J. Scientific Computing}, 16, 1190-1208.
 
 Knapp, B. R., & Batchelder, W. H. (2004). Representing parametric order constraints in multi-trial applications of multinomial processing tree models. \emph{Journal of Mathematical Psychology}, 48, 215-229.
@@ -179,6 +182,9 @@ All (model or restriction) files should end with an empty line, otherwise a warn
 }
 
 \examples{
+
+\dontrun{
+
 # The first example fits the MPT model presented in Riefer and Batchelder (1988, Figure 1)
 # to the data presented in Riefer and Batchelder (1988, Table 1)
 # Note that Riefer and Batchelder (1988, pp. 328) did some hypotheses tests, that are not done here.
@@ -239,8 +245,6 @@ model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 (df.c.equal <- c.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
 (p.value.c.equal <- pchisq(g.sq.c.equal, df.c.equal , lower.tail = FALSE))
 
-
-\dontrun{
 
 # Example from Broeder & Schuetz (2009)
 # We fit the data from the 40 individuals from their Experiment 3

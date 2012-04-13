@@ -26,11 +26,11 @@ fit.model(rb.fig1.data, model1, n.optim = 1)
 fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
 
 #fit using a textConnection (i.e., you can specify the model in the code):
-model1.connection <- textConnection("p * q * r
+model1.txt <- "p * q * r
 p * q * (1-r)
 p * (1-q) * r
-p * (1-q) * (1-r) + (1-p)")
-fit.mpt(rb.fig1.data, model1.connection, n.optim = 1)
+p * (1-q) * (1-r) + (1-p)"
+fit.mpt(rb.fig1.data, textConnection(model1.txt), n.optim = 1)
 
 
 
@@ -40,10 +40,9 @@ fit.mpt(rb.fig1.data, model1.connection, n.optim = 1)
 # Next, the model with all r set equal is fitted: r.equal
 # Then, the model with all c set equal is fitted: c.equal
 # Finally, the inferential tests reported by Riefer & Batchelder, (1988, p. 332) are executed.
-# Note, that n.optim = 10, because of frequent local minima.
 
 # get the data
-data(rb.fig2.data, package = "MPTinR")
+data(rb.fig2.data)
 
 # positions of model and restriction files:
 model2 <- system.file("extdata", "rb.fig2.model", package = "MPTinR")
@@ -51,16 +50,13 @@ model2r.r.eq <- system.file("extdata", "rb.fig2.r.equal", package = "MPTinR")
 model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 
 # The full (i.e., unconstrained) model
-(ref.model <- fit.mpt(rb.fig2.data, model2, n.optim = 10))
-(ref.model <- fit.model(rb.fig2.data, model2, n.optim = 10))
+(ref.model <- fit.mpt(rb.fig2.data, model2))
 
 # All r equal
-(r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq, n.optim = 10))
-(r.equal <- fit.model(rb.fig2.data, model2, model2r.r.eq, n.optim = 10))
+(r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq))
 
 # All c equal
-(c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq, n.optim = 10))
-(c.equal <- fit.model(rb.fig2.data, model2, model2r.c.eq, n.optim = 10))
+(c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq))
 
 # is setting all r equal a good idea?
 (g.sq.r.equal <- r.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
@@ -71,6 +67,17 @@ model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 (g.sq.c.equal <- c.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
 (df.c.equal <- c.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
 (p.value.c.equal <- pchisq(g.sq.c.equal, df.c.equal , lower.tail = FALSE))
+
+# You can specify restrictions also via a list instead of an external file:
+# All r equal
+r.equal.2 <- fit.mpt(rb.fig2.data, model2, list("r0 = r1 = r2= r3 = r4"), n.optim = 5)
+all.equal(r.equal, r.equal.2)
+
+# All c equal
+c.equal.2 <- fit.mpt(rb.fig2.data, model2, list("c0 = c1 = c2 = c3= c4"))
+all.equal(c.equal, c.equal.2)
+
+
 
 
 ## Not run: 
@@ -182,4 +189,158 @@ system.time(br.2htm.ineq.indiv <- fit.mpt(d.broeder, m.2htm, i.2htm, multicore =
 
 ## End(Not run)
 
+##############################################################
+# Example: fit.model
+  
+  
+# Example from Broder & Schutz (2009)
+# We fit the data from the 40 individuals from their Experiment 3
+# We fit three different models:
+# 1. Their SDT Model: br.sdt
+# 2. Their 2HTM model: br.2htm
+# 3. A restricted 2HTM model with Dn = Do: br.2htm.res
+# 4. A 1HTM model (i.e., Dn = 0): br.1htm
+
+data(d.broeder, package = "MPTinR")
+m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
+
+
+# We specify the SDT model in the code using a textConnection.
+# Note that a textCconnection can only be used once. Then you need to call it again (e.g., after calling check.mpt)!
+
+m.sdt <- "
+1-pnorm((cr1-mu)/ss)
+pnorm((cr1-mu)/ss)
+
+1-pnorm(cr1)
+pnorm(cr1)
+
+1-pnorm((cr2-mu)/ss)
+pnorm((cr2-mu)/ss)
+
+1-pnorm(cr2)
+pnorm(cr2)
+
+1-pnorm((cr3-mu)/ss)
+pnorm((cr3-mu)/ss)
+
+1-pnorm(cr3)
+pnorm(cr3)
+
+1-pnorm((cr4-mu)/ss)
+pnorm((cr4-mu)/ss)
+
+1-pnorm(cr4)
+pnorm(cr4)
+
+1-pnorm((cr5-mu)/ss)
+pnorm((cr5-mu)/ss)
+
+1-pnorm(cr5)
+pnorm(cr5)
+"
+
+# How does the model look like?
+check.mpt(textConnection(m.sdt))
+
+# fit the SDT (unequal variance version)
+br.uvsdt <- fit.model(d.broeder, textConnection(m.sdt), lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
+
+# Is there any effect of studying the items?
+br.uvsdt.2 <- fit.model(d.broeder, textConnection(m.sdt), restrictions.filename = list("mu = 0", "ss = 1"), lower.bound = -Inf, upper.bound = Inf)
+
+(diff.g2 <- br.uvsdt.2[["goodness.of.fit"]][["sum"]][["G.Squared"]] - br.uvsdt[["goodness.of.fit"]][["sum"]][["G.Squared"]])
+(diff.df <- br.uvsdt.2[["goodness.of.fit"]][["sum"]][["df"]] - br.uvsdt[["goodness.of.fit"]][["sum"]][["df"]])
+1 - pchisq(diff.g2, diff.df)
+
+# fit the equal variance SDT model:
+br.evsdt <- fit.model(d.broeder, textConnection(m.sdt), lower.bound = c(rep(-Inf, 5), 0), upper.bound = Inf, restrictions.filename = list("ss = 1"))
+
+# fit the MPTs (see also ?fit.mpt).
+# In contrast to ?fit.mpt we specify the restrictions using textConnections!
+br.2htm <- fit.mpt(d.broeder, m.2htm)
+br.2htm.res <- fit.mpt(d.broeder, m.2htm, textConnection("Do = Dn"))
+br.1htm <- fit.mpt(d.broeder, m.2htm, textConnection("Dn = 0"))
+
+select.mpt(list(uvsdt = br.uvsdt, evsdt = br.evsdt, two.htm = br.2htm, two.htm.res = br.2htm.res, one.htm = br.1htm), output = "full")
+
+# the restricted 2HTM "wins" for individual data (although evsdt does not perform too bad), but the 2htm and restricted 2htm restricted "win" for aggregated data.
+
+
+
+##############################################################
+# Example: fit.mptinr
+
+
+# Fit an SDT for a 4 alternative ranking task (Kellen, Klauer, & Singmann, 2012).
+
+ranking.data <- structure(c(39, 80, 75, 35, 61, 54, 73, 52, 44, 63, 40, 48, 80,
+49, 43, 80, 68, 53, 81, 60, 60, 65, 49, 58, 69, 75, 71, 47, 44,
+85, 23, 9, 11, 21, 12, 21, 14, 20, 19, 15, 29, 13, 14, 15, 22,
+11, 12, 16, 13, 20, 20, 9, 26, 19, 13, 9, 14, 15, 24, 9, 19,
+7, 9, 26, 16, 14, 6, 17, 21, 14, 20, 18, 5, 19, 17, 5, 11, 21,
+4, 9, 15, 17, 7, 17, 11, 11, 9, 19, 20, 3, 19, 4, 5, 18, 11,
+11, 7, 11, 16, 8, 11, 21, 1, 17, 18, 4, 9, 10, 2, 11, 5, 9, 18,
+6, 7, 5, 6, 19, 12, 3), .Dim = c(30L, 4L))
+
+expSDTrank <- function(Q, param.names, n.params, tmp.env){
+   
+    e <- vector("numeric",4)
+
+    mu <- Q[1]
+    ss <- Q[2]
+       
+    G1<-function(x){
+        ((pnorm(x)^3)*dnorm(x,mean=mu,sd=ss))
+    }
+
+    G2<-function(x){
+        ((pnorm(x)^2)*dnorm(x,mean=mu,sd=ss)*(1-pnorm(x)))*3
+    }
+
+     G3<-function(x){
+        (pnorm(x)*dnorm(x,mean=mu,sd=ss)*(1-pnorm(x))^2)*3
+    }
+ 
+
+    e[1] <- integrate(G1,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value    
+    e[2] <- integrate(G2,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value
+    e[3] <- integrate(G3,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value
+    e[4] <- 1-e[1]-e[2]-e[3]  
+   
+    return(e)
+}
+
+
+
+SDTrank <- function(Q, data, param.names, n.params, tmp.env, lower.bound, upper.bound){
+   
+    e<-vector("numeric",4)
+
+    mu <- Q[1]
+    ss <- Q[2]
+       
+    G1<-function(x){
+        ((pnorm(x)^3)*dnorm(x,mean=mu,sd=ss))
+    }
+
+    G2<-function(x){
+        ((pnorm(x)^2)*dnorm(x,mean=mu,sd=ss)*(1-pnorm(x)))*3
+    }
+
+     G3<-function(x){
+        (pnorm(x)*dnorm(x,mean=mu,sd=ss)*(1-pnorm(x))^2)*3
+    }
+ 
+
+    e[1] <- integrate(G1,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value    
+    e[2] <- integrate(G2,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value
+    e[3] <- integrate(G3,-Inf,Inf,rel.tol = .Machine$double.eps^0.5)$value
+    e[4] <- 1-e[1]-e[2]-e[3]  
+   
+    LL <- -sum(data[data!=0]*log(e[data!=0]))
+    return(LL)
+}
+
+fit.mptinr(ranking.data, SDTrank, c("mu", "sigma"), 4, prediction = expSDTrank, lower.bound = c(0,0.1), upper.bound = Inf)
   

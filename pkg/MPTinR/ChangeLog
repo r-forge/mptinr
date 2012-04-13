@@ -1,3 +1,8 @@
+2012-04-13
+		* removed warning when cell counts are < 5
+		* restrictions.filename can now be a list of characters
+		* worked on examples (textConnections moved in the call to fit.mpt)
+
 2012-03-28
 		* fixed bug when restricted parameters were not present in the model
 

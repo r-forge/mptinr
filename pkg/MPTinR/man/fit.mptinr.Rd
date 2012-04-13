@@ -178,7 +178,8 @@ Warnings may relate to the optimization routine (e.g., \code{Optimization routin
 In these cases it is recommended to rerun the model to check if the results are stable.
 }
 \references{
-none
+Kellen, D., Klauer, K. C., & Singmann, H. (2012). On the Measurement of Criterion Noise in Signal Detection Theory: The Case of Recognition Memory. \emph{Psychological Review}. doi:10.1037/a0027727
+
 }
 \author{
 Henrik Singmann and David Kellen.
@@ -189,9 +190,9 @@ All (model or restriction) files should end with an empty line, otherwise a warn
 
 \examples{
 \dontrun{
-# the example is in a not run block as it may occasionally fail due to a starting values - integration mismatch.
+# the example may occasionally fail due to a starting values - integration mismatch.
 
-# Fit an SDT for a 4 alternative ranking task (Kellen, Klauer, & Singmann, under review).
+# Fit an SDT for a 4 alternative ranking task (Kellen, Klauer, & Singmann, 2012).
 
 ranking.data <- structure(c(39, 80, 75, 35, 61, 54, 73, 52, 44, 63, 40, 48, 80,
 49, 43, 80, 68, 53, 81, 60, 60, 65, 49, 58, 69, 75, 71, 47, 44,

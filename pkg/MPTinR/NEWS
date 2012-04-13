@@ -7,18 +7,18 @@
 
 	Significant User Visible Changes and new Features
 	
-	o	fit.model now contains an example of how to fit a SDT. see ?fit.model. 
+	o	fit.mpt and fit.model (see version 0.7.0) are now just wrappers around 
+		the new function fit.mptinr. They produce the appropirate objective, gradient,
+		hessian, and prediction function to fit the model.
+		
+	o	fit.model contains an example of how to fit a SDT. see ?fit.model. 
 		Dont forget to set lower.bound and upper.bound when fitting non-MPT models.
 	
 	o	fit.mptinr is a new function that takes an arbitrary objective function and 
 		possibly a gradient, hessian and prediction function to fit categorical
 		data (see examples in ?fit.model).
 	
-	o	fit.mpt and fit.model (see version 0.7.0) are now just wrappers around 
-		the new function fit.mptinr. They produce the appropirate objective, gradient,
-		hessian, and prediction function to fit the model.
-	
-	o	fitting for MPT and similar models is now done using a gradient function,
+	o	fitting for MPT and similar models is done using a gradient function,
 		which significantly improves fitting speed. In the rare cases where fitting 
 		fails using the gradient a numerical gradient is still used (with warning).
 		
@@ -30,7 +30,8 @@
 		(using L-BFGS-B is available in fit.mpt.old)
 	
 	o	models and restrictions can now be specified using textConnections instead of 
-		only external files. See examples in ?fit.mpt and especially ?fit.model.
+		only external files. See examples in ?fit.mpt and especially ?fit.model. 
+		restrictions can be specified as a list of characters.
 	
 	o	added make.mdt, a function to make .mdt data files which can be read by multiTree 
 		or HMMTree.
@@ -41,7 +42,7 @@
 	o	expanded check.mpt functionality (now gives number of categories and df)
 	
 	o	all fitting functions have the argument fit.aggregated to indicate whether or not
-		the aggregated data (for multiple datasets) should be fitted.
+		the aggregated data (for multiple datasets) should be fitted. Default is TRUE
 	
 	o	summary.llks was renamed to fitting.runs
 	
@@ -57,6 +58,8 @@
 	
 	o	select.mpt now rounds information criteria before determining number of 
 		best fits
+	
+	o	no more warnings by cell counts below 5 (seems unprincipled)
 		
 	o	fixed bug when resttricted parameters were not in the original model
 		(now throws a warning, thanks to Alex)

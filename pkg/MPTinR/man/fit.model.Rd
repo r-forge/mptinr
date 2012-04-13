@@ -38,7 +38,7 @@ Either a \emph{numeric} \code{vector} for individual fit or a \emph{numeric} \co
 A character \code{vector} specifying the location and name of the model file. 
 }
   \item{restrictions.filename}{
-\code{NULL} or a character \code{vector} specifying the location and name of the restrictions file. Default is \code{NULL} which corresponds to no restrictions.
+\code{NULL} or a character \code{vector} or a \code{list} of characters. The default is \code{NULL} which corresponds to no restrictions. A character \code{vector} specifies the location or name of the restrictions file. A \code{list} of characters contains the restrictions directly. See Details and Examples.
 }
   \item{n.optim}{
 Number of optimization runs. Can be parallelized via \code{multicore}. Default is 5. If the number is high, fitting can take long for \emph{large} models.
@@ -154,7 +154,7 @@ Warnings may relate to the optimization routine (e.g., \code{Optimization routin
 In these cases it is recommended to rerun the model to check if the results are stable.
 }
 \references{
-none
+Broder, A., & Schutz, J. (2009). Recognition ROCs are curvilinear-or are they? On premature arguments against the two-high-threshold model of recognition. \emph{Journal of Experimental Psychology: Learning, Memory, and Cognition}, 35(3), 587. doi:10.1037/a0015279
 }
 \author{
 Henrik Singmann and David Kellen.
@@ -164,6 +164,8 @@ All (model or restriction) files should end with an empty line, otherwise a warn
 }
 
 \examples{
+
+\dontrun{
 
 # Example from Broder & Schutz (2009)
 # We fit the data from the 40 individuals from their Experiment 3
@@ -180,7 +182,7 @@ m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 # We specify the SDT model in the code using a textConnection.
 # Note that a textCconnection can only be used once. Then you need to call it again (e.g., after calling check.mpt)!
 
-m.sdt <- textConnection("
+m.sdt <- "
 1-pnorm((cr1-mu)/ss)
 pnorm((cr1-mu)/ss)
 
@@ -210,10 +212,23 @@ pnorm((cr5-mu)/ss)
 
 1-pnorm(cr5)
 pnorm(cr5)
-")
+"
 
-# fit the SDT
-br.sdt <- fit.model(d.broeder, m.sdt, lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
+# How does the model look like?
+check.mpt(textConnection(m.sdt))
+
+# fit the SDT (unequal variance version)
+br.uvsdt <- fit.model(d.broeder, textConnection(m.sdt), lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
+
+# Is there any effect of studying the items?
+br.uvsdt.2 <- fit.model(d.broeder, textConnection(m.sdt), restrictions.filename = list("mu = 0", "ss = 1"), lower.bound = -Inf, upper.bound = Inf)
+
+(diff.g2 <- br.uvsdt.2[["goodness.of.fit"]][["sum"]][["G.Squared"]] - br.uvsdt[["goodness.of.fit"]][["sum"]][["G.Squared"]])
+(diff.df <- br.uvsdt.2[["goodness.of.fit"]][["sum"]][["df"]] - br.uvsdt[["goodness.of.fit"]][["sum"]][["df"]])
+1 - pchisq(diff.g2, diff.df)
+
+# fit the equal variance SDT model:
+br.evsdt <- fit.model(d.broeder, textConnection(m.sdt), lower.bound = c(rep(-Inf, 5), 0), upper.bound = Inf, restrictions.filename = list("ss = 1"))
 
 # fit the MPTs (see also ?fit.mpt).
 # In contrast to ?fit.mpt we specify the restrictions using textConnections!
@@ -221,9 +236,11 @@ br.2htm <- fit.mpt(d.broeder, m.2htm)
 br.2htm.res <- fit.mpt(d.broeder, m.2htm, textConnection("Do = Dn"))
 br.1htm <- fit.mpt(d.broeder, m.2htm, textConnection("Dn = 0"))
 
-select.mpt(list(sdt = br.sdt, two.htm = br.2htm, two.htm.res = br.2htm.res, one.htm = br.1htm), output = "full")
+select.mpt(list(uvsdt = br.uvsdt, evsdt = br.evsdt, two.htm = br.2htm, two.htm.res = br.2htm.res, one.htm = br.1htm), output = "full")
 
-# the restricted 2HTM "wins" for individual data, but the 2htm and restricted 2htm restricted "win" for aggregated data.
+# the restricted 2HTM "wins" for individual data (although evsdt does not perform too bad), but the 2htm and restricted 2htm restricted "win" for aggregated data.
+
+}
 
 }
 
