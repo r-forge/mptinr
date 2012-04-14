@@ -42,7 +42,7 @@ fit.mpt(rb.fig1.data, textConnection(model1.txt), n.optim = 1)
 # Finally, the inferential tests reported by Riefer & Batchelder, (1988, p. 332) are executed.
 
 # get the data
-data(rb.fig2.data)
+data(rb.fig2.data, package = "MPTinR")
 
 # positions of model and restriction files:
 model2 <- system.file("extdata", "rb.fig2.model", package = "MPTinR")
@@ -92,7 +92,7 @@ all.equal(c.equal, c.equal.2)
 # Finally, we compute the FIA for all models, taking inequalities into account when they are imposed.
 # Note: The following examples will take some time (> 1 hour).
 
-data(d.broeder)
+data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
 r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")

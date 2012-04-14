@@ -1,4 +1,8 @@
 2012-04-13
+		* data element now contains indidivudal and aggregated data
+		* more work on bug when paramaters in restrictions are not in model 
+
+2012-04-13
 		* removed warning when cell counts are < 5
 		* restrictions.filename can now be a list of characters
 		* worked on examples (textConnections moved in the call to fit.mpt)

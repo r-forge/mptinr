@@ -430,9 +430,20 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	} else {
 		parameters <- get.parameter.table.single(minim[[1]], param.names, n.params, use.restrictions, inv.hess.list[[1]], ci, sort.param = sort.param, orig.params)
 	}
-	if (!is.null(prediction)) predictions <- get.predicted.values(minim = minim, prediction = prediction, data = data, tmp.env = tmpllk.env, n_items.per.type = n_items.per.type, param.names = param.names, n.params = n.params, n.data = n.data, ...)
-	else predictions <- list()
-	data <- list(observed = data, predicted = predictions)
+	if (!is.null(prediction)) {
+		if (multiFit) {
+			predictions <- list(individual = get.predicted.values(minim = minim, prediction = prediction, data = data, tmp.env = tmpllk.env, n_items.per.type = n_items.per.type, param.names = param.names, n.params = n.params, n.data = n.data, ...))
+			if (fit.aggregated) {
+				n_items.per.type.agg <- n.items.per.type(categories.per.type, data.pooled)
+				predictions = c(predictions, aggregated = list(get.predicted.values(minim = res.optim.pooled$minim, prediction = prediction, data = data.pooled, tmp.env = tmpllk.env, n_items.per.type = n_items.per.type.agg, param.names = param.names, n.params = n.params, n.data = 1, ...)))
+			}
+		} else predictions <- get.predicted.values(minim = minim, prediction = prediction, data = data, tmp.env = tmpllk.env, n_items.per.type = n_items.per.type, param.names = param.names, n.params = n.params, n.data = n.data, ...)
+	} else predictions <- list()
+	if (multiFit) {
+		if (fit.aggregated) data.out <- list(individual = data, aggregated = data.pooled)
+		else data.out <- list(individual = data)
+	} else data.out <- data
+	data <- list(observed = data.out, predicted = predictions)
 	
 	if (multiFit) if (!is.null(fia.agg)) fia.df <- list(individual = fia.df, aggregated = fia.agg)
 	
