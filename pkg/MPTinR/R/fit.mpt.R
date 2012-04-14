@@ -78,8 +78,21 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 		restricted.parameter <- vapply(restrictions.tmp, "[", "", i = 1)
 		orig.tree <- tree
 		orig.params <- .find.MPT.params(tree)
+		#browser()
 		if (any(!restricted.parameter %in% orig.params)) {
-			warning(paste("Restricted parameter(s)",  paste(restricted.parameter[!restricted.parameter %in% orig.params], collapse = ", "), "are not in the original model."))
+			warning(paste("Restricted parameter(s)",  paste(restricted.parameter[!restricted.parameter %in% orig.params], collapse = ", "), "is/are not in the original model."))
+			restrictions <- restrictions.tmp[restricted.parameter %in% orig.params]
+			if (length(restrictions) == 0) {
+				use.restrictions <- FALSE
+			}
+			restrictions.tmp <- restrictions
+		} else restrictions <- restrictions.tmp
+		restricted.parameter <- vapply(restrictions.tmp, "[", "", i = 2)
+		orig.tree <- tree
+		orig.params <- .find.MPT.params(tree)
+		#browser()
+		if (any(!restricted.parameter %in% orig.params)) {
+			warning(paste("Restricted parameter(s)",  paste(restricted.parameter[!restricted.parameter %in% orig.params], collapse = ", "), "is/are not in the original model."))
 			restrictions <- restrictions.tmp[restricted.parameter %in% orig.params]
 			if (length(restrictions) == 0) {
 				use.restrictions <- FALSE
