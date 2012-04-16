@@ -3,10 +3,14 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 	if(!is.list(mpt.results)) stop("mpt.results need to be a list.")
 	if(length(mpt.results)< 2) stop("length(mpt.results) needs to be >= 2.") 
 	n.models <- length(mpt.results)
+	class.data <- vapply(mpt.results, function(x) class(x[["data"]][["observed"]]), "")
+	if (!all(class.data == class.data[1])) stop("observed data from results differ (i.e., some seem to be individual data others not)")
 	observed.data <- lapply(mpt.results, function(x) return(x[["data"]][["observed"]]))
 	equal.data <- sapply(observed.data, function(x) identical(observed.data[[1]],x))
 	if(!all(equal.data)) stop("observed data for the models differ.")
-	n.data <- dim(observed.data[[1]])[1]
+	if (is.matrix(observed.data[[1]])) n.data <- dim(observed.data[[1]])[1]
+	if (is.list(observed.data[[1]])) n.data <- dim(observed.data[[1]][[1]])[1]
+	else stop("problem with data object of mpt.results")
 	if (!is.null(names(mpt.results))) m.names <- names(mpt.results)
 	else m.names <- 1:n.models
 	

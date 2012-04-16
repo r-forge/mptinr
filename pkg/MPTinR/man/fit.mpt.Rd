@@ -339,7 +339,13 @@ br.select[order(br.select[,"delta.FIA.sum"]),]
 # Compare this with the model selection not using FIA:
 select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = br.2htm.res, res.2htm.ineq = br.2htm.res.ineq, orig.1htm = br.1htm, orig.1htm.ineq = br.1htm.ineq))
 
+# Only use the aggregated data:
+d.broeder.agg <- colSums(d.broeder)
+br.2htm.agg <- fit.mpt(d.broeder.agg, m.2htm)
+br.2htm.res.agg <- fit.mpt(d.broeder.agg, m.2htm, r.2htm)
+br.1htm.agg <- fit.mpt(d.broeder.agg, m.2htm, r.1htm)
 
+select.mpt(list(orig.2htm = br.2htm.agg, res.2htm = br.2htm.res.agg, orig.1htm = br.1htm.agg), output = "full")
 
 
 # compare speed of no multicore versus multicore for multiple datasets:

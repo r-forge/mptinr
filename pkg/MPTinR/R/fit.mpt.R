@@ -71,40 +71,31 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	
 	orig.params <- NULL
 	use.restrictions <- FALSE
+	
+	# check if restrictions is connection and if it is needed later again:
+	class.restr <- class(restrictions.filename)
+	if (!is.null(restrictions.filename) & !is.null(fia) & ("connection" %in% class.restr)) {
+		tmp.restr <- readLines(restrictions.filename)
+		restrictions.filename <- textConnection(tmp.restr)
+	}
 		
 	if (!is.null(restrictions.filename)) {
-		use.restrictions <- TRUE
-		restrictions.tmp <- .read.MPT.restrictions(restrictions.filename)
-		restricted.parameter <- vapply(restrictions.tmp, "[", "", i = 1)
-		orig.tree <- tree
 		orig.params <- .find.MPT.params(tree)
-		#browser()
-		if (any(!restricted.parameter %in% orig.params)) {
-			warning(paste("Restricted parameter(s)",  paste(restricted.parameter[!restricted.parameter %in% orig.params], collapse = ", "), "is/are not in the original model."))
-			restrictions <- restrictions.tmp[restricted.parameter %in% orig.params]
-			if (length(restrictions) == 0) {
-				use.restrictions <- FALSE
-			}
-			restrictions.tmp <- restrictions
-		} else restrictions <- restrictions.tmp
-		restricted.parameter <- vapply(restrictions.tmp, "[", "", i = 2)
-		orig.tree <- tree
-		orig.params <- .find.MPT.params(tree)
-		#browser()
-		if (any(!restricted.parameter %in% orig.params)) {
-			warning(paste("Restricted parameter(s)",  paste(restricted.parameter[!restricted.parameter %in% orig.params], collapse = ", "), "is/are not in the original model."))
-			restrictions <- restrictions.tmp[restricted.parameter %in% orig.params]
-			if (length(restrictions) == 0) {
-				use.restrictions <- FALSE
-			}
-		} else restrictions <- restrictions.tmp
+		new.restrictions <- .check.restrictions(restrictions.filename, tree)
+		if (length(new.restrictions) > 0) use.restrictions <- TRUE
 		if (!reparam.ineq) {
-			res.no.ineq <- restrictions
-			for (res in 1:length(restrictions)) if (restrictions[[res]][3] == "<") res.no.ineq[[1]] <- NULL
+			res.no.ineq <- new.restrictions
+			for (res in 1:length(new.restrictions)) if (new.restrictions[[res]][3] == "<") res.no.ineq[[1]] <- NULL
 			if (length(res.no.ineq) == 0) use.restrictions <- FALSE
-			else restrictions <- res.no.ineq
+			else new.restrictions <- res.no.ineq
 			}
-		if (use.restrictions) tree <- .apply.MPT.restrictions(tree, restrictions)
+		if (use.restrictions) tree <- .apply.MPT.restrictions(tree, new.restrictions)
+		restrictions <- new.restrictions
+	}
+	
+	# check if restrictions is connection and needed again then construct anew here:
+	if (!is.null(restrictions.filename) & !is.null(fia) & ("connection" %in% class.restr)) {
+		restrictions.filename <- textConnection(tmp.restr)
 	}
 	
 	# make arguments:

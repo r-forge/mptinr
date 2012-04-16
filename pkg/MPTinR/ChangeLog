@@ -1,4 +1,10 @@
 2012-04-13
+		* more work on bug when paramaters in restrictions are not in model 
+		  (work from yesterday introduced more problems)
+		  added function .check.restrictions() which also reads the restrictions
+		* added an aggregated example to fit.mpt.Rd
+
+2012-04-13
 		* data element now contains indidivudal and aggregated data
 		* more work on bug when paramaters in restrictions are not in model 
 

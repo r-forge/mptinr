@@ -12,7 +12,7 @@ get.mpt.fia <- function(data, model.filename, restrictions.filename = NULL, Samp
 	} else stop("data is neither vector, nor matrix, nor data.frame!")
 	
 	if(!is.null(restrictions.filename)) {
-		restrictions <- .read.MPT.restrictions(restrictions.filename)
+		restrictions <- .check.restrictions(restrictions.filename, tree)
 	}
 	
 	model <- .get.mpt.model(model.filename, model.type)
