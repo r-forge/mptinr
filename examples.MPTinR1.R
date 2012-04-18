@@ -96,7 +96,7 @@ all.equal(c.equal, c.equal.2)
 # Finally, we compute the FIA for all models, taking inequalities into account when they are imposed.
 # Note: The following examples will take some time (> 1 hour).
 
-data(d.broeder)
+data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
 r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
