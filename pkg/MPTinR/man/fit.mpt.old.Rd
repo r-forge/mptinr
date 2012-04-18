@@ -118,7 +118,7 @@ Note that you need to \emph{close} snowfall via \code{sfStop()} after using MPTi
 Note that \code{fit.model()} is usually slower than \code{fit.mpt.old} as there are some more checks in the critical function calculating the likelihood of the model. \cr
 
 
-The \code{lower.bound} and \code{upper.bound} needs to be of length 1 or equal to the number of \code{free} parameters. If length > 1, parameters are mapped to the bounds in alphabetic order of the paramaters. Use \code{\link{check.mpt}} to obtain the alphabetical order of parameters for your model.
+The \code{lower.bound} and \code{upper.bound} needs to be of length 1 or equal to the number of \code{free} parameters. If length > 1, parameters are mapped to the bounds in alphabetic order of the parameters. Use \code{\link{check.mpt}} to obtain the alphabetical order of parameters for your model.
 
 While it should be possible to specify equality or fixed restrictions it will probably lead to unforseen consequences to specify inequality restrictions for non-MPT models.
 
@@ -236,13 +236,17 @@ model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 (c.equal <- fit.mpt.old(rb.fig2.data, model2, model2r.c.eq, n.optim = 10))
 
 # is setting all r equal a good idea?
-(g.sq.r.equal <- r.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
-(df.r.equal <- r.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
+(g.sq.r.equal <- r.equal[["goodness.of.fit"]][["G.Squared"]] - 
+			ref.model[["goodness.of.fit"]][["G.Squared"]])
+(df.r.equal <- r.equal[["goodness.of.fit"]][["df"]] - 
+			ref.model[["goodness.of.fit"]][["df"]])
 (p.value.r.equal <- pchisq(g.sq.r.equal, df.r.equal , lower.tail = FALSE))
 
 # is setting all c equal a good idea?
-(g.sq.c.equal <- c.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
-(df.c.equal <- c.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
+(g.sq.c.equal <- c.equal[["goodness.of.fit"]][["G.Squared"]] - 
+		ref.model[["goodness.of.fit"]][["G.Squared"]])
+(df.c.equal <- c.equal[["goodness.of.fit"]][["df"]] - 
+		ref.model[["goodness.of.fit"]][["df"]])
 (p.value.c.equal <- pchisq(g.sq.c.equal, df.c.equal , lower.tail = FALSE))
 
 
@@ -274,20 +278,24 @@ br.2htm.ineq <- fit.mpt.old(d.broeder, m.2htm, i.2htm)
 br.2htm.ineq[["parameters"]][["individual"]][,"estimates",]
 br.2htm[["parameters"]][["individual"]][,"estimates",]
 # See the difference between forced and non-forced inequality restrictions:
-round(br.2htm[["parameters"]][["individual"]][,"estimates",] - br.2htm.ineq[["parameters"]][["individual"]][,"estimates",],2)
+round(br.2htm[["parameters"]][["individual"]][,"estimates",] -
+		br.2htm.ineq[["parameters"]][["individual"]][,"estimates",],2)
 
 # The same for the other two models
 # The restricted 2HTM
 br.2htm.res <- fit.mpt(d.broeder, m.2htm, r.2htm)
 br.2htm.res.ineq <- fit.mpt(d.broeder, m.2htm, ir.2htm)
-round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
+round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] -
+		br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
 # The 1HTM
 br.1htm <- fit.mpt(d.broeder, m.2htm, r.1htm)
 br.1htm.ineq <- fit.mpt(d.broeder, m.2htm, ir.1htm)
-round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
+round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] -
+		br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
 
 # These results show that we cannot compute inequality constraints for the non inequality imposed models.
-# (It would look differently if we excluded critical cases, e.g., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)
+# (It would look differently if we excluded critical cases, 
+# i.e., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)
 # Therefore, we get the FIA for the models as computed above 
 # WARNING: The following part will take a long time!
 
@@ -299,12 +307,16 @@ br.1htm.fia <- fit.mpt.old(d.broeder, m.2htm, r.1htm, fia = 200000)
 br.1htm.ineq.fia <- fit.mpt.old(d.broeder, m.2htm, ir.1htm, fia = 200000)
 
 # Model selection using the FIA
-(br.select <- select.mpt(list(orig.2htm = br.2htm.fia, orig.2htm.ineq = br.2htm.ineq.fia, res.2htm = br.2htm.res.fia, res.2htm.ineq = br.2htm.res.ineq.fia, orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
+(br.select <- select.mpt(list(orig.2htm = br.2htm.fia, orig.2htm.ineq = br.2htm.ineq.fia,
+		res.2htm = br.2htm.res.fia, res.2htm.ineq = br.2htm.res.ineq.fia, 
+		orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
 # The same results, ordered by FIA
 br.select[order(br.select[,"delta.FIA.sum"]),]
 
 # Compare this with the model selection not using FIA:
-select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = br.2htm.res, res.2htm.ineq = br.2htm.res.ineq, orig.1htm = br.1htm, orig.1htm.ineq = br.1htm.ineq))
+select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, 
+		res.2htm = br.2htm.res, res.2htm.ineq = br.2htm.res.ineq, 
+		orig.1htm = br.1htm, orig.1htm.ineq = br.1htm.ineq))
 
 
 

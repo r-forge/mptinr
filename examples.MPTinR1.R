@@ -4,8 +4,8 @@
 \examples{
 # The first example fits the MPT model presented in Riefer and Batchelder (1988, Figure 1)
 # to the data presented in Riefer and Batchelder (1988, Table 1)
-# Note that Riefer and Batchelder (1988, pp. 328) did some hypotheses tests, that are not done here.
-# Rather, we use each condition (i.e., row in Table 1) as a different individual.
+# Note that Riefer and Batchelder (1988, pp. 328) did some hypotheses tests not replicated here.
+# Instead, we use each condition (i.e., row in Table 1) as a different dataset.
 
 # load the data
 data(rb.fig1.data, package = "MPTinR")
@@ -14,15 +14,15 @@ data(rb.fig1.data, package = "MPTinR")
 model1 <- system.file("extdata", "rb.fig1.model", package = "MPTinR")
 model1.eqn <- system.file("extdata", "rb.fig1.model.eqn", package = "MPTinR")
 
-# just fit the first "individual":
+# just fit the first dataset:
 fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
 fit.model(rb.fig1.data[1,], model1, n.optim = 1)
 
-#fit all "individuals":
+#fit all datasets:
 fit.mpt(rb.fig1.data, model1, n.optim = 1)
 fit.model(rb.fig1.data, model1, n.optim = 1)
 
-#fit all "individuals" using the .EQN model file:
+#fit all datasets using the .EQN model file:
 fit.mpt(rb.fig1.data, model1.eqn, n.optim = 1)
 
 #fit using a textConnection (i.e., you can specify the model in your script/code):
@@ -42,7 +42,7 @@ fit.mpt(rb.fig1.data, textConnection(model1.txt), n.optim = 1)
 # Finally, the inferential tests reported by Riefer & Batchelder, (1988, p. 332) are executed.
 
 # get the data
-data(rb.fig2.data, package = "MPTinR")
+data(rb.fig2.data)
 
 # positions of model and restriction files:
 model2 <- system.file("extdata", "rb.fig2.model", package = "MPTinR")
@@ -59,13 +59,17 @@ model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
 (c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq))
 
 # is setting all r equal a good idea?
-(g.sq.r.equal <- r.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
-(df.r.equal <- r.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
+(g.sq.r.equal <- r.equal[["goodness.of.fit"]][["G.Squared"]] - 
+				ref.model[["goodness.of.fit"]][["G.Squared"]])
+(df.r.equal <- r.equal[["goodness.of.fit"]][["df"]] - 
+				ref.model[["goodness.of.fit"]][["df"]])
 (p.value.r.equal <- pchisq(g.sq.r.equal, df.r.equal , lower.tail = FALSE))
 
 # is setting all c equal a good idea?
-(g.sq.c.equal <- c.equal[["goodness.of.fit"]][["G.Squared"]] - ref.model[["goodness.of.fit"]][["G.Squared"]])
-(df.c.equal <- c.equal[["goodness.of.fit"]][["df"]] - ref.model[["goodness.of.fit"]][["df"]])
+(g.sq.c.equal <- c.equal[["goodness.of.fit"]][["G.Squared"]] - 
+				ref.model[["goodness.of.fit"]][["G.Squared"]])
+(df.c.equal <- c.equal[["goodness.of.fit"]][["df"]] - 
+				ref.model[["goodness.of.fit"]][["df"]])
 (p.value.c.equal <- pchisq(g.sq.c.equal, df.c.equal , lower.tail = FALSE))
 
 # You can specify restrictions also via a list instead of an external file:
@@ -92,7 +96,7 @@ all.equal(c.equal, c.equal.2)
 # Finally, we compute the FIA for all models, taking inequalities into account when they are imposed.
 # Note: The following examples will take some time (> 1 hour).
 
-data(d.broeder, package = "MPTinR")
+data(d.broeder)
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
 r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
@@ -108,24 +112,28 @@ br.2htm.ineq <- fit.mpt(d.broeder, m.2htm, i.2htm)
 br.2htm.ineq[["parameters"]][["individual"]][,"estimates",]
 br.2htm[["parameters"]][["individual"]][,"estimates",]
 # See the difference between forced and non-forced inequality restrictions:
-round(br.2htm[["parameters"]][["individual"]][,"estimates",] - br.2htm.ineq[["parameters"]][["individual"]][,"estimates",],2)
+round(br.2htm[["parameters"]][["individual"]][,"estimates",] -
+		br.2htm.ineq[["parameters"]][["individual"]][,"estimates",],2)
 
 # The same for the other two models
 # The restricted 2HTM
 br.2htm.res <- fit.mpt(d.broeder, m.2htm, r.2htm)
 br.2htm.res.ineq <- fit.mpt(d.broeder, m.2htm, ir.2htm)
-round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
+round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - 
+		br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
 # The 1HTM
 br.1htm <- fit.mpt(d.broeder, m.2htm, r.1htm)
 br.1htm.ineq <- fit.mpt(d.broeder, m.2htm, ir.1htm)
-round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
+round(br.2htm.res[["parameters"]][["individual"]][,"estimates",] - 
+		br.2htm.res.ineq[["parameters"]][["individual"]][,"estimates",],2)
 
 # identical to the last fit of the 1HTM (using a list as restriction):
 br.1htm.ineq.list <- fit.mpt(d.broeder, m.2htm, list("G1 < G2 < G3 < G4 < G5", "Dn = 0"))
 all.equal(br.1htm.ineq, br.1htm.ineq.list)  # TRUE
 
-# These results show that we cannot compute inequality constraints for the non inequality imposed models.
-# (It would look differently if we excluded critical cases, e.g., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)
+# These results show that inequality restrictions do not hold for all datasets.
+# (It would look differently if we excluded critical cases, 
+# i.e., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)
 # Therefore, we get the FIA for the models as computed above 
 # WARNING: The following part will take a long time!
 
@@ -137,13 +145,15 @@ br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 200000)
 br.1htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, ir.1htm, fia = 200000)
 
 # Model selection using the FIA
-(br.select <- select.mpt(list(orig.2htm = br.2htm.fia, orig.2htm.ineq = br.2htm.ineq.fia, res.2htm = br.2htm.res.fia, res.2htm.ineq = br.2htm.res.ineq.fia, orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
+(br.select <- select.mpt(list(orig.2htm = br.2htm.fia, orig.2htm.ineq = br.2htm.ineq.fia, 
+		res.2htm = br.2htm.res.fia, res.2htm.ineq = br.2htm.res.ineq.fia, 
+		orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
 # The same results, ordered by FIA
 br.select[order(br.select[,"delta.FIA.sum"]),]
 
 # Compare this with the model selection not using FIA:
-select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = br.2htm.res, res.2htm.ineq = br.2htm.res.ineq, orig.1htm = br.1htm, orig.1htm.ineq = br.1htm.ineq))
-
+select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = br.2htm.res, 
+		res.2htm.ineq = br.2htm.res.ineq, orig.1htm = br.1htm, orig.1htm.ineq = br.1htm.ineq))
 
 # Only use the aggregated data:
 d.broeder.agg <- colSums(d.broeder)
@@ -193,7 +203,7 @@ m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 
 
 # We specify the SDT model in the code using a textConnection.
-# Note that a textCconnection can only be used once. Then you need to call it again (e.g., after calling check.mpt)!
+# However, textConnection is only called in the function call on the string.
 
 m.sdt <- "
 1-pnorm((cr1-mu)/ss)
@@ -231,27 +241,36 @@ pnorm(cr5)
 check.mpt(textConnection(m.sdt))
 
 # fit the SDT (unequal variance version)
-br.uvsdt <- fit.model(d.broeder, textConnection(m.sdt), lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
+br.uvsdt <- fit.model(d.broeder, textConnection(m.sdt), 
+			lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
 
 # Is there any effect of studying the items?
-br.uvsdt.2 <- fit.model(d.broeder, textConnection(m.sdt), restrictions.filename = list("mu = 0", "ss = 1"), lower.bound = -Inf, upper.bound = Inf)
+br.uvsdt.2 <- fit.model(d.broeder, textConnection(m.sdt), 
+			restrictions.filename = list("mu = 0", "ss = 1"), 
+			lower.bound = -Inf, upper.bound = Inf)
 
-(diff.g2 <- br.uvsdt.2[["goodness.of.fit"]][["sum"]][["G.Squared"]] - br.uvsdt[["goodness.of.fit"]][["sum"]][["G.Squared"]])
-(diff.df <- br.uvsdt.2[["goodness.of.fit"]][["sum"]][["df"]] - br.uvsdt[["goodness.of.fit"]][["sum"]][["df"]])
+(diff.g2 <- br.uvsdt.2[["goodness.of.fit"]][["sum"]][["G.Squared"]] -
+			br.uvsdt[["goodness.of.fit"]][["sum"]][["G.Squared"]])
+(diff.df <- br.uvsdt.2[["goodness.of.fit"]][["sum"]][["df"]] - 
+			br.uvsdt[["goodness.of.fit"]][["sum"]][["df"]])
 1 - pchisq(diff.g2, diff.df)
 
 # fit the equal variance SDT model:
-br.evsdt <- fit.model(d.broeder, textConnection(m.sdt), lower.bound = c(rep(-Inf, 5), 0), upper.bound = Inf, restrictions.filename = list("ss = 1"))
+br.evsdt <- fit.model(d.broeder, textConnection(m.sdt), 
+			lower.bound = c(rep(-Inf, 5), 0), upper.bound = Inf, 
+			restrictions.filename = list("ss = 1"))
 
 # fit the MPTs (see also ?fit.mpt).
-# In contrast to ?fit.mpt we specify the restrictions using textConnections!
+# In contrast to ?fit.mpt we specify the restrictions using a textConnection or a list!
 br.2htm <- fit.mpt(d.broeder, m.2htm)
 br.2htm.res <- fit.mpt(d.broeder, m.2htm, textConnection("Do = Dn"))
-br.1htm <- fit.mpt(d.broeder, m.2htm, textConnection("Dn = 0"))
+br.1htm <- fit.mpt(d.broeder, m.2htm, list("Dn = 0"))
 
-select.mpt(list(uvsdt = br.uvsdt, evsdt = br.evsdt, two.htm = br.2htm, two.htm.res = br.2htm.res, one.htm = br.1htm), output = "full")
+select.mpt(list(uvsdt = br.uvsdt, evsdt = br.evsdt, two.htm = br.2htm, 
+			two.htm.res = br.2htm.res, one.htm = br.1htm), output = "full")
 
-# the restricted 2HTM "wins" for individual data (although evsdt does not perform too bad), but the 2htm and restricted 2htm restricted "win" for aggregated data.
+# the restricted 2HTM "wins" for individual data (although evsdt does not perform too bad),
+# but the 2htm and restricted 2htm restricted "win" for aggregated data.
 
 }
 
@@ -336,6 +355,7 @@ SDTrank <- function(Q, data, param.names, n.params, tmp.env, lower.bound, upper.
     return(LL)
 }
 
-fit.mptinr(ranking.data, SDTrank, c("mu", "sigma"), 4, prediction = expSDTrank, lower.bound = c(0,0.1), upper.bound = Inf)
+fit.mptinr(ranking.data, SDTrank, c("mu", "sigma"), 4, prediction = expSDTrank, 
+		lower.bound = c(0,0.1), upper.bound = Inf)
  }
 }

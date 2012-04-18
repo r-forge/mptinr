@@ -14,7 +14,7 @@ make.mdt(data, mdt.filename, index, prefix = "dataset")
 }
 \arguments{
   \item{model.filename}{
-A character \code{vector} specifying the location and name of the model file in the "easy" format.
+A character \code{vector} specifying the location and name of the model file in the \code{easy} format.
 }
   \item{eqn.filename}{
 A character vector specifying the location and name of the target .eqn file.
