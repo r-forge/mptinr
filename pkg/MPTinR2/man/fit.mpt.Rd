@@ -103,6 +103,7 @@ The Fortran code was written by Karl Christoph Klauer
 }
 
 \examples{
+\dontrun{
 # The first example fits the MPT model presented in Riefer and Batchelder (1988, Figure 1)
 # to the data presented in Riefer and Batchelder (1988, Table 1)
 # Note that Riefer and Batchelder (1988, pp. 328) did some hypotheses tests, that are not done here.
@@ -217,7 +218,7 @@ br.1htm <- fit.mpt(m.2htm, d.broeder, r.1htm)
 br.1htm.ineq <- fit.mpt(m.2htm, d.broeder, ir.1htm)
 round(parameters(br.1htm, sort.alphabetical = TRUE)[["individual"]][,"estimates",]-
 parameters(br.1htm.ineq, sort.alphabetical = TRUE)[["individual"]][,"estimates",],2)
-
+}
   }
 \seealso{
 \code{\link{make.mpt}} for the function to create the model objects and \code{\link{bmpt.model-class}} for their methods.
