@@ -1,3 +1,7 @@
+2012-04-26
+		* fit.mptinr now checks if there is a gradient/hessian function and 
+		  sets use.gradient/use.hessian FALSE otherwise.
+
 2012-04-18
 		* copy editing on documentation.
 		* select.mpt(): renamed n.model.df to n.independent.categories
