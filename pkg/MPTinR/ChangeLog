@@ -1,4 +1,7 @@
 2012-04-26
+		* resolved bug when obtaining FIA from model specified via textConnection.
+		
+2012-04-26
 		* fit.mptinr now checks if there is a gradient/hessian function and 
 		  sets use.gradient/use.hessian FALSE otherwise.
 
