@@ -269,9 +269,11 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	if (is.null(fia.df)) fia <- NULL
 	else {
 		fia <- TRUE
-		fia.df.tmp <- fia.df
-		fia.df <- fia.df.tmp[[1]]
-		fia.agg.tmp <- fia.df.tmp[[2]]
+		if (multiFit) {
+			fia.df.tmp <- fia.df
+			fia.df <- fia.df.tmp[[1]]
+			fia.agg.tmp <- fia.df.tmp[[2]]
+		}
 	}
 	
 	#n_items <- n.items.per.type(categories.per.type, data)

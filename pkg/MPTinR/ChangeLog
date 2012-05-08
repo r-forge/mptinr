@@ -1,4 +1,7 @@
-2012-04-26
+2012-05-08
+		* resolved bug when obtaining FIA for individual data sets
+
+2012-05-02
 		* resolved bug when obtaining FIA from model specified via textConnection.
 		
 2012-04-26
