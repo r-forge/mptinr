@@ -13,7 +13,7 @@
 	
 	Bugfixes
 	
-	o	
+	o	fixed bug when obtaining fia from textConnection also for fit.model()
 	
 	
 
