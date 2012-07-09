@@ -1,5 +1,6 @@
 2012-07-09
 		* added functions gen.predictions and gen.data
+		* MPTinR is now byte compiled.
 		
 2012-05-08
 		* resolved bug when obtaining FIA for individual data sets

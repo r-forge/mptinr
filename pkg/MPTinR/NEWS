@@ -9,6 +9,8 @@
 	
 	o	added functions gen.data and gen.predictionsfor generating data and predictions.
 	
+	o	MPTinR is now byte compiled.
+	
 	Bugfixes
 	
 	o	
