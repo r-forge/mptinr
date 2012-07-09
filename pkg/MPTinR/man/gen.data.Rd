@@ -1,0 +1,112 @@
+\name{gen.data}
+\alias{gen.data}
+\alias{gen.predictions}
+\title{
+Generate data and get predictions from a model specified in a model file (or connection).
+}
+\description{
+\code{gen.data} generates random dataset(s) from given paramater values and model (specified via model file or textConnection).\cr
+\code{gen.predictions} generates response probabilities or predicted responses from given paramater values and model (specified via model file or textConnection). \cr
+Can be used for e.g., paramateric boorstrap or model mimicry.
+}
+\usage{
+gen.data(parameter.values, n.per.item.type, samples, 
+	model.filename, 
+	restrictions.filename = NULL, model.type = c("easy", "eqn", "eqn2"), 
+	reparam.ineq = TRUE)
+
+gen.predictions(parameter.values, 
+	model.filename, 
+	restrictions.filename = NULL, 
+	n.per.item.type = NULL, 
+	model.type = c("easy", "eqn", "eqn2"), 
+	reparam.ineq = TRUE)
+}
+
+
+\arguments{
+  \item{parameter.values}{
+\code{vector} of paramater values. Either named then order is irrelevant or unnamed then must follow the alphabetical order of paramaters (\code{\link{check.mpt}} returns the alphabetical order of paramater names).
+}
+  \item{n.per.item.type}{
+\code{vector} of length equal to number of item types (or trees) specifying how many item each item type has.
+}
+  \item{samples}{
+Number of random datasets to be generated from a given set of paramater values.
+}
+ 
+  \item{model.filename}{
+A character \code{vector} specifying the location and name of the model file, pssoble a \code{\link{textConnection}}. 
+}
+  \item{restrictions.filename}{
+\code{NULL} or a character \code{vector} or a \code{list} of characters. The default is \code{NULL} which corresponds to no restrictions. A character \code{vector} specifies the location or name of the restrictions file. A \code{list} of characters contains the restrictions directly. See \code{\link{fit.mpt}} for Details and Examples.
+}
+  \item{model.type}{
+Character vector specifying whether the model file is formatted in the easy way (\code{"easy"}; i.e., each line represents all branches corresponding to a response category) or the traditional EQN syntax (\code{"eqn"} or \code{"eqn2"}; see Details and e.g., Stahl & Klauer, 2007). If \code{model.filename} ends with .eqn or .EQN, \code{model.type} is automatically set to \code{"eqn"}. Default is \code{"easy"}.
+}
+  \item{reparam.ineq}{
+Should inequality restrictions be applied (i.e., the model reparametrized)? Default is \code{TRUE}.
+}
+}
+
+\details{
+\code{gen.data} is basically a wrapper for \code{gen.predictions} that then calls \code{\link{rmultinom}} (potentially multiple times).
+
+See examples for the different uses.
+
+}
+\value{
+Either a vector or matrix containing the generated data (for \code{gen.data}) or a vector containing the predictions (for \code{gen.predictions}).
+}
+
+\author{
+Henrik Singmann and David Kellen
+}
+\note{
+As this functions is not very well tested, report all issues to Henrik Singmann
+}
+
+\seealso{
+\code{\link{fit.mpt}} or \code{\link{fit.model}} for functions that will fit the generated data. Note that it is probably a very good idea to set \code{fit.aggregated = FALSE} when fitting larger sets of generated data.
+}
+\examples{
+# predicting using the proactive Inhibiton Model (Riefer & Batchelder, 1988, Figure 1)
+
+model1 <- system.file("extdata", "rb.fig1.model", package = "MPTinR")
+
+gen.predictions(c(r = 0.3, p = 1, q = 0.4944), model1)  
+gen.predictions(c(r = 0.3, p = 1, q = 0.4944), model1, n.per.item.type = 180)
+
+# the order of parameters is reordered (i.e., not alphabetically)
+# but as the vector is named, it does not matter!
+# Compare with:
+data(rb.fig1.data, package = "MPTinR")
+fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
+
+
+# using the model and data from Broeder & Schuetz:
+data(d.broeder, package = "MPTinR")
+m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
+m.sdt <- system.file("extdata", "broeder.sdt.model", package = "MPTinR")
+
+# fit the 2HTM
+br.2htm <- fit.mpt(colSums(d.broeder), m.2htm)
+
+# fit the SDT model
+br.sdt <- fit.model(colSums(d.broeder), m.sdt, lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
+
+# just get the predicted proportions:
+predictions.mpt <- gen.predictions(br.2htm[["parameters"]][,1], m.2htm)
+predictions.sdt <- gen.predictions(br.sdt[["parameters"]][,1], m.sdt)
+
+# How would it look if all ten item types had equal number of trials (= 20)?
+gen.predictions(br.2htm[["parameters"]][,1], m.2htm, n.per.item.type = rep(20, 10))
+gen.predictions(br.sdt[["parameters"]][,1], m.sdt, n.per.item.type = rep(20, 10))
+
+# get one random dataset using the paramater values obtained (i.e., parametric bootstrap).
+gen.data(br.2htm[["parameters"]][,1],c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240), 1, m.2htm)
+
+gen.data(br.sdt[["parameters"]][,1],c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240), 1, m.sdt)
+
+}
+

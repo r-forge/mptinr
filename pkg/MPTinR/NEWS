@@ -1,4 +1,21 @@
 					**************************
+					** MPTinR VERSION 0.9.x **
+					**************************
+					
+					Changes in MPTinR Version 0.9.x
+					Released July 2012
+
+	Significant User Visible Changes and new Features
+	
+	o	added functions gen.data and gen.predictionsfor generating data and predictions.
+	
+	Bugfixes
+	
+	o	
+	
+	
+
+					**************************
 					** MPTinR VERSION 0.8.x **
 					**************************
 					
