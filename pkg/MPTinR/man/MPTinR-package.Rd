@@ -12,8 +12,8 @@ MPTinR provides a user-friendly way for the analysis of multinomial processing t
 \tabular{ll}{
 Package: \tab MPTinR\cr
 Type: \tab Package\cr
-Version: \tab 0.9.1\cr
-Date: \tab 2012-07-09\cr
+Version: \tab 0.9.2\cr
+Date: \tab 2012-07-10\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
