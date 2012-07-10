@@ -1,3 +1,8 @@
+2012-07-10
+		* now comments in model and restrictions files are treated like 
+		  in normal R (i.e., only everything after # is ignored).
+		  Changed: .read.MPT.model() and .read.MPT.restrictions()
+
 2012-07-09
 		* added functions gen.predictions and gen.data
 		* MPTinR is now byte compiled.

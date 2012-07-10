@@ -42,7 +42,7 @@ fit.mpt(rb.fig1.data, textConnection(model1.txt), n.optim = 1)
 # Finally, the inferential tests reported by Riefer & Batchelder, (1988, p. 332) are executed.
 
 # get the data
-data(rb.fig2.data)
+data(rb.fig2.data, package = "MPTinR")
 
 # positions of model and restriction files:
 model2 <- system.file("extdata", "rb.fig2.model", package = "MPTinR")
