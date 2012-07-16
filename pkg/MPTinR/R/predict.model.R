@@ -65,7 +65,7 @@ gen.predictions <- function(parameter.values, model.filename, restrictions.filen
 	
 }
 
-gen.data<- function(parameter.values, n.per.item.type, samples, model.filename, restrictions.filename = NULL, model.type = c("easy", "eqn", "eqn2"), reparam.ineq = TRUE){
+gen.data <- function(parameter.values, samples, model.filename, data = NULL, n.per.item.type = NULL, restrictions.filename = NULL, model.type = c("easy", "eqn", "eqn2"), reparam.ineq = TRUE){
 	
 	class.model <- class(model.filename)
 	if ("connection" %in% class.model) {
@@ -73,10 +73,16 @@ gen.data<- function(parameter.values, n.per.item.type, samples, model.filename, 
 		model.filename <- textConnection(tmp.model)
 	}
 
-	
 	tree <- .get.mpt.model(model.filename, model.type)
 	
-	if (length(tree) != length(n.per.item.type)) stop(paste("Length of n.per.item.type does not correspond to size of model. Model has ", length(n.per.item.type), " item types (or trees), but n.per.item type is only of length ", length(n.per.item.type), ".", sep = ""))
+	if (is.null(data) & is.null(n.per.item.type)) stop("Either data or n.per.item.type needs to be non-null")
+	
+	if (!is.null(data) & !is.null(n.per.item.type)) stop("Only one of data or n.per.item.type can be non-null")
+	
+	if (!is.null(data)) {
+		if (!is.vector(data)) stop("data needs to be a vector")
+		if (sum(sapply(tree, length)) != length(data)) stop(paste("Size of data does not correspond to size of model (i.e., model needs ", sum(sapply(tree, length)), " datapoints, data gives ", length(data), " datapoints).", sep = ""))
+	}
 	
 	orig.params <- NULL
 	use.restrictions <- FALSE
@@ -106,6 +112,15 @@ gen.data<- function(parameter.values, n.per.item.type, samples, model.filename, 
 	length.param.names <- length(param.names)
 	categories.per.type <- vapply(tree, length, 0)
 	
+	if (is.null(n.per.item.type)) {
+		n.per.item.type <- vector("numeric", length(tree))
+		for (c in seq_len(length(tree))) {
+			n.per.item.type[c] <- sum(data[(sum(categories.per.type[seq_len(c-1)]) + 1):(sum(categories.per.type[seq_len(c)]))])
+		}
+	}
+		
+	if (length(tree) != length(n.per.item.type)) stop(paste("Length of n.per.item.type does not correspond to size of model. Model has ", length(tree), " item types (or trees), but n.per.item type is only of length ", length(n.per.item.type), ".", sep = ""))
+	
 	if (!is.null(restrictions.filename) & ("connection" %in% class.restr)) {
 		restrictions.filename <- textConnection(tmp.restr)
 	}
@@ -115,7 +130,7 @@ gen.data<- function(parameter.values, n.per.item.type, samples, model.filename, 
 	
 	predictions <- gen.predictions(parameter.values = parameter.values, model.filename = model.filename, restrictions.filename = restrictions.filename, n.per.item.type = NULL, model.type = model.type, reparam.ineq = reparam.ineq)
 	
-	data <- rmultinom(samples, n.per.item.type[1], predictions[1:cumsum(categories.per.type[1])])
+	data <- rmultinom(samples, n.per.item.type[1], predictions[1:sum(categories.per.type[1])])
 	
 	if (length(categories.per.type) > 1) {
 		n.data <- vector("list", length(categories.per.type))
@@ -129,5 +144,4 @@ gen.data<- function(parameter.values, n.per.item.type, samples, model.filename, 
 	
 	t(data)	
 }
-
 

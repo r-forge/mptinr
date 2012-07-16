@@ -1,3 +1,7 @@
+2012-07-16
+		* added data argument to gen.data. Now, either data or 
+		  n.per.item.type need to be non-null (but not both).
+
 2012-07-10
 		* now comments in model and restrictions files are treated like 
 		  in normal R (i.e., only everything after # is ignored).

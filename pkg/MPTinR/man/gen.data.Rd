@@ -10,8 +10,9 @@ Generate data and get predictions from a model specified in a model file (or con
 Can be used for e.g., paramateric boorstrap or model mimicry.
 }
 \usage{
-gen.data(parameter.values, n.per.item.type, samples, 
+gen.data(parameter.values, samples,
 	model.filename, 
+	data = NULL, n.per.item.type = NULL,
 	restrictions.filename = NULL, model.type = c("easy", "eqn", "eqn2"), 
 	reparam.ineq = TRUE)
 
@@ -28,13 +29,15 @@ gen.predictions(parameter.values,
   \item{parameter.values}{
 \code{vector} of paramater values. Either named then order is irrelevant or unnamed then must follow the alphabetical order of paramaters (\code{\link{check.mpt}} returns the alphabetical order of paramater names).
 }
-  \item{n.per.item.type}{
-\code{vector} of length equal to number of item types (or trees) specifying how many item each item type has.
-}
   \item{samples}{
 Number of random datasets to be generated from a given set of paramater values.
 }
- 
+  \item{n.per.item.type}{
+\code{vector} of length equal to number of item types (or trees) specifying how many item each item type has. Default is \code{NULL}. See Details.
+} 
+  \item{data}{
+data \code{vector}. Default is \code{NULL}. See Details.
+} 
   \item{model.filename}{
 A character \code{vector} specifying the location and name of the model file, pssoble a \code{\link{textConnection}}. 
 }
@@ -52,6 +55,8 @@ Should inequality restrictions be applied (i.e., the model reparametrized)? Defa
 \details{
 \code{gen.data} is basically a wrapper for \code{gen.predictions} that then calls \code{\link{rmultinom}} (potentially multiple times).
 
+\code{gen.data} needs to know how big the n for each item type is. This can either be specified via the \code{data} or the \code{n.per.item.type} argument (i.e., one of those needs to be non-\code{NULL}). See the examples.
+
 See examples for the different uses.
 
 }
@@ -63,7 +68,7 @@ Either a vector or matrix containing the generated data (for \code{gen.data}) or
 Henrik Singmann and David Kellen
 }
 \note{
-As this functions is not very well tested, report all issues to Henrik Singmann
+As this functions is rather new, report all issues to Henrik Singmann
 }
 
 \seealso{
@@ -83,10 +88,11 @@ gen.predictions(c(r = 0.3, p = 1, q = 0.4944), model1, n.per.item.type = 180)
 data(rb.fig1.data, package = "MPTinR")
 fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
 
-
-# using the model and data from Broeder & Schuetz:
+#### using the model and data from Broeder & Schuetz:
 data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
+m.sdt <- "pkg/MPTinR/inst/extdata/broeder.sdt.model"
+
 m.sdt <- system.file("extdata", "broeder.sdt.model", package = "MPTinR")
 
 # fit the 2HTM
@@ -95,18 +101,21 @@ br.2htm <- fit.mpt(colSums(d.broeder), m.2htm)
 # fit the SDT model
 br.sdt <- fit.model(colSums(d.broeder), m.sdt, lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
 
+# get one random dataset using the paramater values obtained (i.e., parametric bootstrap) and the data argument.
+gen.data(br.2htm[["parameters"]][,1], 1, m.2htm, data = colSums(d.broeder))
+
+gen.data(br.sdt[["parameters"]][,1], 1, m.sdt, data = colSums(d.broeder))
+
+# get one random dataset using the paramater values obtained (i.e., parametric bootstrap) and the n.per.item.type argument.
+gen.data(br.2htm[["parameters"]][,1], 1, m.2htm, n.per.item.type = c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240))
+
+gen.data(br.sdt[["parameters"]][,1], 1, m.sdt, n.per.item.type = c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240))
+
 # just get the predicted proportions:
 predictions.mpt <- gen.predictions(br.2htm[["parameters"]][,1], m.2htm)
 predictions.sdt <- gen.predictions(br.sdt[["parameters"]][,1], m.sdt)
 
-# How would it look if all ten item types had equal number of trials (= 20)?
-gen.predictions(br.2htm[["parameters"]][,1], m.2htm, n.per.item.type = rep(20, 10))
-gen.predictions(br.sdt[["parameters"]][,1], m.sdt, n.per.item.type = rep(20, 10))
 
-# get one random dataset using the paramater values obtained (i.e., parametric bootstrap).
-gen.data(br.2htm[["parameters"]][,1],c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240), 1, m.2htm)
-
-gen.data(br.sdt[["parameters"]][,1],c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240), 1, m.sdt)
 
 }
 

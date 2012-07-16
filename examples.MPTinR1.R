@@ -376,10 +376,10 @@ gen.predictions(c(r = 0.3, p = 1, q = 0.4944), model1, n.per.item.type = 180)
 # the order of parameters is reordered (i.e., not alphabetically)
 # but as the vector is named, it does not matter!
 # Compare with:
+data(rb.fig1.data, package = "MPTinR")
 fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
 
-
-# using the model and data from Broeder & Schuetz:
+#### using the model and data from Broeder & Schuetz:
 data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 m.sdt <- "pkg/MPTinR/inst/extdata/broeder.sdt.model"
@@ -392,20 +392,22 @@ br.2htm <- fit.mpt(colSums(d.broeder), m.2htm)
 # fit the SDT model
 br.sdt <- fit.model(colSums(d.broeder), m.sdt, lower.bound = c(rep(-Inf, 5), 0, 1), upper.bound = Inf)
 
+# get one random dataset using the paramater values obtained (i.e., parametric bootstrap) and the data argument.
+gen.data(br.2htm[["parameters"]][,1], 1, m.2htm, data = colSums(d.broeder))
+
+gen.data(br.sdt[["parameters"]][,1], 1, m.sdt, data = colSums(d.broeder))
+
+# get one random dataset using the paramater values obtained (i.e., parametric bootstrap) and the n.per.item.type argument.
+gen.data(br.2htm[["parameters"]][,1], 1, m.2htm, n.per.item.type = c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240))
+
+gen.data(br.sdt[["parameters"]][,1], 1, m.sdt, n.per.item.type = c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240))
+
 # just get the predicted proportions:
 predictions.mpt <- gen.predictions(br.2htm[["parameters"]][,1], m.2htm)
 predictions.sdt <- gen.predictions(br.sdt[["parameters"]][,1], m.sdt)
 
-# How would it look if all ten item types had equal number of trials (= 20)?
-gen.predictions(br.2htm[["parameters"]][,1], m.2htm, n.per.item.type = rep(20, 10))
-gen.predictions(br.sdt[["parameters"]][,1], m.sdt, n.per.item.type = rep(20, 10))
 
-# get one random dataset using the paramater values obtained (i.e., parametric bootstrap).
-gen.data(br.2htm[["parameters"]][,1],c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240), 1, m.2htm)
 
-gen.data(br.sdt[["parameters"]][,1],c(240, 2160, 600, 1800, 1200, 1200, 1800, 600, 2160, 240), 1, m.sdt)
-
-#now we could use this data to see which model produces the better fit to the other data (i.e., model mimicry)
 
 }
 
