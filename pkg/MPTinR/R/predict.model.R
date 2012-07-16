@@ -145,3 +145,42 @@ gen.data <- function(parameter.values, samples, model.filename, data = NULL, n.p
 	t(data)	
 }
 
+
+sample.data <- function(data, samples, model.filename = NULL, categories.per.type = NULL, model.type = c("easy", "eqn", "eqn2")){
+		
+	if (!is.vector(data)) stop("data needs to be a vector")
+	
+	if (is.null(model.filename) & is.null(categories.per.type)) stop("Either mode.filename or categories.per.type needs to be non-null")
+	
+	if (!is.null(model.filename) & !is.null(categories.per.type)) stop("Only one of mode.filename and categories.per.type can be non-null")
+	
+	if (!is.null(model.filename)) {
+		tree <- .get.mpt.model(model.filename, model.type)
+		if (sum(sapply(tree, length)) != length(data)) stop(paste("Size of data does not correspond to size of model (i.e., model needs ", sum(sapply(tree, length)), " datapoints, data gives ", length(data), " datapoints).", sep = ""))
+		categories.per.type <- vapply(tree, length, 0)
+	}
+		
+	if (sum(categories.per.type) != length(data)) stop("sum(categories.per.type) needs to be equal to length(data).")
+	
+	n.per.item.type <- vector("numeric", length(categories.per.type))
+	for (c in seq_len(length(categories.per.type))) {
+		n.per.item.type[c] <- sum(data[(sum(categories.per.type[seq_len(c-1)]) + 1):(sum(categories.per.type[seq_len(c)]))])
+	}
+	
+	predictions <- data / rep(n.per.item.type, times = categories.per.type)
+	
+	data <- rmultinom(samples, n.per.item.type[1], predictions[1:sum(categories.per.type[1])])
+	
+	if (length(categories.per.type) > 1) {
+		n.data <- vector("list", length(categories.per.type))
+		n.data[[1]] <- data
+		for (tree in seq_along(categories.per.type)) {
+			if (tree == 1) next
+			n.data[[tree]] <- rmultinom(samples, n.per.item.type[tree], predictions[(sum(categories.per.type[seq_len(tree-1)])+1):sum(categories.per.type[seq_len(tree)])])		
+		}
+		data <- do.call("rbind", n.data)
+	}
+	
+	t(data)	
+}
+

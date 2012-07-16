@@ -1,4 +1,5 @@
 2012-07-16
+		* added sample.data function for nonparametric bootstrap
 		* added data argument to gen.data. Now, either data or 
 		  n.per.item.type need to be non-null (but not both).
 

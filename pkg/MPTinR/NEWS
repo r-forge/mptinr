@@ -7,7 +7,8 @@
 
 	Significant User Visible Changes and new Features
 	
-	o	added functions gen.data and gen.predictionsfor generating data and predictions.
+	o	added functions gen.data, sample.data and gen.predictions
+		for bootstrapping, generating data and predictions.
 	
 	o	coments in model and restrictions files are now treated as in R:
 		Everything to the right of a # is ignored and NOT the whole line!
