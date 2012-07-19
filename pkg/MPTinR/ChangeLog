@@ -1,3 +1,6 @@
+2012-07-18
+		* disabled examples for the gen.data examples (gen.data.Rd)
+
 2012-07-16
 		* added sample.data function for nonparametric bootstrap
 		* added data argument to gen.data. Now, either data or 
