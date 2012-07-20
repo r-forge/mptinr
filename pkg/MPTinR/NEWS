@@ -15,6 +15,8 @@
 	
 	o	MPTinR is now byte compiled.
 	
+	o	make.mdt can now handle a matrix or data.frames building a big mdt file.
+	
 	Bugfixes
 	
 	o	fixed bug when obtaining fia from textConnection also for fit.model()
