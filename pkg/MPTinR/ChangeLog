@@ -1,5 +1,6 @@
 2012-07-20
 		* make.mdt can now handle a matrix or data.frame, updated .Rd file
+		* reactivated examples for the gen.data examples (gen.data.Rd)
 
 2012-07-18
 		* disabled examples for the gen.data examples (gen.data.Rd)

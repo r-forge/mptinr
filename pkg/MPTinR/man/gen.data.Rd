@@ -83,7 +83,6 @@ As this functions are rather new, report all issues to Henrik Singmann
 \code{\link{fit.mpt}} or \code{\link{fit.model}} for functions that will fit the generated data. Note that it is probably a very good idea to set \code{fit.aggregated = FALSE} when fitting larger sets of generated data.
 }
 \examples{
-\dontrun{
 #### using the model and data from Broeder & Schuetz:
 data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
@@ -131,6 +130,5 @@ gen.predictions(c(r = 0.3, p = 1, q = 0.4944), model1, n.per.item.type = 180)
 # Compare with:
 data(rb.fig1.data, package = "MPTinR")
 fit.mpt(rb.fig1.data[1,], model1, n.optim = 1)
-}
 }
 

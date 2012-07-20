@@ -28,4 +28,3 @@ make.mdt <- function(data, mdt.filename, index, prefix = "dataset") {
 		close(my.con)
 	}
 }
-
