@@ -7,13 +7,14 @@ make.eqn <- function(model.filename, eqn.filename) {
 }
 
 make.mdt <- function(data, mdt.filename, index, prefix = "dataset") {
+	my.con <- file(mdt.filename, open = "w")
 	if (is.vector(data)) { 
 		df <- data.frame(seq_len(length(data)), data)
 		colnames(df) <- c(prefix, index)
-		write.table(df, file = mdt.filename, row.names = FALSE, quote = FALSE)
+		write.table(df, file = my.con, row.names = FALSE, quote = FALSE)
+		writeLines("===", con = my.con)
 	}
 	if (is.matrix(data) | is.data.frame(data)) {
-		my.con <- file(mdt.filename, open = "a")
 		for (c in seq_len(nrow(data))) {
 			df <- data.frame(seq_len(length(data[c,])), data[c,])
 			colnames(df) <- c(prefix, c)
@@ -25,6 +26,6 @@ make.mdt <- function(data, mdt.filename, index, prefix = "dataset") {
 				writeLines("===", con = my.con)
 			}
 		}
-		close(my.con)
 	}
+	close(my.con)
 }

@@ -1,6 +1,7 @@
 2012-07-20
 		* make.mdt can now handle a matrix or data.frame, updated .Rd file
 		* reactivated examples for the gen.data examples (gen.data.Rd)
+		* make.mdt now makes mdt files that HMMTree can handle
 
 2012-07-18
 		* disabled examples for the gen.data examples (gen.data.Rd)
