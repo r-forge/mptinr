@@ -1,3 +1,6 @@
+2012-07-24
+		* make.mdt now uses dimnames(data)[[1]] as index (with warning).
+
 2012-07-20
 		* make.mdt can now handle a matrix or data.frame, updated .Rd file
 		* reactivated examples for the gen.data examples (gen.data.Rd)
