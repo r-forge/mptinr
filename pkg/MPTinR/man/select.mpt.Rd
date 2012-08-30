@@ -47,6 +47,10 @@ For multi-indivudal fit the postfix indicates whether the results refer to the s
 Henrik Singmann
 }
 
+\note{
+If any of the models is fitted with \code{fit.aggregated = FALSE} no aggregated results are presented.
+}
+
 \references{
 Gruenwald, P.D. (2000). Model selection based on minimum description length. \emph{Journal of Mathematical Psychology}, 44, 133-152.
 
@@ -74,5 +78,25 @@ r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq)
 c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq)
 
 select.mpt(list(reference = ref.model, r.equal = r.equal, c.equal = c.equal))
+
+
+
+\dontrun{
+
+# Example from Broder & Schutz (2009)
+
+data(d.broeder, package = "MPTinR")
+m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
+r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
+r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
+
+br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 200000, fit.aggregated = FALSE)
+br.2htm.res.fia <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 200000, fit.aggregated = FALSE)
+br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 200000, fit.aggregated = FALSE)
+
+select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia))
+# This table shows, that the n is to small to correctly compute FIA for the 1htm model (as the penalty is bigger than for the 2htm)
+
+}
 
 }

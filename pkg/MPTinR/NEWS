@@ -9,11 +9,14 @@
 	o	added function plot.prediction for plotting obersved versus 
 		predicted data.
 	
+	o	added fia.penalty to information criteria output and to select.mpt.
+	
 	o	
 	
 	Bugfixes
 	
-	o	
+	o	select.mpt works now if some some models (with multiple datasets)
+		were fitted with fit.aggregated = FALSE.
 
 
 

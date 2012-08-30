@@ -1,5 +1,8 @@
 2012-08-30
 		* added function plot.prediction.
+		* added FIA.penalty to output with FIA.
+		* removed bug when select.mpt from models with fit
+		  fit.aggregated = FALSE
 
 2012-07-24
 		* make.mdt now uses dimnames(data)[[1]] as index (with warning).
