@@ -1,5 +1,5 @@
 
-select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit = 6) {
+select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit = 6, dataset) {
 	if(!is.list(mpt.results)) stop("mpt.results need to be a list.")
 	if(length(mpt.results)< 2) stop("length(mpt.results) needs to be >= 2.") 
 	n.models <- length(mpt.results)
@@ -12,9 +12,34 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 		n.data <- dim(observed.data[[1]])[1]
 	} else {
 		if (is.list(observed.data[[1]])) {
-			n.data <- dim(observed.data[[1]][[1]])[1]
-			if (any(vapply(mpt.results, function(x) length(x[[1]]), 0) != 3)) c.aggregated <- FALSE
-			else c.aggregated <- TRUE
+			if (!missing(dataset)) {
+					if (length(dataset) == 1) {
+						n.data <- 1
+						red.res <- lapply(mpt.results, "[", i = 1:3)
+						mpt.results <- lapply(red.res, function(x) lapply(x, function(x) x[[1]][dataset,]))
+					} else {
+						# stop("'length(dataset > 1)' currently not implemented!")
+						red.res <- lapply(mpt.results, "[", i = 1:3)
+						mpt.results <- (lapply(red.res, function(x) lapply(x, function(x) {
+							 tmp <- x
+							 tmp[[1]] <- tmp[[1]][dataset,]
+							 #browser()
+							 if (isTRUE(names(tmp)[2] == "sum")) {
+								tmp[[2]] <- as.data.frame(t(apply(tmp[[1]], 2, sum)))
+								if ("p.value" %in% colnames(tmp[[2]])) {
+									tmp[[2]][1,"p.value"] <- 1-pchisq(tmp[[2]][1,"G.Squared"], tmp[[2]][1,"df"])
+								}
+							 }
+							 tmp
+							 })))
+						n.data <- length(dataset)
+						c.aggregated <- FALSE
+					}
+			} else {
+				n.data <- dim(observed.data[[1]][[1]])[1]
+				if (any(vapply(mpt.results, function(x) length(x[[1]]), 0) != 3)) c.aggregated <- FALSE
+				else c.aggregated <- TRUE
+			}
 		} else stop("problem with data object of mpt.results")
 	}
 	if (!is.null(names(mpt.results))) m.names <- names(mpt.results)
@@ -23,7 +48,10 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 	if (n.data == 1) {
 		c.fia <- sapply(mpt.results, function(x) any(grepl("^FIA$", colnames(x[["information.criteria"]]))))
 		if (any(c.fia)) if (all(!c.fia)) warning(paste("FIA not available for model(s):", paste(m.names[which(c.fia == FALSE)], collapse = ", ")))
-		n.parameters <- sapply(mpt.results, function(x) x[["model.info"]][["n.parameters"]])
+		n.parameters <- vapply(mpt.results, function(x) x[["model.info"]][["n.parameters"]], 0)
+		G.Squared <- vapply(mpt.results, function(x) x[["goodness.of.fit"]][1,"G.Squared"], 0)
+		df <- vapply(mpt.results, function(x) x[["goodness.of.fit"]][1,"df"], 0)
+		p <- vapply(mpt.results, function(x) x[["goodness.of.fit"]][1,"p.value"], 0)
 		if (any(c.fia)) {
 			FIA <- vapply(mpt.results, function(x) tryCatch(x[["information.criteria"]][["FIA"]], error = function(e) NA), 0)
 			delta.FIA <- FIA - min(FIA, na.rm = TRUE)
@@ -37,7 +65,7 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 		delta.BIC <- BIC - min(BIC)
 		denom.wBIC <- sum(exp(-0.5*(delta.BIC)))
 		wBIC <- sapply(delta.BIC, function(x) exp(-0.5*(x))/denom.wBIC)
-		df.out <- data.frame(model = m.names, n.parameters)
+		df.out <- data.frame(model = m.names, n.parameters, G.Squared, df, p)
 		if (any(c.fia)) {
 			df.out <- cbind(df.out, delta.FIA)
 			if (output[1] != "standard") df.out <- cbind(df.out, FIA.penalty, FIA)
@@ -48,9 +76,13 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 			df.out <- cbind(df.out, delta.AIC, wAIC, AIC, delta.BIC, wBIC, BIC)
 		}
 	} else {
+		#browser()
 		c.fia <- sapply(mpt.results, function(x) any(grepl("^FIA$", colnames(x[["information.criteria"]][["individual"]]))))
 		if (any(c.fia)) if (all(!c.fia)) warning(paste("FIA not available for model(s):", paste(m.names[which(c.fia == FALSE)], collapse = ", ")))
 		n.parameters <- vapply(mpt.results, function(x) x[["model.info"]][["individual"]][1,"n.parameters"], 0)
+		G.Squared.sum <- vapply(mpt.results, function(x) x[["goodness.of.fit"]][["sum"]][1,"G.Squared"], 0)
+		df.sum <- vapply(mpt.results, function(x) x[["goodness.of.fit"]][["sum"]][1,"df"], 0)
+		p.sum <- vapply(mpt.results, function(x) x[["goodness.of.fit"]][["sum"]][1,"p.value"], 0)
 		if (any(c.fia)) {
 			FIA.sum <- vapply(mpt.results, function(x) {if (any(grepl("^FIA$", colnames(x[["information.criteria"]][["sum"]])))) x[["information.criteria"]][["sum"]][["FIA"]] else NA}, 0)
 			FIA.penalty.sum <- vapply(mpt.results, function(x) {if (any(grepl("^FIA.penalty$", colnames(x[["information.criteria"]][["sum"]])))) x[["information.criteria"]][["sum"]][["FIA.penalty"]] else NA}, 0)
@@ -85,7 +117,7 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 		AIC.best <- rowSums(apply(AICs, 1, function(x) round(x, round.digit) == min(round(x, round.digit))))
 		BICs <- sapply(mpt.results, function(x) x[["information.criteria"]][["individual"]][["BIC"]])
 		BIC.best <- rowSums(apply(BICs, 1, function(x) round(x, round.digit) == min(round(x, round.digit))))
-		df.out <- data.frame(model = m.names, n.parameters)
+		df.out <- data.frame(model = m.names, n.parameters, G.Squared.sum, df.sum, p.sum)
 		if (any(c.fia)) {
 			df.out <- cbind(df.out, FIA.penalty.sum, delta.FIA.sum, FIA.best)
 			if (output[1] != "standard") {

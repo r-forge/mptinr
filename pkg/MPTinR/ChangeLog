@@ -1,3 +1,7 @@
+2012-09-03
+		* select.mpt now shows g.square, df, and p
+		* select.mpt has argument dataset
+		
 2012-08-30
 		* added function plot.prediction.
 		* added FIA.penalty to output with FIA.

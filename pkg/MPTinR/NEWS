@@ -11,7 +11,10 @@
 	
 	o	added fia.penalty to information criteria output and to select.mpt.
 	
-	o	
+	o	added G.Square, df, and p to output of select.mpt
+	
+	o	argument dataset added to select.mpt. Allows to select only certain 
+		datasets for the comparison (argument may be of length > 1).
 	
 	Bugfixes
 	

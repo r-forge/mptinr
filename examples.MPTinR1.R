@@ -360,6 +360,54 @@ fit.mptinr(ranking.data, SDTrank, c("mu", "sigma"), 4, prediction = expSDTrank,
  }
 }
 
+##############################################################
+# Example: select.mpt
+
+\examples{
+
+# This example compares the three versions of the model in 
+# Riefer and Batchelder (1988, Figure 2)
+
+data(rb.fig2.data)
+model2 <- system.file("extdata", "rb.fig2.model", package = "MPTinR")
+model2r.r.eq <- system.file("extdata", "rb.fig2.r.equal", package = "MPTinR")
+model2r.c.eq <- system.file("extdata", "rb.fig2.c.equal", package = "MPTinR")
+
+# The full (i.e., unconstrained) model
+ref.model <- fit.mpt(rb.fig2.data, model2)
+# All r equal
+r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq)
+# All c equal
+c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq)
+
+select.mpt(list(reference = ref.model, r.equal = r.equal, c.equal = c.equal))
+
+
+
+\dontrun{
+
+# Example from Broder & Schutz (2009)
+
+data(d.broeder, package = "MPTinR")
+m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
+r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
+r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
+
+br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 50000, fit.aggregated = FALSE)
+br.2htm.res.fia <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 50000, fit.aggregated = FALSE)
+br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 50000, fit.aggregated = FALSE)
+
+select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia))
+# This table shows, that the n is to small to correctly compute FIA for the 1htm model (as the penalty is bigger than for the 2htm)
+
+# using the new dataset argument
+select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia), dataset = 4)
+
+select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia), dataset = 1:10)
+
+}
+
+}
 
 ##############################################################
 # Example: predict.model
