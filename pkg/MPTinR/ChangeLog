@@ -1,3 +1,7 @@
+2012-09-14
+		* resolved bug when using inequality and crossed equality
+          restrictions (see bugs/resrictionsbug.order.R)
+
 2012-09-03
 		* select.mpt now shows g.square, df, and p
 		* select.mpt has argument dataset

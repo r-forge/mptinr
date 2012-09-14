@@ -20,6 +20,13 @@
 	
 	o	select.mpt works now if some some models (with multiple datasets)
 		were fitted with fit.aggregated = FALSE.
+      
+    o   You can now pose an order restriction on variables that may also
+        be restricted to be equal to others. E.g., the following restriction
+        is allowed list("G2 < G3 < G5", "G1 = G2", "G4 = G5") and produces
+        the desired results, see r-forge/MPTinR/bugs/restrictionsbug.order.R 
+        Note that in this case G1 would be marked as inequality restricted
+        instead of equality restricted (which is not the case for G4).
 
 
 
