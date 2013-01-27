@@ -2,7 +2,7 @@
 					** MPTinR VERSION 1.0.x **
 					**************************
 					Changes in MPTinR Version 1.0.x
-					Released September 2012
+					Released January 2013
 
 	Significant User Visible Changes and new Features
 	
@@ -15,11 +15,16 @@
 	
 	o	argument dataset added to select.mpt. Allows to select only certain 
 		datasets for the comparison (argument may be of length > 1).
+    
+    o   added CITATION file (as our Behavior Research Methods paper finally 
+        came out)
 	
 	Bugfixes
 	
 	o	select.mpt works now if some some models (with multiple datasets)
 		were fitted with fit.aggregated = FALSE.
+        
+    o   select.mpt returns the aggregated GoF (G^2, df, p) when output = "full"
       
     o   You can now pose an order restriction on variables that may also
         be restricted to be equal to others. E.g., the following restriction

@@ -393,12 +393,14 @@ m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
 r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
 
-br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 50000, fit.aggregated = FALSE)
-br.2htm.res.fia <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 50000, fit.aggregated = FALSE)
-br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 50000, fit.aggregated = FALSE)
+br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 50000, fit.aggregated = TRUE)
+br.2htm.res.fia <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 50000, fit.aggregated = TRUE)
+br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 50000, fit.aggregated = TRUE)
 
 select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia))
 # This table shows, that the n is to small to correctly compute FIA for the 1htm model (as the penalty is bigger than for the 2htm)
+
+select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia), output = "full")
 
 # using the new dataset argument
 select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia), dataset = 4)

@@ -1,3 +1,7 @@
+2013-01-27
+        * added CITATION file
+        * added aggregated G^2 when output = "full" (select.mpt)
+
 2012-09-14
 		* resolved bug when using inequality and crossed equality
           restrictions (see bugs/resrictionsbug.order.R)
