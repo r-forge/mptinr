@@ -2,7 +2,8 @@ export(
        ## major functions
        "fit.mpt",
        "make.mpt",
-       "generate.data"
+       "generate.data",
+       "write.mpt"
 )
 
 exportClasses("bmpt.model", "mpt.model", "bmpt", "mpt")

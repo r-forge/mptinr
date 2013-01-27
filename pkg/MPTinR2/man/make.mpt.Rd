@@ -12,7 +12,7 @@ This generic function in \pkg{MPTinR} creates an object representing a MPT model
 \usage{
 \S4method{make.mpt}{characterOrConnection}(model, restrictions = NULL, model.type = c("easy", "eqn", "eqn2"), ...)
 \S4method{make.mpt}{characterOrConnection,characterOrConnection}(model, restrictions = NULL, model.type = c("easy", "eqn", "eqn2"), ...)
-\S4method{make.mpt}{characterOrConnection,list}(model, restrictions = NULL, model.type = c("easy", "eqn", "eqn2"), ...)
+\S4method{make.mpt}{characterOrConnection,list}(model, restrictions, model.type = c("easy", "eqn", "eqn2"), ...)
 }
 \arguments{
   \item{model}{
