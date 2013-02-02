@@ -121,7 +121,7 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 		BICs <- sapply(mpt.results, function(x) x[["information.criteria"]][["individual"]][["BIC"]])
 		BIC.best <- rowSums(apply(BICs, 1, function(x) round(x, round.digit) == min(round(x, round.digit))))
 		df.out <- data.frame(model = m.names, n.parameters, G.Squared.sum, df.sum, p.sum)
-        if (c.aggregated) {
+        if (c.aggregated & (output[1] != "standard")) {
             df.out <- cbind(df.out, G.Squared.aggregated, df.aggregated, p.aggregated)
         }
 		if (any(c.fia)) {

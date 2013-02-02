@@ -1,3 +1,6 @@
+2013-02-02
+        * aggrgeated G^2 only if output == "full"
+
 2013-01-27
         * added CITATION file
         * added aggregated G^2 when output = "full" (select.mpt)
