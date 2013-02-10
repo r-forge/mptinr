@@ -1,3 +1,6 @@
+2013-02-10
+        * modifed documentation for FIA (extra brackets warning).
+        
 2013-02-02
         * aggrgeated G^2 only if output == "full"
 

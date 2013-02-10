@@ -1,4 +1,21 @@
 					**************************
+					** MPTinR VERSION 1.1.0 **
+					**************************
+					Changes in MPTinR Version 1.1.x
+					Released XXX 2013
+
+	Significant User Visible Changes and new Features
+	
+	o	documentation now says that extra brackets will distort FIA 
+        calculation (Thanks to Joachim Vandekerckhove and 
+        EJ Wagenmakers)
+	
+	Bugfixes
+	
+	o	
+
+        
+					**************************
 					** MPTinR VERSION 1.0.x **
 					**************************
 					Changes in MPTinR Version 1.0.x
