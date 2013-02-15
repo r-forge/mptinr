@@ -9,6 +9,9 @@
 	o	documentation now says that extra brackets will distort FIA 
         calculation (Thanks to Joachim Vandekerckhove and 
         EJ Wagenmakers)
+        
+    o   added possibility to specify individual bounds for 
+        random starting values (via two element list).
 	
 	Bugfixes
 	

@@ -31,7 +31,9 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 			if (is.null(start.params)) start.params <- c(0.1, 0.9)
             if (is.list(start.params)) {
                 lbound <- start.params[[1]]
+                if (length(lbound) == 1) lbound <- rep(lbound, n.params)
                 ubound <- start.params[[2]]
+                if (length(ubound) == 1) ubound <- rep(ubound, n.params)
                 start.params <- vector("numeric", n.params)
                 for (c in 1:n.params) {
                 start.params[c] <- runif(1, lbound[c], ubound[c])
