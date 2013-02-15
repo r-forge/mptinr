@@ -29,6 +29,14 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	optim.tree <- function(data, objective, gradient, use.gradient, hessian, use.hessian, tmp.env, param.names, n.params, n.optim, start.params, lower.bound, upper.bound, control, ...)  {
 		wrapper.nlminb <- function(x, data, objective, gradient, use.gradient, hessian, use.hessian, tmp.env, param.names, n.params, n.optim, start.params, lower.bound, upper.bound, control, ...) {
 			if (is.null(start.params)) start.params <- c(0.1, 0.9)
+            if (is.list(start.params)) {
+                lbound <- start.params[[1]]
+                ubound <- start.params[[2]]
+                start.params <- vector("numeric", n.params)
+                for (c in 1:n.params) {
+                start.params[c] <- runif(1, lbound[c], ubound[c])
+                }                
+            }
 			if (length(start.params) == 2) start.params <- runif(n.params, start.params[1], start.params[2])
 			nlminb(start.params, objective = objective, gradient = if(use.gradient) gradient, hessian = if(use.hessian) hessian, tmp.env = tmp.env, lower = lower.bound, upper = upper.bound, control = control, data = data, param.names = param.names, n.params = n.params, lower.bound = lower.bound, upper.bound = upper.bound,  ...)
 		}

@@ -1,3 +1,8 @@
+2013-02-15
+        * added undocumented feature to specify lower and upper
+          bound for starting values (must be two element list, 
+          first is lower, second is upper).
+
 2013-02-10
         * modifed documentation for FIA (extra brackets warning).
         
