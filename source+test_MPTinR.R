@@ -1,4 +1,7 @@
 
+require(RcppEigen)
+require(inline)
+
 for (r.file in list.files("pkg/MPTinR/R", full.names = TRUE)) {
 	source(r.file)
 }

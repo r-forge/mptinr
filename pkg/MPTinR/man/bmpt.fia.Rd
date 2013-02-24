@@ -101,7 +101,7 @@ Wu, H., Myung, J.I., & Batchelder, W.H. (2010a). Minimum description length mode
 Wu, H., Myung, J.I., & Batchelder, W.H. (2010b). On the minimum description length complexity of multinomial processing trees. \emph{Journal of Mathematical Psychology}, 54, 291-303.
 }
 \author{
-The original Matlab code was written by Hao Wu, Jay I. Myung, and William H. Batchelder. This code was ported to R by Henrik Singmann and David Kellen
+The original Matlab code was written by Hao Wu, Jay I. Myung, and William H. Batchelder.\cr This code was ported to R by Henrik Singmann and David Kellen, RcppEigen was added by Henrik Singmann and Christian Mueller.
 }
 \note{
 The R version of the code is considerably slower than the Matlab version of this code.

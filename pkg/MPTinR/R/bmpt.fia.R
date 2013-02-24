@@ -1,4 +1,8 @@
 
+.detI <- function (SS, Mcast, Acast, Bcast, Ccast, patternCast, ineq) 
+.Call("determinant", SS, Mcast, Acast, Bcast, Ccast, patternCast, 
+    ineq, PACKAGE = "MPTinR")
+
 bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05) {
 
 	t0 <- Sys.time()
@@ -119,7 +123,7 @@ bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05) {
 			Ineq[i, pos==ineq0[i,1]] <- -1  ####### erased transpose operator from originial code
 			Ineq[i, pos==ineq0[i,2]] <- 1  ####### erased transpose operator from original code
 		}
-	}
+	} else Ineq <- matrix(0, 1, 1)
 
 	###
 
@@ -137,30 +141,17 @@ bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05) {
 	integral <- 0
 	vr <- 0
 	count <- 0
+    storage.mode(A) <- "integer"
+    storage.mode(B) <- "integer"
+    #browser()
 	while (sample <= Sample) {
-		theta <- rbeta(S, 0.5, 0.5)
-		if (is.vector(theta) & length(theta) == 1) theta <- as.matrix(theta)
-		count <- count +1
-		if (!is.null(ineq0)) ineqeff <- (theta%*%(t(Ineq))<0)
-		else ineqeff <- FALSE
-		if (any(ineqeff) | any(theta == 0 | theta == 1)) next
-		############
-		# calculate the integrant, which is part of the Fisher information
-		Theta <- matrix(1, M, 1) %*% theta
-		p <- apply(Theta^A,1,prod)*apply((1-Theta)^B,1,prod)*c
-		#if (dim(p)[2] == 1) V <- pattern%*%diag(p[,1], dim(p)[1], dim(p)[1])
-		#else V <- pattern%*%diag(p)
-		V <- pattern%*%diag(p)
-		pc <- rowSums(V)
-		delta0 <- V %*% (A-(A+B) %*% diag(theta))
-		D = 1/pc
-		D[is.infinite(D)] <- 0
-		I <- t(delta0) %*% diag(D) %*% delta0 %*% solve(diag(theta*(1-theta))) *pi*pi
-		
-		detI <- abs(det(I))
+        #set.seed(10)
+        detI <- .detI(S, M, A, B, c, pattern, Ineq)
+        count <- count + 1
+        #print(detI)
 		integral <- integral + sqrt(detI)
 		vr <- vr + detI
-		sample <- sample + 1
+        if (detI != 0) sample <- sample + 1
 		if (floor(sample/10000) == sample/10000) {
 			message(paste("Samples:", sample), "\r", appendLF=FALSE)
 			flush.console()

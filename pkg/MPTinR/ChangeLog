@@ -1,4 +1,8 @@
 2013-02-15
+        * FIA calculation uses RcppEigen (thanks to 
+          Christian Mueller)
+
+2013-02-15
         * added feature to specify lower and upper bound
           for starting values (must be two element list, 
           first is lower, second is upper).

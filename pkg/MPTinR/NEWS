@@ -6,6 +6,9 @@
 
 	Significant User Visible Changes and new Features
 	
+    o   Calculation of FIA uses RcppEigen for dramatic speed
+        improvements (thanks to Christian Mueller).
+    
 	o	documentation now says that extra brackets will distort FIA 
         calculation (Thanks to Joachim Vandekerckhove and 
         EJ Wagenmakers)
