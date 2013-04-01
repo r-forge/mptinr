@@ -1,4 +1,9 @@
-2013-02-15
+2013-04-01
+        * FIA calculation can now use multicore (in bmpt.fia)
+		* multicore FIA also available via get.mpt.fia, fit.mpt, 
+		  and fit.model.
+		
+2013-02-24
         * FIA calculation uses RcppEigen (thanks to 
           Christian Mueller)
 

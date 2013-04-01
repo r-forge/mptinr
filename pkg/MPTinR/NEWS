@@ -1,5 +1,5 @@
 					**************************
-					** MPTinR VERSION 1.1.0 **
+					** MPTinR VERSION 1.1.x **
 					**************************
 					Changes in MPTinR Version 1.1.x
 					Released XXX 2013
@@ -8,6 +8,10 @@
 	
     o   Calculation of FIA uses RcppEigen for dramatic speed
         improvements (thanks to Christian Mueller).
+	
+	o	FIA calculation can also be parallelized, see bmpt.fia 
+		(but even in fit.mpt or fit.model, if multicore is not "none",
+		or in get.mpt.fia)
     
 	o	documentation now says that extra brackets will distort FIA 
         calculation (Thanks to Joachim Vandekerckhove and 

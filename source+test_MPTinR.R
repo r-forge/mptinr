@@ -1,10 +1,14 @@
 
 require(RcppEigen)
 require(inline)
+require(snowfall)
 
 for (r.file in list.files("pkg/MPTinR/R", full.names = TRUE)) {
 	source(r.file)
 }
+
+dyn.load("pkg/MPTinR/src-x64/MPTinR.dll")
+dyn.unload("pkg/MPTinR/src-x64/MPTinR.dll")
 
 options(error = recover)
 options(error = NULL)

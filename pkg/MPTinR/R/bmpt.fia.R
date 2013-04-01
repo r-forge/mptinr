@@ -1,9 +1,10 @@
 
-.detI <- function (SS, Mcast, Acast, Bcast, Ccast, patternCast, ineq) 
-.Call("determinant", SS, Mcast, Acast, Bcast, Ccast, patternCast, 
-    ineq, PACKAGE = "MPTinR")
+.oneSample <- function(index, subsample, seed, Sx, Mx, Ax, Bx, cx, pattern, Ineq) {
+  set.seed(seed[index])
+  .Call("determinant", Sx, Mx, Ax, Bx, cx, pattern, Ineq, subsample[index], PACKAGE = "MPTinR")
+}
 
-bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05) {
+bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05, multicore = FALSE, split = NULL) {
 
 	t0 <- Sys.time()
 	print(paste("Computing FIA: Iteration begins at ", t0, sep = ""))
@@ -137,34 +138,39 @@ bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05) {
 		pattern[i, category==i] <- 1
 	}
 
-	sample <- 1
-	integral <- 0
-	vr <- 0
-	count <- 0
-    storage.mode(A) <- "integer"
-    storage.mode(B) <- "integer"
-    #browser()
-	while (sample <= Sample) {
-        #set.seed(10)
-        detI <- .detI(S, M, A, B, c, pattern, Ineq)
-        count <- count + 1
-        #print(detI)
-		integral <- integral + sqrt(detI)
-		vr <- vr + detI
-        if (detI != 0) sample <- sample + 1
-		if (floor(sample/10000) == sample/10000) {
-			message(paste("Samples:", sample), "\r", appendLF=FALSE)
-			flush.console()
-		}
-	}
-
-	integral <- integral/Sample
+  storage.mode(A) <- "integer"
+  storage.mode(B) <- "integer"
+	storage.mode(Sample) <- "integer"
+  if (!is.null(split)) {
+    subsamples <- rep(ceiling(Sample/split), split)
+    seeds <- runif(split) * 10e7
+  } else {
+    if (multicore) {
+      subsamples <- vapply(sfClusterSplit(1:Sample), length, 0)
+      seeds <- runif(length(subsamples)) * 10e7
+    } else {
+      subsamples <- Sample
+      seeds <- runif(1) * 10e7
+    }
+  }
+  #browser()
+  if (isTRUE(multicore)) {
+    sfLibrary(MPTinR)
+    tmp.dat <- sfClusterApplyLB(1:length(seeds),.oneSample, Sx = S, Mx = M, Ax = A, Bx = B, cx = c, pattern = pattern, Ineq = Ineq, seed = seeds, subsample = subsamples)  
+  } else 
+    tmp.dat <- lapply(1:length(seeds), .oneSample, Sx = S, Mx = M, Ax = A, Bx = B, cx = c, pattern = pattern, Ineq = Ineq, seed = seeds, subsample = subsamples) 
+  #browser()
+  count <- sum(vapply(tmp.dat, "[", 0, i = 1))
+  integral <- sum(vapply(tmp.dat, "[", 0, i = 3))
+  vr <- sum(vapply(tmp.dat, "[", 0, i = 2))
+	#sum(sapply(tmp.dat[2,], function(x) isTRUE(all.equal(x, 0))))
+	# if (detI != 0) sample <- sample + 1	
+  integral <- integral/Sample
 	vr <- vr/Sample
 	vr1 <- abs(vr-integral^2)/Sample
 	lnInt <- log(integral)
 	d1 <- sqrt(vr1)/integral*qnorm(.975)
 	CI1 <- c(lnInt-d1, lnInt+d1)
-
 	const <- Sample/count
 	lnconst <- log(const)
 	d2 <- sqrt((1-const)/Sample)* qnorm(.975)
@@ -172,10 +178,8 @@ bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05) {
 	CFIA <- lnInt + lnconst+S/2*log(N/2/pi)
 	d <- sqrt(d2^2 + d1^2)
 	CI = c(CFIA-d, CFIA+d)
-
 	out <- c(CFIA, CI, lnInt, CI1, lnconst, CI2)
 	names(out) <- c("CFIA", "CI.l", "CI.u", "lnInt", "CI.lnint.l", "CI.lnint.u", "lnconst", "CI.lnconst.l", "CI.lnconst.u")
-	
 	t1 <- Sys.time()
 	print(paste("Computing FIA: Iteration stopped at ", t1, sep = ""))
 	print(t1-t0)

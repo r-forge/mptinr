@@ -24,7 +24,7 @@ fit.model(
 	sort.param = TRUE,
 	show.messages = TRUE,
 	model.type = c("easy", "eqn", "eqn2"),
-	multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2,
+	multicore = c("none", "individual", "n.optim", "fia"), sfInit = FALSE, nCPU = 2,
 	control = list(),
 	use.gradient = TRUE, use.hessian = FALSE
 )
@@ -71,7 +71,7 @@ Logical. If TRUE the time the fitting algorithms takes is printed to the console
 Character vector specifying whether the model file is formatted in the easy way (\code{"easy"}; i.e., each line represents all branches corresponding to a response category) or the traditional EQN syntax (\code{"eqn"} or \code{"eqn2"}; see Details and e.g., Stahl & Klauer, 2007). If \code{model.filename} ends with .eqn or .EQN, \code{model.type} is automatically set to \code{"eqn"}. Default is \code{"easy"}.
 }
   \item{multicore}{
-Character vector. If not \code{"none"}, uses \code{snowfall} for parallelization (which needs to be installed separately via \code{install.packages(snowfall)}). If \code{"individual"}, parallelizes the optimization for each individual (i.e., data needs to be a \code{matrix} or \code{data.frame}). If \code{"n.optim"}, parallelizes the \code{n.optim} optimization runs. Default is \code{"none"} which corresponds to no parallelization. Note that you need to initialize \code{snowfall} in default settings. See \code{sfInit} and Details.
+Character vector. If not \code{"none"}, uses \code{snowfall} for parallelization (which needs to be installed separately via \code{install.packages(snowfall)}). If \code{"individual"}, parallelizes the optimization for each individual (i.e., data needs to be a \code{matrix} or \code{data.frame}). If \code{"n.optim"}, parallelizes the \code{n.optim} optimization runs. If not \code{"none"} (e.g., \code{"fia"}) calculation of FIA is parallelized (if FIA is requested). Default is \code{"none"} which corresponds to no parallelization. Note that you need to initialize \code{snowfall} in default settings. See \code{sfInit} and Details.
 }
   \item{sfInit}{
 Logical. Relevant if \code{multicore} is not \code{"none"}. If \code{TRUE}, \code{fit.mpt} will initialize and close the multicore support. If \code{FALSE}, (the default) assumes that \code{sfInit()} was initialized before. See Details.
