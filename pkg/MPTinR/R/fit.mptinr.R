@@ -44,7 +44,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		}
 		for (d in seq_along(data)) assign(paste("hank.data.", d, sep = ""), data[d], envir = tmp.env)
 		if (multicore[1] == "n.optim") {
-			out <- sfLapply(1:n.optim, wrapper.nlminb, data = data, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmp.env, param.names = param.names, n.params = n.params, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound, control = control, ...)
+			out <- sfClusterApplyLB(1:n.optim, wrapper.nlminb, data = data, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmp.env, param.names = param.names, n.params = n.params, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound, control = control, ...)
 		} else out <- lapply(1:n.optim, wrapper.nlminb, data = data, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmp.env, param.names = param.names, n.params = n.params, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound, control = control, ...)
 		return(out)
 	}
@@ -56,7 +56,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		llks <- array(NA, dim=c(n.data, n.optim))
 		
 		if (multicore[1] == "individual" & length(data.new) > 1) {
-			 optim.runs <- sfLapply(data.new, optim.tree, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmp.env, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound, control = control, ...)
+			 optim.runs <- sfClusterApplyLB(data.new, optim.tree, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmp.env, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound, control = control, ...)
 		} else optim.runs <- lapply(data.new, optim.tree, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmp.env, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = start.params, lower.bound = lower.bound, upper.bound = upper.bound, control = control, ...)
 		
 		for (c.outer in 1:n.data) {

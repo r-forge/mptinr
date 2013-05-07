@@ -7,8 +7,7 @@ for (r.file in list.files("pkg/MPTinR2/R", pattern = "R$", full.names = TRUE)) {
 	tryCatch(source(r.file), error = function(e) print(e))
 }
 
-dyn.load("K:/packages/MPTinR/MPTinR2.dll")
-
+dyn.load("pkg/MPTinR2/src-x64/MPTinR2.dll")
 
 options(error = recover)
 

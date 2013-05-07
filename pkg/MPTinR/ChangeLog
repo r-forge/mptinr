@@ -1,3 +1,6 @@
+2013-05-07
+        * multicore fitting now uses load balancing (fit.mptinr)
+
 2013-04-01
         * FIA calculation can now use multicore (in bmpt.fia)
 		* multicore FIA also available via get.mpt.fia, fit.mpt, 
