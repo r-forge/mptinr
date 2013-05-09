@@ -194,6 +194,8 @@ Henrik Singmann and David Kellen with help from Karl Christoph Klauer.
 }
 \note{
 All (model or restriction) files should end with an empty line, otherwise a warning will be shown.
+
+The likelihood returned does not include the factorial constants of the multinomial probability-mass functions.
 }
 
 \examples{

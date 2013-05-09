@@ -1,7 +1,7 @@
 Package: MPTinR
 Type: Package
 Title: Analyze Multinomial Processing Tree Models
-Version: 1.1.5
+Version: 1.1.6
 Date: 2013-05-09
 Author: Henrik Singmann, David Kellen, and Christian Mueller
 Maintainer: Henrik Singmann <henrik.singmann@psychologie.uni-freiburg.de>

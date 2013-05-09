@@ -27,7 +27,8 @@
 	
 	Bugfixes
 	
-	o	
+	o	Added note that LLKs do not include factorial constant of the
+        multinomial PMF.
 
         
 					**************************

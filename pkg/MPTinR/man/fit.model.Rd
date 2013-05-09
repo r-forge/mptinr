@@ -154,6 +154,8 @@ When \code{output == "full"} the list contains the additional items:\cr
 \note{
 Warnings may relate to the optimization routine (e.g., \code{Optimization routine [...] did not converge succesfully}).\cr
 In these cases it is recommended to rerun the model fitting to check if the results are stable.
+
+The likelihood returned does not include the factorial constants of the multinomial probability-mass functions.
 }
 \references{
 Broeder, A., & Schuetz, J. (2009). Recognition ROCs are curvilinear-or are they? On premature arguments against the two-high-threshold model of recognition. \emph{Journal of Experimental Psychology: Learning, Memory, and Cognition}, 35(3), 587. doi:10.1037/a0015279
