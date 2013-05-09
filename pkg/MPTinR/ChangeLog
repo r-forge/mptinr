@@ -1,3 +1,6 @@
+2013-05-09
+        * added n.smaller.05 column to select.mpt
+
 2013-05-07
         * multicore fitting now uses load balancing (fit.mptinr)
 

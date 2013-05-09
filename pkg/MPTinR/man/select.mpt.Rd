@@ -45,6 +45,7 @@ A \code{data.frame} containing the model selection values:\cr
 \code{G.Squared}: G.Squared values of the model (from summed fits for multiple datasets).\cr
 \code{df}: df values of the model (from summed fits for multiple datasets).\cr
 \code{p.value}: p values of the model (from summed fits for multiple datasets).\cr 
+\code{p.smaller.05}: How many of the individual data sets have p < .05 (for multiple datasets only).\cr 
 For the information criteria (i.e., FIA, AIC, BIC) \code{X}, \code{delta.X}, \code{X.best}, \code{X}, \code{wX} represent: The difference from the reference model, how often each model provided the best fit (only for multi-individual fit), the absolute value, the weights (only AIC and BIC).\cr
 For multi-indivudal fit the postfix indicates whether the results refer to the summed information criteria from individual fit \code{.sum} or the information criteria from the aggregated data \code{.aggregated}.
 }
