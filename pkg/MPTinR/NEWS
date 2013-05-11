@@ -2,7 +2,7 @@
 					** MPTinR VERSION 1.1.x **
 					**************************
 					Changes in MPTinR Version 1.1.x
-					Released XXX 2013
+					Released May 2013
 
 	Significant User Visible Changes and new Features
 	
@@ -29,6 +29,8 @@
 	
 	o	Added note that LLKs do not include factorial constant of the
         multinomial PMF.
+        
+    o   (hopefully) repaired bug in make.mdt() with matrix/data.frame
 
         
 					**************************

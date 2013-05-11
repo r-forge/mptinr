@@ -1,3 +1,6 @@
+2013-05-11
+        * removed bug in make.mdt with data.frames
+        
 2013-05-09
         * added n.smaller.05 column to select.mpt
         * added note about factorial constant (fit.mpt, fit.model)
