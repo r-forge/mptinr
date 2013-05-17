@@ -119,7 +119,7 @@ To get the FIA, \code{fit.mpt} performs the following steps:\cr
 2. The context free representation of the model is then fed into the MCMC function computing the FIA (the port of BMPTFIA provided by Wu, Myung & Batchelder (2010a), see \code{\link{bmpt.fia}}).\cr
 (Actually, both steps are achieved by a call to \code{\link{get.mpt.fia}})
 
-Note that FIA can sometimes be non-consistent (i.e., larger FIA penalty values for restricted versions of a model than for the superordinate model; see Navarro, 2004). This may specifically happens for small ns and is for example the case for the Bröder & Schütz example below. In these cases FIA cannot be used! Therefore, always check for consistency of the FIA penalty terms.
+Note that FIA can sometimes be non-consistent (i.e., larger FIA penalty values for restricted versions of a model than for the superordinate model; see Navarro, 2004). This may specifically happens for small ns and is for example the case for the Broder & Schutz example below. In these cases FIA cannot be used! Therefore, always check for consistency of the FIA penalty terms.
 
 Once again: If one wants to compute the FIA, it is \emph{absolutely necessary}, that the representation of the model via equations in the model file exactly maps on the structure of the binary MPT (see \code{\link{make.mpt.cf}} for more details).
 
@@ -181,7 +181,7 @@ Knapp, B. R., & Batchelder, W. H. (2004). Representing parametric order constrai
 
 Moshagen, M. (2010). multiTree: A computer program for the analysis of multinomial processing tree models. \emph{Behavior Research Methods}, 42, 42-54.
 
-Navarro, D. J. (2004). A Note on the Applied Use of MDL Approximations. \emph{Neural Computation}, 16(9), 1763–1768.
+Navarro, D. J. (2004). A Note on the Applied Use of MDL Approximations. \emph{Neural Computation}, 16(9), 1763-1768.
 
 Purdy, B. P., & Batchelder, W. H. (2009). A context-free language for binary multinomial processing tree models. \emph{Journal of Mathematical Psychology}, 53, 547-561.
 
