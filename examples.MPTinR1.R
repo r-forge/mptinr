@@ -94,7 +94,6 @@ all.equal(c.equal, c.equal.2)
 # that is, for some models (.ineq) we impose: G1 < G2 < G3 < G4 < G5 
 # As will be apparent, the inequality restrictions do not hold for all individuals.
 # Finally, we compute the FIA for all models, taking inequalities into account when they are imposed.
-# Note: The following examples will take some time (> 1 hour).
 
 data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
@@ -135,7 +134,6 @@ all.equal(br.1htm.ineq, br.1htm.ineq.list)  # TRUE
 # (It would look differently if we excluded critical cases, 
 # i.e., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)
 # Therefore, we get the FIA for the models as computed above 
-# WARNING: The following part will take a long time!
 
 br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 200000)
 br.2htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, i.2htm, fia = 200000)
@@ -150,6 +148,11 @@ br.1htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, ir.1htm, fia = 200000)
 		orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
 # The same results, ordered by FIA
 br.select[order(br.select[,"delta.FIA.sum"]),]
+
+# Note that FIA for individual data (.sum) is not consistent (i.e., the penalty
+# for the nested model br.1htm.ineq.fia is not really smaller than the penalty
+# for the superordinate model br.2htm.ineq.fia).
+# Hence, one should use the aggregated data for this analysis (not shown here)! 
 
 # Compare this with the model selection not using FIA:
 select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = br.2htm.res, 

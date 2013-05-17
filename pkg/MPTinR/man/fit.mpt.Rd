@@ -119,6 +119,8 @@ To get the FIA, \code{fit.mpt} performs the following steps:\cr
 2. The context free representation of the model is then fed into the MCMC function computing the FIA (the port of BMPTFIA provided by Wu, Myung & Batchelder (2010a), see \code{\link{bmpt.fia}}).\cr
 (Actually, both steps are achieved by a call to \code{\link{get.mpt.fia}})
 
+Note that FIA can sometimes be non-consistent (i.e., larger FIA penalty values for restricted versions of a model than for the superordinate model; see Navarro, 2004). This may specifically happens for small ns and is for example the case for the Bröder & Schütz example below. In these cases FIA cannot be used! Therefore, always check for consistency of the FIA penalty terms.
+
 Once again: If one wants to compute the FIA, it is \emph{absolutely necessary}, that the representation of the model via equations in the model file exactly maps on the structure of the binary MPT (see \code{\link{make.mpt.cf}} for more details).
 
 Confidence intervals (CI) are based on the observed Hessian matrix produced by the symbolically derived function for the Hessian (i.e., the second derivative of the likelihood function). If it is based on a numerically estimated Hessian, a warning will be given. \cr
@@ -178,6 +180,8 @@ Fox P (1997). \emph{The Port Mathematical Subroutine Library, Version 3}. AT&T B
 Knapp, B. R., & Batchelder, W. H. (2004). Representing parametric order constraints in multi-trial applications of multinomial processing tree models. \emph{Journal of Mathematical Psychology}, 48, 215-229.
 
 Moshagen, M. (2010). multiTree: A computer program for the analysis of multinomial processing tree models. \emph{Behavior Research Methods}, 42, 42-54.
+
+Navarro, D. J. (2004). A Note on the Applied Use of MDL Approximations. \emph{Neural Computation}, 16(9), 1763–1768.
 
 Purdy, B. P., & Batchelder, W. H. (2009). A context-free language for binary multinomial processing tree models. \emph{Journal of Mathematical Psychology}, 53, 547-561.
 
@@ -239,7 +243,7 @@ fit.mpt(rb.fig1.data, textConnection(model1.txt), n.optim = 1)
 # Finally, the inferential tests reported by Riefer & Batchelder, (1988, p. 332) are executed.
 
 # get the data
-data(rb.fig2.data)
+data(rb.fig2.data, package = "MPTinR")
 
 # positions of model and restriction files:
 model2 <- system.file("extdata", "rb.fig2.model", package = "MPTinR")
@@ -291,9 +295,8 @@ all.equal(c.equal, c.equal.2)
 # that is, for some models (.ineq) we impose: G1 < G2 < G3 < G4 < G5 
 # As will be apparent, the inequality restrictions do not hold for all individuals.
 # Finally, we compute the FIA for all models, taking inequalities into account when they are imposed.
-# Note: The following examples will take some time (> 1 hour).
 
-data(d.broeder)
+data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
 r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
@@ -332,7 +335,6 @@ all.equal(br.1htm.ineq, br.1htm.ineq.list)  # TRUE
 # (It would look differently if we excluded critical cases, 
 # i.e., 2, 6, 7, 10, 18, 21, 25, 29, 32, 34, 35, 37, 38)
 # Therefore, we get the FIA for the models as computed above 
-# WARNING: The following part will take a long time!
 
 br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 200000)
 br.2htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, i.2htm, fia = 200000)
@@ -347,6 +349,11 @@ br.1htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, ir.1htm, fia = 200000)
 		orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
 # The same results, ordered by FIA
 br.select[order(br.select[,"delta.FIA.sum"]),]
+
+# Note that FIA for individual data (.sum) is not consistent (i.e., the penalty
+# for the nested model br.1htm.ineq.fia is not really smaller than the penalty
+# for the superordinate model br.2htm.ineq.fia).
+# Hence, one should use the aggregated data for this analysis (not shown here)! 
 
 # Compare this with the model selection not using FIA:
 select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = br.2htm.res, 
