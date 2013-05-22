@@ -102,12 +102,15 @@ br.2htm.res.fia <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 50000, fit.aggregate
 br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 50000, fit.aggregated = FALSE)
 
 select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia))
-# This table shows, that the n is to small to correctly compute FIA for the 1htm model (as the penalty is bigger than for the 2htm)
+# This table shows, that the n is to small to correctly compute FIA for 
+# the 1htm model (as the penalty is bigger than for the 2htm)
 
 # using the new dataset argument
-select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia), dataset = 4)
+select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia),
+	dataset = 4)
 
-select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia), dataset = 1:10)
+select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia),
+	dataset = 1:10)
 
 }
 

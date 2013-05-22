@@ -8,8 +8,9 @@ Convenient function to get FIA for MPT
 \code{get.mpt.fia} is a comfortable wrapper for the R-port of Wu, Myung, and Batchelder's (2010) BMPTFIA \code{\link{bmpt.fia}}. It takes data, a model file, and (optionally) a restrictions file, computes the context-free representation of this file and then feeds this into \code{\link{bmpt.fia}} which returns the FIA.
 }
 \usage{
-get.mpt.fia(data, model.filename, restrictions.filename = NULL, Sample = 2e+05, model.type = c("easy", "eqn", "eqn2"), 
-round.digit = 6, multicore = FALSE, split = NULL)
+get.mpt.fia(data, model.filename, restrictions.filename = NULL, Sample = 2e+05, 
+	model.type = c("easy", "eqn", "eqn2"), round.digit = 6, 
+	multicore = FALSE, split = NULL)
 }
 \arguments{
   \item{data}{
