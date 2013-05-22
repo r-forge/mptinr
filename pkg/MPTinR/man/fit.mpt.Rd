@@ -294,7 +294,7 @@ all.equal(c.equal, c.equal.2)
 # We fit the models with, as well as without, applied inequality restrictions (see Details)
 # that is, for some models (.ineq) we impose: G1 < G2 < G3 < G4 < G5 
 # As will be apparent, the inequality restrictions do not hold for all individuals.
-# Finally, we compute the FIA for all models, taking inequalities into account when they are imposed.
+# Finally, we compute the FIA for all models, taking inequalities into account.
 
 data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
@@ -344,9 +344,9 @@ br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 200000)
 br.1htm.ineq.fia <- fit.mpt(d.broeder, m.2htm, ir.1htm, fia = 200000)
 
 # Model selection using the FIA
-(br.select <- select.mpt(list(orig.2htm = br.2htm.fia, orig.2htm.ineq = br.2htm.ineq.fia, 
-		res.2htm = br.2htm.res.fia, res.2htm.ineq = br.2htm.res.ineq.fia, 
-		orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
+(br.select <- select.mpt(list(orig.2htm = br.2htm.fia, orig.2htm.ineq = br.2htm.ineq.fia,
+    res.2htm = br.2htm.res.fia, res.2htm.ineq = br.2htm.res.ineq.fia, 
+    orig.1htm = br.1htm.fia, orig.1htm.ineq = br.1htm.ineq.fia)))
 # The same results, ordered by FIA
 br.select[order(br.select[,"delta.FIA.sum"]),]
 
@@ -356,8 +356,9 @@ br.select[order(br.select[,"delta.FIA.sum"]),]
 # Hence, one should use the aggregated data for this analysis (not shown here)! 
 
 # Compare this with the model selection not using FIA:
-select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, res.2htm = br.2htm.res, 
-		res.2htm.ineq = br.2htm.res.ineq, orig.1htm = br.1htm, orig.1htm.ineq = br.1htm.ineq))
+select.mpt(list(orig.2htm = br.2htm, orig.2htm.ineq = br.2htm.ineq, 
+        res.2htm = br.2htm.res, res.2htm.ineq = br.2htm.res.ineq, 
+        orig.1htm = br.1htm, orig.1htm.ineq = br.1htm.ineq))
 
 # Only use the aggregated data:
 d.broeder.agg <- colSums(d.broeder)
@@ -365,7 +366,8 @@ br.2htm.agg <- fit.mpt(d.broeder.agg, m.2htm)
 br.2htm.res.agg <- fit.mpt(d.broeder.agg, m.2htm, r.2htm)
 br.1htm.agg <- fit.mpt(d.broeder.agg, m.2htm, r.1htm)
 
-select.mpt(list(orig.2htm = br.2htm.agg, res.2htm = br.2htm.res.agg, orig.1htm = br.1htm.agg), output = "full")
+select.mpt(list(orig.2htm = br.2htm.agg, res.2htm = br.2htm.res.agg, 
+    orig.1htm = br.1htm.agg), output = "full")
 
 
 # compare speed of no multicore versus multicore for multiple datasets:

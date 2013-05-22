@@ -8,7 +8,8 @@ Compute FIA for MPTs
 R-port of the function to compute FIA for MPT models by Wu, Myung, and Batchelder (2010a, 2010b). This function is essentially a copy of the original Matlab code to R (with significant parts moved to C++ and allowing for multicore functionality). Also, the order of input arguments is more R-like.
 }
 \usage{
-bmpt.fia(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05, multicore = FALSE, split = NULL)
+bmpt.fia(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05, 
+        multicore = FALSE, split = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
