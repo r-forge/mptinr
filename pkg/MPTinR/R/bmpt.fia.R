@@ -155,7 +155,7 @@ bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05, m
   }
   #browser()
   if (isTRUE(multicore)) {
-    sfLibrary(MPTinR)
+    sfLibrary("MPTinR", character.only = TRUE)
     tmp.dat <- sfClusterApplyLB(1:length(seeds),.oneSample, Sx = S, Mx = M, Ax = A, Bx = B, cx = c, pattern = pattern, Ineq = Ineq, seed = seeds, subsample = subsamples)  
   } else 
     tmp.dat <- lapply(1:length(seeds), .oneSample, Sx = S, Mx = M, Ax = A, Bx = B, cx = c, pattern = pattern, Ineq = Ineq, seed = seeds, subsample = subsamples) 

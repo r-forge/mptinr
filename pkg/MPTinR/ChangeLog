@@ -1,5 +1,12 @@
 2013-05-17
-        * updated documebntation of fit.mpt (added 
+        * sfLibrary now called with only.character = TRUE 
+		  (removes R CMD check NOTE).
+
+2013-05-22
+        * fixed line lengths in .Rd files
+
+2013-05-17
+        * updated documentation of fit.mpt (added 
           warning for possibly inconsistent FIA penalties)
 
 2013-05-11
