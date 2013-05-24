@@ -1,4 +1,8 @@
-2013-05-17
+2013-05-24
+        * needs R (>= 2.14) same as RcppEigen
+        * minor correction to bmpt.fia.Rd
+
+2013-05-23
         * sfLibrary now called with only.character = TRUE 
 		  (removes R CMD check NOTE).
 
