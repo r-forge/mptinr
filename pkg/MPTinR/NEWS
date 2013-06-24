@@ -1,4 +1,20 @@
 					**************************
+					** MPTinR VERSION 1.2.x **
+					**************************
+					Changes in MPTinR Version 1.2.x
+					Released XXX 2013
+
+	Significant User Visible Changes and new Features
+	
+    o   
+    
+	Bugfixes
+	
+	o   Removed bug that Hessian function was called even though 
+        use.hessian was set to FALSE. 
+
+        
+					**************************
 					** MPTinR VERSION 1.1.x **
 					**************************
 					Changes in MPTinR Version 1.1.x
@@ -159,7 +175,7 @@
 	
 	o	no more warnings by cell counts below 5 (seems unprincipled)
 		
-	o	fixed bug when resttricted parameters were not in the original model
+	o	fixed bug when restricted parameters were not in the original model
 		(now throws a warning, thanks to Alex)
 
 		
