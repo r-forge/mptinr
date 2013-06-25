@@ -392,7 +392,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	
 	for (c in 1:n.data) {
 		for (d in seq_along(data[c,])) assign(paste("hank.data.", d, sep = ""), data[c,d], envir = tmpllk.env)
-		if (!is.null(hessian) & use.hessian) hessian.list[[c]] <- do.call(hessian, args  = list(minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ))
+		if (!is.null(hessian)) hessian.list[[c]] <- tryCatch(do.call(hessian, args  = list(minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... )), error = function(e) NA)
 		else hessian.list[[c]] <- tryCatch(numDeriv::hessian(func = objective, x = minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ), error = function(e) NA)
 	}
 	
@@ -421,7 +421,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 			res.optim.pooled <- optim.mpt(data = data.pooled, objective = objective, gradient = gradient, use.gradient = use.gradient, hessian = hessian, use.hessian = use.hessian, tmp.env = tmpllk.env, param.names = param.names, n.params = n.params, n.optim = n.optim, start.params = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, control = control, n.data = 1, ...)
 			
 			for (d in seq_along(data.pooled)) assign(paste("hank.data.", d, sep = ""), data.pooled[d], envir = tmpllk.env)
-			if (!is.null(hessian) & use.hessian) hessian.pooled <- do.call(hessian, args  = list(res.optim.pooled[["minim"]][[1]][["par"]], upper.bound = upper.bound, lower.bound = lower.bound, data = data.pooled, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ))
+			if (!is.null(hessian)) hessian.pooled <- tryCatch(do.call(hessian, args  = list(res.optim.pooled[["minim"]][[1]][["par"]], upper.bound = upper.bound, lower.bound = lower.bound, data = data.pooled, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... )), error = function(e) NA)
 			else hessian.pooled <- tryCatch(numDeriv::hessian(func = objective, x = res.optim.pooled[["minim"]][[1]][["par"]], upper.bound = upper.bound, lower.bound = lower.bound, data = data.pooled, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ), error = function(e) NA)
 			
 			inv.hessian <- tryCatch(solve(hessian.pooled), error = function(e) NA)

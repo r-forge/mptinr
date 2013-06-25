@@ -1,4 +1,7 @@
-2013-06-26
+2013-06-25
+        * last changes broke code, should be better now
+
+2013-06-24
         * removed bug that Hessian function was invoked
           even though use.hessian = FALSE.
 
