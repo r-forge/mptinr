@@ -6,13 +6,16 @@
 
 	Significant User Visible Changes and new Features
 	
-    o   
+    o   Most warnings (e.g., concerning unsuccesful optimization
+        with analytic gradient) are now messages.
+    
+    o   Added error message when the objective function did not 
+        evaluate succesfully with the given starting values.
     
 	Bugfixes
 	
-	o   Removed bug that Hessian function was called even though 
-        use.hessian was set to FALSE. 
-
+	o   Removed bug that crahsed the main functions when Hessian
+        function failed to produce reasonable results. 
         
 					**************************
 					** MPTinR VERSION 1.1.x **

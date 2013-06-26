@@ -142,8 +142,8 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	# gradient and hessian:
 	
 	llk.function <- tryCatch(.make.llk.function(tree, param.names, length.param.names), error = function(e) {warning("likelihood function cannot be build"); NULL})
-	llk.gradient <- tryCatch(.make.llk.gradient(llk.function, param.names, length.param.names), error = function(e) {warning("gradient function cannot be build (probably derivation failure, see ?D"); NULL})
-	llk.hessian <- tryCatch(.make.llk.hessian(llk.function, param.names, length.param.names), error = function(e) {warning("hessian function cannot be build (probably derivation failure, see ?D"); NULL})
+	llk.gradient <- tryCatch(.make.llk.gradient(llk.function, param.names, length.param.names), error = function(e) {message("gradient function cannot be build (probably derivation failure, see ?D"); NULL})
+	llk.hessian <- tryCatch(.make.llk.hessian(llk.function, param.names, length.param.names), error = function(e) {message("hessian function cannot be build (probably derivation failure, see ?D"); NULL})
 	
 	if (!is.null(fia)) {
 		if (multiFit) {
