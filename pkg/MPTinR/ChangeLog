@@ -1,5 +1,9 @@
+2013-10-28
+        * bmpt.fia now uses the absolute of the determinant 
+          (as did the original code by Wu et al.).
+
 2013-06-26
-        # added reasonable message when objective function failed.
+        * added reasonable message when objective function failed.
         * changed warnings to messages.
         * now everything should work with Hessian (hopefully)
 

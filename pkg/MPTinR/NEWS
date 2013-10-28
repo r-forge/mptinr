@@ -1,8 +1,26 @@
 					**************************
+					** MPTinR VERSION 1.3.x **
+					**************************
+					Changes in MPTinR Version 1.3.x
+					Released November 2013
+
+	Significant User Visible Changes and new Features
+	
+    o   
+        
+    Bugfixes
+	
+	o   FIA calculation could fail when determinant of Fisher matrix 
+        was below 0 as it did not take the absoulate value 
+        (as does the original code by Wu et al.). This should be
+        fixed now and FIA work for all models again.
+        
+
+					**************************
 					** MPTinR VERSION 1.2.x **
 					**************************
 					Changes in MPTinR Version 1.2.x
-					Released XXX 2013
+					Released May 2013
 
 	Significant User Visible Changes and new Features
 	
