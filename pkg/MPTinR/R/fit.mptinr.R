@@ -146,13 +146,11 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 				parameter_table.indiv.tmp <- data.frame(param.names, estimates = estimates[, counter.n], lower.conf =lower.conf[, counter.n], upper.conf = upper.conf[, counter.n], restricted.parameter = 0)
 				parameter_table <- parameter_table.indiv.tmp[parameter_table.indiv.tmp$param.names %in% orig.params,]
 				for (c in 1:length(restrictions)) {
-					if (restrictions[[c]][3] == "=" & sum(grepl("[[:alpha:]]", restrictions[[c]][2]))) {
+					if (restrictions[[c]][3] == "=" & sum(grepl("^\\.?[[:alpha:]]", restrictions[[c]][2]))) {
 						parameter_table <- rbind(parameter_table, data.frame(param.names = restrictions[[c]][1], parameter_table[parameter_table$param.names == restrictions[[c]][2], 2:4], restricted.parameter = 1))
-					}
-					if (restrictions[[c]][3] == "=" & sum(grepl("^[[:digit:]]\\.?[[:digit:]]*", restrictions[[c]][2]))) {
+					} else if (restrictions[[c]][3] == "=") {
 						parameter_table <- rbind(parameter_table, data.frame(param.names = restrictions[[c]][1], estimates = as.numeric(restrictions[[c]][2]), lower.conf = NA, upper.conf = NA, restricted.parameter = 1))
-					}
-					if (restrictions[[c]][3] == "<") {
+					} else if (restrictions[[c]][3] == "<") {
 						tmp.vars <- .find.MPT.params(parse(text = restrictions[[c]][2])[1])
 						new.param <- prod(parameter_table.indiv.tmp[parameter_table.indiv.tmp$param.names %in% tmp.vars,2])
 						var.tmp <- var.params[rownames(var.params) %in% tmp.vars, counter.n]
@@ -201,13 +199,11 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 			parameter_table <- parameter_table.tmp[parameter_table.tmp$parameter.names %in% orig.params,]
 			
 			for (c in 1:length(restrictions)) {
-				if (restrictions[[c]][3] == "=" & sum(grepl("[[:alpha:]]", restrictions[[c]][2]))) {
+				if (restrictions[[c]][3] == "=" & sum(grepl("^\\.?[[:alpha:]]", restrictions[[c]][2]))) {
 					parameter_table <- rbind(parameter_table, data.frame(parameter.names = restrictions[[c]][1], parameter_table[parameter_table$parameter.names == restrictions[[c]][2], 2:4], restricted.parameter = restrictions[[c]][2]))
-				}
-				if (restrictions[[c]][3] == "=" & sum(grepl("^[[:digit:]]\\.?[[:digit:]]*", restrictions[[c]][2]))) {
+				} else if (restrictions[[c]][3] == "=") {
 					parameter_table <- rbind(parameter_table, data.frame(parameter.names = restrictions[[c]][1], estimates = as.numeric(restrictions[[c]][2]), lower.conf = NA, upper.conf = NA, restricted.parameter = restrictions[[c]][2]))
-				}
-				if (restrictions[[c]][3] == "<") {
+				} else if (restrictions[[c]][3] == "<") {
 					tmp.vars <- .find.MPT.params(parse(text = restrictions[[c]][2])[1])
 					new.param <- prod(parameter_table.tmp[parameter_table.tmp$parameter.names %in% tmp.vars,2])
 					var.tmp <- var.params[names(var.params) %in% tmp.vars]

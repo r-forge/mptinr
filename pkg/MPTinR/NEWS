@@ -6,7 +6,8 @@
 
 	Significant User Visible Changes and new Features
 	
-    o   
+    o   restrictions to constants can now be set to any value 
+        (not anymore restricted to be within 0 and 1).
         
     Bugfixes
 	
