@@ -1,27 +1,9 @@
-					**************************
-					** MPTinR VERSION 1.3.x **
-					**************************
-					Changes in MPTinR Version 1.3.x
-					Released November 2013
-
-	Significant User Visible Changes and new Features
-	
-    o   restrictions to constants can now be set to any value 
-        (not anymore restricted to be within 0 and 1).
-        
-    Bugfixes
-	
-	o   FIA calculation could fail when determinant of Fisher matrix 
-        was below 0 as it did not take the absoulate value 
-        (as does the original code by Wu et al.). This should be
-        fixed now and FIA work for all models again.
-        
 
 					**************************
 					** MPTinR VERSION 1.2.x **
 					**************************
 					Changes in MPTinR Version 1.2.x
-					Released May 2013
+					Released November 2013
 
 	Significant User Visible Changes and new Features
 	
@@ -30,11 +12,20 @@
     
     o   Added error message when the objective function did not 
         evaluate succesfully with the given starting values.
+        
+    o   restrictions to constants can now be set to any value 
+        (not anymore restricted to be within 0 and 1).
     
 	Bugfixes
 	
 	o   Removed bug that crahsed the main functions when Hessian
         function failed to produce reasonable results. 
+    
+    o   FIA calculation could fail when determinant of Fisher matrix 
+        was below 0 as it did not take the absoulate value 
+        (as does the original code by Wu et al.). This should be
+        fixed now and FIA again work for all models.
+        
         
 					**************************
 					** MPTinR VERSION 1.1.x **
