@@ -1,4 +1,7 @@
 2013-10-28
+        * check.mpt shouldn't fail if predictions are NA.
+
+2013-10-28
         * bmpt.fia now uses the absolute of the determinant 
           (as did the original code by Wu et al.).
         * removed restriction of constant to within 0 and 1.
