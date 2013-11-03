@@ -1,3 +1,6 @@
+2013-11-03
+        * added check.model argument to fit.model.
+
 2013-10-28
         * check.mpt shouldn't fail if predictions are NA.
 

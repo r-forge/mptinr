@@ -15,6 +15,9 @@
         
     o   restrictions to constants can now be set to any value 
         (not anymore restricted to be within 0 and 1).
+        
+    o   fit.model has argument check.model which allows to
+        suppress the check if the expected values of a model sum to 1.
     
 	Bugfixes
 	
