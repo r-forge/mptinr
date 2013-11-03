@@ -89,7 +89,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	}
 	
 	
-	tree <- .get.mpt.model(model.filename, model.type, model.check = model.check)
+	tree <- .get.mpt.model(model.filename, model.type, model.check = check.model)
 	if(is.null(data)) stop("Model seems to be constructed well (i.e., all probabilities sum to 1), but data is NULL.")
 	
 	if(is.vector(data)) {
