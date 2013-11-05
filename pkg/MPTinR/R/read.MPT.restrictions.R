@@ -97,7 +97,7 @@
 # 						tmpStr[pos.ref] <- max.restriction
 # 					}
 					if (as.numeric(tmpStr[pos.ref]) >= 1 | as.numeric(tmpStr[pos.ref]) <= 0) {
-					  warning(paste("Restriction starting with ", tmpStr[1], ": Constant is either equal to 0 or 1 or outside the interval from 0 to 1. This may lead to problems.", sep = ""))
+					  message(paste("Restriction starting with ", tmpStr[1], ": Constant is either equal to 0 or 1 or outside the interval from 0 to 1. This may lead to problems.", sep = ""))
 					}
 				}
 				for (ci in 1:(pos.ref-1)) {
