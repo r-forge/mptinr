@@ -1,3 +1,10 @@
+2013-11-06
+        * removed bug when only fitting a model with only one
+          free parameter to multiple data sets (reported by 
+          Alberto Mirisola)
+        * if FIA fails fit.mpt gives a warning now (instead
+          of failing)
+
 2013-11-03
         * added check.model argument to fit.model.
 

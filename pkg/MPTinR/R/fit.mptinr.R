@@ -105,11 +105,13 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	get.parameter.table.multi <- function(minim, param.names, n.params, n.data, use.restrictions, inv.hess.list, ci, orig.params){
 		#recover()
 		var.params <- sapply(inv.hess.list, function(x) tryCatch(diag(x), error = function(e) rep(NA, n.params)))
-        # as var.params needs to be of nrow=length(parameter.names) (which it isn't if the hessian function fails, the following prohibits termination.
-        if (is.null(dim(var.params))) var.params <- matrix(NA, nrow = length(param.names), ncol = n.data)
+    # as var.params needs to be of nrow=length(parameter.names) (which it isn't if the hessian function fails, the following prohibits termination.
+    if (is.null(dim(var.params))) var.params <- matrix(var.params, nrow = length(param.names), ncol = n.data)
 		rownames(var.params) <- param.names
 		suppressWarnings(confidence.interval <- qnorm(1-((100-ci)/2)/100)*sqrt(var.params))
-		estimates <- sapply(minim, function(x) x$par)
+		estimates <- vapply(minim, "[[", i = "par", minim[[1]]$par)
+    if (is.null(dim(estimates))) 
+      dim(estimates) <- c(1, length(estimates))
 		upper.conf <- estimates + confidence.interval
 		lower.conf <- estimates - confidence.interval
 		
@@ -131,7 +133,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 			#parameter_table.tmp <- data.frame(param.names, estimates, lower.conf, upper.conf, restricted.parameter = "")
 			
 			used.rows <- param.names %in% orig.params
-			params <- 1:length(orig.params)
+      params <- 1:length(orig.params)
 			parameter.names.all <- param.names[used.rows]
 			restricted <- rep("", sum(used.rows))
 			for (c in 1:length(restrictions)) {

@@ -2,6 +2,7 @@
 data(d.broeder, package = "MPTinR")
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 
+check.mpt(m.2htm)
 
 d.broeder.agg <- colSums(d.broeder)
 

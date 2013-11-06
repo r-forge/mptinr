@@ -32,6 +32,13 @@
     o   check.mpt doesn't fail anymore if any of the predictions is 
         NA or NaN.
         
+    o   Removed bug that crashed MPTinR when fitting a model with a 
+        single free parameter to multiple datasets (bug reported by
+        Alberto Mirisola)
+        
+    o   fit.mpt gives a warning when FIA fails due to model not being
+        a BMPT (instead of failing).
+        
         
 					**************************
 					** MPTinR VERSION 1.1.x **
