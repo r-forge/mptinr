@@ -4,6 +4,9 @@
           Alberto Mirisola)
         * if FIA fails fit.mpt gives a warning now (instead
           of failing)
+        * if check.model = FALSE (fit.model) the check of 
+          whether or not the parameter are within bounds is
+          now also suppressed.
 
 2013-11-03
         * added check.model argument to fit.model.
