@@ -1,3 +1,6 @@
+2013-11-24
+        * added check.model to gen.predictions et al.
+        
 2013-11-06
         * removed bug when only fitting a model with only one
           free parameter to multiple data sets (reported by 

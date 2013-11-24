@@ -365,7 +365,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	error.codes <- vapply(minim, "[[", 0, i = "convergence")
 	if (sum(not.converged != 0)) {
 		if (use.gradient == FALSE) {
-			message(paste("Optimization routine for dataset(s) ", not.converged[not.converged != 0], " did not converge succesfully.
+			warning(paste("Optimization routine for dataset(s) ", not.converged[not.converged != 0], " did not converge succesfully.
   Error code(s): ", sort(unique(vapply(minim, "[[", 0, i = "convergence")))[-1], ". Try use.gradient == TRUE or use output = 'full' for more information.", sep =""))
 		} else {
 			message(paste("Optimization routine for dataset(s) ", paste(not.converged[not.converged != 0], collapse = " "), "
