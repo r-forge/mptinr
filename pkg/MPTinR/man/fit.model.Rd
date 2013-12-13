@@ -26,7 +26,7 @@ fit.model(
 	model.type = c("easy", "eqn", "eqn2"),
 	multicore = c("none", "individual", "n.optim", "fia"), sfInit = FALSE, nCPU = 2,
 	control = list(),
-	use.gradient = TRUE, use.hessian = FALSE, check.model = TRUE
+	use.gradient = TRUE, use.hessian = FALSE, check.model = TRUE, args.fia = list()
 )
 }
 
@@ -96,6 +96,9 @@ logical. Whether or not the symbomlically derived function returning the Hessian
 }
   \item{check.model}{
 logical. Should model be chekced with random values whether or not the expected values sum to one per tree? Default is \code{TRUE}.
+}
+  \item{args.fia}{
+list of arguments passed on to \code{\link{get.mpt.fia}}, such as \code{mConst} to avoid numerical problems in the FIA function.
 }
 }
 \details{

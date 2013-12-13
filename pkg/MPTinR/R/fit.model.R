@@ -1,5 +1,5 @@
    
-fit.model <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), reparam.ineq = TRUE, fit.aggregated = TRUE, sort.param = TRUE, show.messages = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim", "fia"), sfInit = FALSE, nCPU = 2, control = list(), use.gradient = TRUE, use.hessian = FALSE, check.model = TRUE){
+fit.model <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), reparam.ineq = TRUE, fit.aggregated = TRUE, sort.param = TRUE, show.messages = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim", "fia"), sfInit = FALSE, nCPU = 2, control = list(), use.gradient = TRUE, use.hessian = FALSE, check.model = TRUE, args.fia = list()){
 	
 	llk.model <- function(Q, unlist.model, data, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env, ...){
 		if (check.model) {
@@ -154,12 +154,18 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	if (!is.null(fia)) {
 		if (multiFit) {
 			data.new <- rbind(data, apply(data,2,sum))
-			fia.tmp <- get.mpt.fia(data.new, model.filename, restrictions.filename, fia, model.type, multicore = if (multicore[1] != "none") TRUE else FALSE)
-			fia.df <- fia.tmp[-dim(fia.tmp)[1],]
-			fia.agg.tmp <- fia.tmp[dim(fia.tmp)[1],]
-			fia.df <- list(fia.df, fia.agg.tmp)
+			fia.tmp <- tryCatch(do.call(get.mpt.fia, args = c(data = data.new, model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = model.type, multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)), error = function(e) NULL)
+			if (!is.null(fia.tmp)) {
+			  fia.df <- fia.tmp[-dim(fia.tmp)[1],]
+			  fia.agg.tmp <- fia.tmp[dim(fia.tmp)[1],]
+			  fia.df <- list(fia.df, fia.agg.tmp)
+			} else fia.df <- NULL
 		} else {
-			fia.df <- get.mpt.fia(data, model.filename, restrictions.filename, fia, model.type, multicore = if (multicore[1] != "none") TRUE else FALSE)
+			fia.df <- tryCatch(do.call(get.mpt.fia, args = c(data = data, model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = model.type, multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)), error = function(e) NULL)
+		}
+		if (is.null(fia.df)) {
+		  warning("Calculation of FIA failed. Model does not seem to be a BMPT!")
+		  fia <- NULL
 		}
 	}
 	
