@@ -152,21 +152,32 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	llk.hessian <- tryCatch(.make.llk.hessian(llk.function, param.names, length.param.names), error = function(e) {message("hessian function cannot be build (probably derivation failure, see ?D"); NULL})
 	
 	if (!is.null(fia)) {
-		if (multiFit) {
-			data.new <- rbind(data, apply(data,2,sum))
-			fia.tmp <- tryCatch(do.call(get.mpt.fia, args = c(data = data.new, model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = model.type, multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)), error = function(e) NULL)
-			if (!is.null(fia.tmp)) {
-			  fia.df <- fia.tmp[-dim(fia.tmp)[1],]
-			  fia.agg.tmp <- fia.tmp[dim(fia.tmp)[1],]
-			  fia.df <- list(fia.df, fia.agg.tmp)
-			} else fia.df <- NULL
-		} else {
-			fia.df <- tryCatch(do.call(get.mpt.fia, args = c(data = data, model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = model.type, multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)), error = function(e) NULL)
-		}
-		if (is.null(fia.df)) {
-		  warning("Calculation of FIA failed. Model does not seem to be a BMPT!")
-		  fia <- NULL
-		}
+	  if (length(args.fia)) {
+	    nms <- names(args.fia)
+	    if (!is.list(args.fia) || is.null(args.fia)) stop("'args.fia' argument must be a named list")
+	    if (!all(nms %in% names(formals(get.mpt.fia)))) warning(paste0("Unrecognized arguments in 'args.fia' ignored: ", paste(args.fia[!nms %in% names(formals(get.mpt.fia))], collapes = " ")))
+	    args.fia <- args.fia[nms %in% names(formals(get.mpt.fia))]
+	    fia.args <- c(model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = list(model.type), multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)
+	  }
+	  else {
+	    fia.args <- list(model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = model.type, multicore = if (multicore[1] != "none") TRUE else FALSE)
+	  }
+	  args.fia <- NULL
+	  if (multiFit) {
+	    data.new <- rbind(data, apply(data,2,sum))
+	    fia.tmp <- tryCatch(do.call(get.mpt.fia, args = c(data = list(data.new), fia.args)), error = function(e) NULL)
+	    if (!is.null(fia.tmp)) {
+	      fia.df <- fia.tmp[-dim(fia.tmp)[1],]
+	      fia.agg.tmp <- fia.tmp[dim(fia.tmp)[1],]
+	      fia.df <- list(fia.df, fia.agg.tmp)
+	    } else fia.df <- NULL
+	  } else {
+	    fia.df <- tryCatch(do.call(get.mpt.fia, args = c(data = list(data.new), fia.args)), error = function(e) NULL)
+	  }
+	  if (is.null(fia.df)) {
+	    warning("Calculation of FIA failed. Model does not seem to be a BMPT!")
+	    fia <- NULL
+	  }
 	}
 	
 	# call the workhorse:	

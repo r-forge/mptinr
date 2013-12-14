@@ -1,3 +1,6 @@
+2013-12-14
+        * fit.mpt and fit.model now work with args.fia
+
 2013-12-13
         * added mConst argument to bmpt.fia for avoiding
           numerical underflows. See: 

@@ -98,7 +98,7 @@ logical. Whether or not the symbomlically derived function returning the Hessian
 logical. Should model be chekced with random values whether or not the expected values sum to one per tree? Default is \code{TRUE}.
 }
   \item{args.fia}{
-list of arguments passed on to \code{\link{get.mpt.fia}}, such as \code{mConst} to avoid numerical problems in the FIA function.
+named list of further arguments passed to \code{\link{get.mpt.fia}}, such as \code{mConst} to avoid numerical problems in the FIA function.
 }
 }
 \details{

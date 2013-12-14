@@ -179,8 +179,8 @@ bmpt.fia <- function(s, parameters, category, N, ineq0 = NULL, Sample = 2e+05, m
     integral <- sum(vapply(tmp.dat, "[", 0, i = 3))
     vr <- sum(vapply(tmp.dat, "[", 0, i = 2))
 	} else {
-	  integral <- as.brob(sum(vapply(tmp.dat, "[", 0, i = 3))) / as.brob(sqrt(mConst ^ dim(A)[2]))
-	  vr <- as.brob(sum(vapply(tmp.dat, "[", 0, i = 2))) / as.brob((mConst ^ dim(A)[2]))
+	  integral <- as.brob(sum(vapply(tmp.dat, "[", 0, i = 3))) / sqrt(as.brob(mConst) ^ dim(A)[2])
+	  vr <- as.brob(sum(vapply(tmp.dat, "[", 0, i = 2))) / (as.brob(mConst) ^ dim(A)[2])
 	}
 	#sum(sapply(tmp.dat[2,], function(x) isTRUE(all.equal(x, 0))))
 	# if (detI != 0) sample <- sample + 1	

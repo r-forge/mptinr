@@ -80,7 +80,7 @@ Scalar. Only relevant if \code{multicore} is not \code{"none"} and \code{sfInit}
 list containing control arguments passed on to \code{\link{nlminb}}. See there.
 }
   \item{args.fia}{
-list of arguments passed on to \code{\link{get.mpt.fia}}, such as \code{mConst} to avoid numerical problems in the FIA function.
+named list of further arguments passed to \code{\link{get.mpt.fia}}, such as \code{mConst} to avoid numerical problems in the FIA function.
 }
 }
 \details{
