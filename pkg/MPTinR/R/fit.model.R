@@ -157,7 +157,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	    if (!is.list(args.fia) || is.null(args.fia)) stop("'args.fia' argument must be a named list")
 	    if (!all(nms %in% names(formals(get.mpt.fia)))) warning(paste0("Unrecognized arguments in 'args.fia' ignored: ", paste(args.fia[!nms %in% names(formals(get.mpt.fia))], collapes = " ")))
 	    args.fia <- args.fia[nms %in% names(formals(get.mpt.fia))]
-	    fia.args <- c(model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = list(model.type), multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)
+	    fia.args <- c(model.filename = model.filename, restrictions.filename = if (is.list(restrictions.filename)) list(restrictions.filename) else restrictions.filename, Sample = fia, model.type = list(model.type), multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)
 	  }
 	  else {
 	    fia.args <- list(model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = model.type, multicore = if (multicore[1] != "none") TRUE else FALSE)

@@ -119,14 +119,14 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 	llk.function <- tryCatch(.make.llk.function(tree, param.names, length.param.names), error = function(e) {warning("likelihood function cannot be build"); NULL})
 	llk.gradient <- tryCatch(.make.llk.gradient(llk.function, param.names, length.param.names), error = function(e) {message("gradient function cannot be build (probably derivation failure, see ?D"); NULL})
 	llk.hessian <- tryCatch(.make.llk.hessian(llk.function, param.names, length.param.names), error = function(e) {message("hessian function cannot be build (probably derivation failure, see ?D"); NULL})
-  
+  #browser()
 	if (!is.null(fia)) {
     if (length(args.fia)) {
       nms <- names(args.fia)
       if (!is.list(args.fia) || is.null(args.fia)) stop("'args.fia' argument must be a named list")
       if (!all(nms %in% names(formals(get.mpt.fia)))) warning(paste0("Unrecognized arguments in 'args.fia' ignored: ", paste(args.fia[!nms %in% names(formals(get.mpt.fia))], collapes = " ")))
       args.fia <- args.fia[nms %in% names(formals(get.mpt.fia))]
-      fia.args <- c(model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = list(model.type), multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)
+      fia.args <- c(model.filename = model.filename, restrictions.filename = if (is.list(restrictions.filename)) list(restrictions.filename) else restrictions.filename, Sample = fia, model.type = list(model.type), multicore = if (multicore[1] != "none") TRUE else FALSE, args.fia)
     }
     else {
       fia.args <- list(model.filename = model.filename, restrictions.filename = restrictions.filename, Sample = fia, model.type = model.type, multicore = if (multicore[1] != "none") TRUE else FALSE)
