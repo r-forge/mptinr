@@ -1,3 +1,6 @@
+2014-01-02
+        * added function lbmpt.to.mpt
+
 2013-12-14
         * fit.mpt and fit.model now work with args.fia
 

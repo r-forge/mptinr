@@ -2,14 +2,17 @@
                     **************************
                     ** MPTinR VERSION 1.3.x **
                     **************************
-                    Changes in MPTinR Version 1.2.x
-                    Released XXX 2013
+                    Changes in MPTinR Version 1.3.x
+                    Released XXX 2014
 
     Significant User Visible Changes and new Features
     
     o   added args.fia argument to fit.mpt and fit.model to pass
         arguments to get.mpt.fia (such as mConst, see below).
         
+    o   added function lbmpt.to.mpt to transform a model in
+        LBMPT into model equations (thanks to Quentin Gronau 
+        and Franz Dietrich).
     
     
     Bugfixes

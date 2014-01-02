@@ -1,13 +1,17 @@
 
-make.mpt.cf <- function(model.filename, model.type = c("easy", "eqn")){
-	
+make.mpt.cf <- function(model.filename, model.type = c("easy", "eqn"), treewise = FALSE){
+	  
 	bin.objects <- function(branch) {
 		objects <- strsplit(branch, "\\*")[[1]]
 		!(grepl("[()]", objects))
 	}
+	oneLineDeparse <- function(expr){
+	  paste(deparse(expr), collapse="")
+	}
 	model <- .get.mpt.model(model.filename, model.type)
-	
-	
+
+	if (treewise) return(lapply(model, function(x) make.mpt.cf(textConnection(vapply(x, oneLineDeparse, "")))))
+  
 	model.df <- .make.model.df(model)
 	
 	#recover()

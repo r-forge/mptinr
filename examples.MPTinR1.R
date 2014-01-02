@@ -513,3 +513,17 @@ prediction.plot(br.sdt, m.2htm, 2, ylim = c(-2, 2), args.plot = list(main = "SDT
 
 
 }
+
+#######################
+## make.mpt.cf
+
+\examples{
+  model2 <- system.file("extdata", "rb.fig2.model", package = "MPTinR")
+  
+  make.mpt.cf(model2)
+  
+  make.mpt.cf(model2, treewise = TRUE)
+  
+  lbmpt.to.mpt(make.mpt.cf(model2, treewise = TRUE))
+  
+}
