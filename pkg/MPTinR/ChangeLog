@@ -1,4 +1,7 @@
 2014-01-02
+        * removed bug in lbmpt.to.mpt (captial letters)
+
+2014-01-02
         * added function lbmpt.to.mpt
 
 2013-12-14

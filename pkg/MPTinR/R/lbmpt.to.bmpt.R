@@ -1,11 +1,11 @@
 ### lbmpt.to.mpt ###
 
 # .isNode
-.isNode <- function(op)ifelse(is.na(op), "argument to function does not exist",grepl("[a-z]",op))
+.isNode <- function(op) grepl("[[:alpha:]]",op)
 
 # .isLeaf
 .isLeaf <- function(op){
-  v <- ifelse(is.na(op), "argument to function does not exist",grepl("^[[:digit:]]+$",op))
+  v <- grepl("^[[:digit:]]+$",op)
   if(sum(!v)>0){
     out <- FALSE
   }else{
