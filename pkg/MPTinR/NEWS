@@ -13,6 +13,8 @@
     o   added function lbmpt.to.mpt to transform a model in
         LBMPT into model equations (thanks to Quentin Gronau 
         and Franz Dietrich).
+        
+    o   added restrictions argument to make.mpt.cf.
     
     
     Bugfixes

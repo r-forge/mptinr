@@ -1,5 +1,6 @@
-2014-01-02
+2014-01-03
         * removed bug in lbmpt.to.mpt (captial letters)
+        * added restrictions argument to make.mpt.cf
 
 2014-01-02
         * added function lbmpt.to.mpt

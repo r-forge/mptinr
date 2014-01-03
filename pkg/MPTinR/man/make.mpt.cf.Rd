@@ -9,7 +9,7 @@ Functions to transfom MPT models.
 }
 
 \usage{
-make.mpt.cf(model.filename, model.type = c("easy", "eqn"), treewise = FALSE)
+make.mpt.cf(model.filename, restrictions.filename = NULL, model.type = c("easy", "eqn"), treewise = FALSE)
 
 lbmpt.to.mpt(model.list, outfile = NULL)
 }
@@ -17,6 +17,9 @@ lbmpt.to.mpt(model.list, outfile = NULL)
 \arguments{
   \item{model.filename}{
 A character \code{vector} specifying the location and name of the model file. 
+}
+  \item{restrictions.filename}{
+\code{NULL} or a character \code{vector} or a \code{list} of characters. The default is \code{NULL} which corresponds to no restrictions. A character \code{vector} specifies the location or name of the restrictions file. A \code{list} of characters contains the restrictions directly. Inequality/order restrictions are silently ignored.
 }
   \item{model.type}{
 Character vector specifying whether the model file is formatted in the \code{easy} format (\code{"easy"}; i.e., each line represents all branches corresponding to a response categories) or the traditional EQN syntax (\code{"eqn"} or \code{"eqn2"}). See Details in \code{\link{fit.mpt}}.
