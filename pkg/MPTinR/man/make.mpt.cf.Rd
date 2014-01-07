@@ -61,7 +61,9 @@ Riefer, D. M., & Batchelder, W. H. (1988). Multinomial modeling and the measurem
 Wu, H., Myung, J., I., & Batchelder, William, H. (2010). Minimum description length model selection of multinomial processing tree models. \emph{Psychonomic Bulletin & Review}, 17, 275-286.
 }
 \author{
-Henrik Singmann, Quentin Gronau, and Franz Dietrich
+Henrik Singmann (make.mpt.cf)
+
+Quentin Gronau and Franz Dietrich (lbmpt.to.mpt, using a function from Akhil S Bhel, LinearizeNestedList)
 }
 \note{
 It is absolutely necessary that the model file exactly maps on the structure of the binary tree. See Details.
