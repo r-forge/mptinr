@@ -11,7 +11,7 @@ Functions to transfom MPT models.
 \usage{
 make.mpt.cf(model.filename, restrictions.filename = NULL, model.type = c("easy", "eqn"), treewise = FALSE)
 
-lbmpt.to.mpt(model.list, outfile = NULL)
+lbmpt.to.mpt(model.list, outfile = NULL, category.names= TRUE)
 }
 
 \arguments{
@@ -32,6 +32,9 @@ Character vector specifying whether the model file is formatted in the \code{eas
 }
   \item{outfile}{
   Name of the file the model equation should be saved in (in easy format). If \code{NULL} (the default) prints it to the console instead (\code{stdout()}).
+}
+  \item{category.names}{
+  logical. Should category names (e.g., "category 1") be printed at the end of each line?
 }
 }
 \details{

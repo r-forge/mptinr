@@ -19,14 +19,14 @@
 
 # .parse.rec
 .parse.rec <-  function(cfl){
-  if(.isNode(cfl[1]) & .isLeaf(cfl[2]) & .isLeaf(cfl[3])){
+ if(.isNode(cfl[1]) & .isLeaf(cfl[2]) & .isLeaf(cfl[3])){
     if(is.na(cfl[4])){
       l <- list(list(c(cfl[1], cfl[2]),(c(paste("(1-",cfl[1],")", sep=""), cfl[3]))),"")# here is something wrong!!
       return(l)
     }else{
-      l <- list(list(c(cfl[1], cfl[2]),(c(paste("(1-",cfl[1],")", sep=""), cfl[3]))),cfl[4:length(cfl)])# here is something wrong!!
-      return(l)
-    }}
+    l <- list(list(c(cfl[1], cfl[2]),(c(paste("(1-",cfl[1],")", sep=""), cfl[3]))),cfl[4:length(cfl)])# here is something wrong!!
+    return(l)
+  }}
   if(.isNode(cfl[1]) & .isLeaf(cfl[2])){
     secondcall <- .parse.rec(cfl[3:length(cfl)])
     l <- list(list(c(cfl[1], cfl[2]), c(paste("(1-",cfl[1],")", sep=""), secondcall[1])),secondcall[[2]])
@@ -37,23 +37,23 @@
     if(.isLeaf(firstcall[[2]])&length(firstcall[[2]])==1){
       l <- list(list(list(cfl[1], firstcall[[1]]), c(paste("(1-",cfl[1],")", sep=""), firstcall[[2]])),cfl[2:length(cfl)]) 
       return(l)
-    } else{
-      if(.isLeaf(firstcall[[2]][1])){
+     } else{
+       if(.isLeaf(firstcall[[2]][1])){
         secondcall <- .parse.rec(firstcall[[2]][-1])
         l <- list(list(list(cfl[1], firstcall[[1]]), c(paste("(1-",cfl[1],")", sep=""), firstcall[[2]][1])), firstcall[[2]][-1])
         return(l)
-      } else{
-        secondcall <- .parse.rec(firstcall[[2]])
-        l <- list(list(list(cfl[1], firstcall[[1]]), c(paste("(1-",cfl[1],")", sep=""), secondcall[1])),secondcall[[2]])
-        return(l)
-      }
+       } else{
+      secondcall <- .parse.rec(firstcall[[2]])
+      l <- list(list(list(cfl[1], firstcall[[1]]), c(paste("(1-",cfl[1],")", sep=""), secondcall[1])),secondcall[[2]])
+      return(l)
+    }
     }
   }
-}
+  }
 
 # .LinearizeNestedList
 .LinearizeNestedList <- function(NList, LinearizeDataFrames=FALSE,
-                                 NameSep="/", ForceNames=FALSE) {
+                                NameSep="/", ForceNames=FALSE) {
   # LinearizeNestedList:
   #
   # https://sites.google.com/site/akhilsbehl/geekspace/
@@ -200,17 +200,17 @@
 
 # .append.helper
 .append.helper <- function(ap, dct){
-  
+ 
   
   for(key in unique(names(dct))){
     if(!is.list(dct[[key]])){
       for(q in which(names(dct)==key)){
-        dct[[q]] <- c(dct[[q]], ap)
-      }} else{
-        dct <- .LinearizeNestedList(dct)
-        names(dct)[1:length(names(dct))] <- substr(names(dct)[1], 1, 1)
-        dct <- lapply(dct, function(x) c(x, ap))
-      }
+      dct[[q]] <- c(dct[[q]], ap)
+    }} else{
+      dct <- .LinearizeNestedList(dct)
+      names(dct)[1:length(names(dct))] <- substr(names(dct)[1], 1, 1)
+    dct <- lapply(dct, function(x) c(x, ap))
+    }
   }
   return(dct)
 }
@@ -232,10 +232,10 @@
   } else{
     rp <- .append.helper(right[[1]], .rendEq.rec(right[[2]]))
   }
-  
+
   return(c(lp,rp))
 }
-
+  
 
 
 # .parse
@@ -243,65 +243,59 @@
 
 
 
-.renderEquation <- function(parsed){
+.renderEquation <- function(parsed, category.names= TRUE){
   trees <- .rendEq.rec(parsed)
-  m.vec <- vector("character", length(unique(names(trees))))
-  for(key in unique(names(trees))){
-    f.category <- vector("character", length(which(names(trees)== key)))
-    z <- 1
-    for(i in which(names(trees)== key)){
-      text <- vector("character", length(seq_along(trees[[i]])))
-      if(length(trees[[i]])==1){
-        f.category[z] <- trees[[i]]
-        
-      }else{
-        trees[[i]] <- trees[[i]][length(trees[[i]]):1]
-        for(y in seq_along(trees[[i]])[-length(trees[[i]])]){
-          text[y] <- paste(trees[[i]][y],"*", sep="")
-        }
-        text[length(trees[[i]])] <- trees[[i]][length(trees[[i]])]
-        
-        
-        f.category[z] <- paste(text, collapse="")
-      }
-      z <- z+1
-    }
-    if(length(f.category)==1){
-      m.vec[as.numeric(key)] <- f.category
-      m.vec[as.numeric(key)] <- paste(m.vec[as.numeric(key)], "# category", key)
-    }else{
-      b.category <- vector("character", length(f.category))
-      for(z in seq_along(f.category)[-length(f.category)]){
-        b.category[z] <- paste(f.category[[z]],"+", sep= "")
-        b.category[length(f.category)] <- f.category[[length(f.category)]]
-      }
-      m.vec[as.numeric(key)] <- paste(b.category, collapse="")
-      m.vec[as.numeric(key)] <- paste(m.vec[as.numeric(key)], "# category", key)
-    }
-  }
-  return(m.vec)
-}
-
-
-# .make.tree
-.make.tree <- function(tree){
-  parsed <- .parse(tree)
-  raw.model <- .renderEquation(parsed)
+m.vec <- vector("character", length(unique(names(trees))))
+for(key in unique(names(trees))){
+f.category <- vector("character", length(which(names(trees)== key)))
+z <- 1
+for(i in which(names(trees)== key)){
+text <- vector("character", length(seq_along(trees[[i]])))
+if(length(trees[[i]])==1){
+  f.category[z] <- trees[[i]]
   
-  return(writeLines(raw.model))
+}else{
+  trees[[i]] <- trees[[i]][length(trees[[i]]):1]
+for(y in seq_along(trees[[i]])[-length(trees[[i]])]){
+  text[y] <- paste(trees[[i]][y],"*", sep="")
+   }
+text[length(trees[[i]])] <- trees[[i]][length(trees[[i]])]
+  
+
+f.category[z] <- paste(text, collapse="")
 }
+z <- z+1
+}
+if(length(f.category)==1){
+  m.vec[as.numeric(key)] <- f.category
+  if(category.names){
+  m.vec[as.numeric(key)] <- paste(m.vec[as.numeric(key)], "# category", key)
+  } 
+}else{
+b.category <- vector("character", length(f.category))
+for(z in seq_along(f.category)[-length(f.category)]){
+  b.category[z] <- paste(f.category[[z]],"+", sep= "")
+  b.category[length(f.category)] <- f.category[[length(f.category)]]
+}
+m.vec[as.numeric(key)] <- paste(b.category, collapse="")
+if(category.names){
+m.vec[as.numeric(key)] <- paste(m.vec[as.numeric(key)], "# category", key)
+}
+}
+}
+return(m.vec)
+}
+
 
 
 # lbmpt.to.mpt
-lbmpt.to.mpt <- function(model.list, outfile = NULL){
-  if(length(model.list)== 1) .make.tree(model.list[[1]])
-  else{
+lbmpt.to.mpt <- function(model.list, outfile = NULL, category.names = TRUE){
     vec <- c()
     y <- 1
     for(l in seq_along(model.list)){
       parsed <- .parse(model.list[[l]])
-      raw.model <- .renderEquation(parsed)
-      
+      raw.model <- .renderEquation(parsed, category.names)
+        
       for(q in seq_along(raw.model)){
         vec[y] <- raw.model[q]
         y <- y+1
@@ -313,7 +307,7 @@ lbmpt.to.mpt <- function(model.list, outfile = NULL){
     if (is.null(outfile)) return(writeLines(vec))
     else writeLines(vec, con = outfile)
   }
-}
+
 
 # test
 # lbmpt.to.mpt(list(c("a", "1", "b", "2", "3"),c("x", "b", "1", "2", "c", "x", "1", "3", "e", "4", "3"),c("a", "b","1", "2", "c","3", "4") ))
