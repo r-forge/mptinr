@@ -141,7 +141,7 @@ fit.mpt <- function(data, model.filename, restrictions.filename = NULL, n.optim 
 			  fia.df <- list(fia.df, fia.agg.tmp)
 			} else fia.df <- NULL
 		} else {
-			fia.df <- tryCatch(do.call(get.mpt.fia, args = c(data = list(data.new), fia.args)), error = function(e) NULL)
+			fia.df <- tryCatch(do.call(get.mpt.fia, args = c(data = list(data), fia.args)), error = function(e) NULL)
 		}
 		if (is.null(fia.df)) {
 		  warning("Calculation of FIA failed. Model does not seem to be a BMPT!")
