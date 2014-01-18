@@ -1,3 +1,6 @@
+2014-01-18
+        * removed bug in get.mpt.fia
+
 2014-01-03
         * removed bug in lbmpt.to.mpt (captial letters)
         * added restrictions argument to make.mpt.cf

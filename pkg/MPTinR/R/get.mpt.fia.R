@@ -37,7 +37,7 @@ get.mpt.fia <- function(data, model.filename, restrictions.filename = NULL, Samp
 	if ("connection" %in% class.model) {
 		model.filename <- textConnection(tmp.model)
 	}
-	mpt.string <- make.mpt.cf(model.filename, model.type)
+	mpt.string <- make.mpt.cf(model.filename = model.filename, model.type = model.type)
 	
 	is.category <- grepl("^[[:digit:]]+$", mpt.string)
 	
