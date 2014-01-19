@@ -2,7 +2,7 @@
 fit.model <- function(data, model.filename, restrictions.filename = NULL, n.optim = 5, fia = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), reparam.ineq = TRUE, fit.aggregated = TRUE, sort.param = TRUE, show.messages = TRUE, model.type = c("easy", "eqn", "eqn2"),  multicore = c("none", "individual", "n.optim", "fia"), sfInit = FALSE, nCPU = 2, control = list(), use.gradient = TRUE, use.hessian = FALSE, check.model = TRUE, args.fia = list()){
 	
 	llk.model <- function(Q, unlist.model, data, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env, ...){
-		if (check.model) {
+		try({
             if (length(upper.bound) == 1) {
                 Q[Q > upper.bound] <- upper.bound
             } else {
@@ -13,7 +13,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
             } else {
                 Q[Q < lower.bound] <- lower.bound[Q < lower.bound]
             }
-        }
+        }, silent = TRUE)
 		#tmpllk.env <- new.env()
 		for (i in seq_len(n.params))  assign(param.names[i],Q[i], envir = tmp.env)
 		
@@ -34,7 +34,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	}
 	
 	llk.gradient.funct <- function(Q, unlist.model, data, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env, ...){
-		if (check.model) {
+		try( {
             if (length(upper.bound) == 1) {
                 Q[Q > upper.bound] <- upper.bound
             } else {
@@ -45,7 +45,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
             } else {
                 Q[Q < lower.bound] <- lower.bound[Q < lower.bound]
             }
-        }
+        }, silent = TRUE)
 		#tmpllk.env <- new.env()
 		for (i in 1:n.params)  assign(param.names[i],Q[i], envir = tmp.env)
 		
@@ -56,7 +56,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 	}
 
 	llk.hessian.funct <- function(Q, unlist.model, data, param.names, n.params, lower.bound, upper.bound, llk.gradient, llk.hessian, tmp.env, ...){
-		if (check.model) {
+		try( {
             if (length(upper.bound) == 1) {
                 Q[Q > upper.bound] <- upper.bound
             } else {
@@ -67,7 +67,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
             } else {
                 Q[Q < lower.bound] <- lower.bound[Q < lower.bound]
             }
-        }
+        }, silent = TRUE)
 		#tmpllk.env <- new.env()
 		for (i in 1:n.params)  assign(param.names[i],Q[i], envir = tmp.env)
 		

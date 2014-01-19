@@ -22,6 +22,12 @@
     o   added mConst argument to bmpt.fia (+ get.mpt.fia) to avoid
         numerical underflows with huge models when calculating FIA.
         see: http://stackoverflow.com/q/20529407/28957
+        (this argument should be used carefully).
+        
+    o   check.model argument in fit.model was also responsible 
+        for certain sanity checks in the objective et al.
+        This frequently led to errors which are now silently
+        dropped.
         
         
                     **************************

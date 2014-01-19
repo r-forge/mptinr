@@ -1,4 +1,8 @@
 2014-01-18
+        * removed bug that fit.model stopped too often
+          when check.model was TRUE.
+
+2014-01-18
         * removed bug in get.mpt.fia
 
 2014-01-03
