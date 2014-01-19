@@ -95,7 +95,7 @@ logical. Whether or not the symbomlically derived function returning the gradien
 logical. Whether or not the symbomlically derived function returning the Hessian matrix should be used for fitting. Default is \code{FALSE} meaning hessian function is not used.
 }
   \item{check.model}{
-logical. Should model be chekced with random values whether or not the expected values sum to one per tree? Default is \code{TRUE}.
+logical. Should model be checked with random values whether or not the expected values sum to one per tree? Default is \code{TRUE}. (This also controls whether other model checks during optimization are performed. If \code{FALSE} the most permissive fitting is performed.)
 }
   \item{args.fia}{
 named list of further arguments passed to \code{\link{get.mpt.fia}}, such as \code{mConst} to avoid numerical problems in the FIA function.

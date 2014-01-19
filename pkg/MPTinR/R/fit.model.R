@@ -18,7 +18,7 @@ fit.model <- function(data, model.filename, restrictions.filename = NULL, n.opti
 		for (i in seq_len(n.params))  assign(param.names[i],Q[i], envir = tmp.env)
 		
 		model.eval <- vapply(unlist.model, eval, envir = tmp.env, 0)
-		if (check.model) if (any(model.eval < 0)) stop(paste("Model not constructed well. Line ", which(model.eval < 0), " produces probabilities < 0!", sep = ""))
+		if (check.model) if (isTRUE(any(model.eval < 0))) stop(paste("Model not constructed well. Line ", which(model.eval < 0), " produces probabilities < 0!", sep = ""))
 		llk <- data * log(model.eval)
 		llk[data == 0] <- 0
 		llk <- sum(llk)
