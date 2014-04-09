@@ -12,8 +12,8 @@ MPTinR provides a user-friendly way for the analysis of multinomial processing t
 \tabular{ll}{
 Package: \tab MPTinR\cr
 Type: \tab Package\cr
-Version: \tab 1.3.3\cr
-Date: \tab 2014-01-19\cr
+Version: \tab 1.3.5\cr
+Date: \tab 2014-04-09\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -27,6 +27,7 @@ A helper function for writing model files is \code{\link{check.mpt}}
 Henrik Singmann (for bug reports and feature requests): \email{henrik.singmann@psychologie.uni-freiburg.de}\cr
 David Kellen\cr
 Quentin Gronau\cr
+Franz Dietrich\cr
 Christian Mueller
 
 Maintainer: Henrik Singmann <henrik.singmann@psychologie.uni-freiburg.de>

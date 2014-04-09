@@ -180,7 +180,7 @@
         #
         if (is.null(names(Element)) | ForceNames == TRUE)
           names(Element) <- as.character(1:length(Element))
-        Element <- LinearizeNestedList(Element, LinearizeDataFrames,
+        Element <- .LinearizeNestedList(Element, LinearizeDataFrames,
                                        NameSep, ForceNames)
         names(Element) <- paste(EName, names(Element), sep=NameSep)
         Jump <- length(Element)

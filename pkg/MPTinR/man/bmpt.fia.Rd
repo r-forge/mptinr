@@ -131,11 +131,13 @@ The R version of the code should now (after moving the code to RcppEigen) be con
 
 bmpt.fia(s = "ppppCpCCppCCCppCpCCppCCCppCCC", 
 	parameters = c(-0.5, -0.5, 3, 2, 5, 1, 5, 4, 2, 5, 1, 5, 1, 5), 
-	category = c(1,1,2,1,2,3,5,4,5,4,5,6,7,8,9), N = 1000, ineq0 = matrix(c(4,3),1,2))
+	category = c(1,1,2,1,2,3,5,4,5,4,5,6,7,8,9), 
+  N = 1000, ineq0 = matrix(c(4,3),1,2))
 
 bmpt.fia(s = "ppppCpCCppCCCppCpCCppCCCppCCC", 
 	parameters = c(-0.5, -0.5, 3, 2, 5, 1, 5, 4, 2, 5, 1, 5, 1, 5), 
-	category = c(1,1,2,1,2,3,5,4,5,4,5,6,7,8,9), N = 1000, ineq0 = matrix(c(4,3),1,2), mConst = 2L^8)
+	category = c(1,1,2,1,2,3,5,4,5,4,5,6,7,8,9), 
+  N = 1000, ineq0 = matrix(c(4,3),1,2), mConst = 2L^8)
 }
   }
 

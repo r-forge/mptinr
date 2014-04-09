@@ -193,6 +193,10 @@ sfStop()
 
 \dontrun{
 
+#####################################
+## Fit response-bias or payoff ROC ##
+#####################################
+  
 # Example from Broder & Schutz (2009)
 # We fit the data from the 40 individuals from their Experiment 3
 # We fit three different models:
@@ -274,6 +278,48 @@ select.mpt(list(uvsdt = br.uvsdt, evsdt = br.evsdt, two.htm = br.2htm,
 
 # the restricted 2HTM "wins" for individual data (although evsdt does not perform too bad),
 # but the 2htm and restricted 2htm restricted "win" for aggregated data.
+
+###################################
+## Fit confidence rating ROC SDT ##
+###################################
+
+# We fit example data from Wickens (2002, Chapter 5)
+# The example data is from Table 5.1, p. 84
+# (data is entered in somewhat different order).
+
+# Note that criteria are defined as increments to 
+# the first (i.e., leftmost) criterion!
+# This is the only way to do it in MPTinR.
+
+# Data
+dat <- c(47, 65, 66, 92, 136, 294, 166, 161, 138, 128, 63, 43)
+
+# UVSDT
+m.uvsdt <- "
+pnorm(cr1, mu, sigma)
+pnorm(cr1+cr2, mu, sigma) - pnorm(cr1, mu, sigma)
+pnorm(cr3+cr2+cr1, mu, sigma) - pnorm(cr2+cr1, mu, sigma)
+pnorm(cr4+cr3+cr2+cr1, mu, sigma) - pnorm(cr3+cr2+cr1, mu, sigma)
+pnorm(cr5+cr4+cr3+cr2+cr1, mu, sigma) - pnorm(cr4+cr3+cr2+cr1, mu, sigma)
+1 - pnorm(cr5+cr4+cr3+cr2+cr1, mu, sigma)
+  
+pnorm(cr1)
+pnorm(cr2+cr1) - pnorm(cr1)
+pnorm(cr3+cr2+cr1) - pnorm(cr2+cr1)
+pnorm(cr4+cr3+cr2+cr1) - pnorm(cr3+cr2+cr1)
+pnorm(cr5+cr4+cr3+cr2+cr1) - pnorm(cr4+cr3+cr2+cr1)
+1 - pnorm(cr5+cr4+cr3+cr2+cr1)
+"
+check.mpt(textConnection(m.uvsdt))
+
+# Model fitting
+(cr_sdt <- fit.model(dat, textConnection(m.uvsdt),
+            lower.bound=c(-Inf, rep(0, 5), 0.1), upper.bound=Inf))
+
+# To obtain the criteria (which match those in Wickens (2002, p. 90)
+# obtain the cumulative sum:
+
+cumsum(cr_sdt$parameters[paste0("cr",1:5), 1, drop = FALSE])
 
 }
 

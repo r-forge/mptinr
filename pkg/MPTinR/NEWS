@@ -3,7 +3,7 @@
                     ** MPTinR VERSION 1.3.x **
                     **************************
                     Changes in MPTinR Version 1.3.x
-                    Released XXX 2014
+                    Released April 2014
 
     Significant User Visible Changes and new Features
     
@@ -16,6 +16,8 @@
         
     o   added restrictions argument to make.mpt.cf.
     
+    o   added example on how to fit a confidence rating SDT model to
+        ?fit.model.
     
     Bugfixes
     

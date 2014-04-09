@@ -9,7 +9,8 @@ Functions to transfom MPT models.
 }
 
 \usage{
-make.mpt.cf(model.filename, restrictions.filename = NULL, model.type = c("easy", "eqn"), treewise = FALSE)
+make.mpt.cf(model.filename, restrictions.filename = NULL, 
+            model.type = c("easy", "eqn"), treewise = FALSE)
 
 lbmpt.to.mpt(model.list, outfile = NULL, category.names= TRUE)
 }
