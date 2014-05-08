@@ -585,7 +585,7 @@ data(d.broeder)
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 i.2htm <- system.file("extdata", "broeder.2htm.ineq", package = "MPTinR")
 
-get.mpt.fia(d.broeder, m.2htm, i.2htm)
+get.mpt.fia(d.broeder, m.2htm, i.2htm, Sample = 10)
 
 # should produce very similar results:
 get.mpt.fia(d.broeder, m.2htm, i.2htm, mConst = 2L^8)
