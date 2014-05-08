@@ -573,3 +573,19 @@ prediction.plot(br.sdt, m.2htm, 2, ylim = c(-2, 2), args.plot = list(main = "SDT
   lbmpt.to.mpt(make.mpt.cf(model2, treewise = TRUE))
   
 }
+
+#######################
+## get.mpt.fia
+
+# Get the FIA for the 40 datasets from Broeder & Schuetz (2009, Experiment 3)
+# for the 2HTM model with inequality restrictions
+# (Can take a while.)
+
+data(d.broeder)
+m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
+i.2htm <- system.file("extdata", "broeder.2htm.ineq", package = "MPTinR")
+
+get.mpt.fia(d.broeder, m.2htm, i.2htm)
+
+# should produce very similar results:
+get.mpt.fia(d.broeder, m.2htm, i.2htm, mConst = 2L^8)
