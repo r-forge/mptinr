@@ -26,7 +26,8 @@ fit.model(
 	model.type = c("easy", "eqn", "eqn2"),
 	multicore = c("none", "individual", "n.optim", "fia"), sfInit = FALSE, nCPU = 2,
 	control = list(),
-	use.gradient = TRUE, use.hessian = FALSE, check.model = TRUE, args.fia = list()
+	use.gradient = TRUE, use.hessian = FALSE, check.model = TRUE, 
+    args.fia = list(), numDeriv = TRUE
 )
 }
 
@@ -100,6 +101,9 @@ logical. Should model be checked with random values whether or not the expected 
   \item{args.fia}{
 named list of further arguments passed to \code{\link{get.mpt.fia}}, such as \code{mConst} to avoid numerical problems in the FIA function.
 }
+  \item{numDeriv}{
+logical. Should the Hessian matrix of the optimum be estimated numerically using \code{numDeriv::hessian)} in case it cannot be estimated analytically? This can be extremely time and memory consuming for larger models. Default is TRUE.
+  }
 }
 \details{
 This functions should be used when fitting a model that is not an MPT model or when fitting using \code{fit.mpt} fails. For fitting MPT models and information on fitting MPT models see \code{\link{fit.mpt}}.

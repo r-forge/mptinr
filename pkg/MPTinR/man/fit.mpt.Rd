@@ -23,7 +23,7 @@ fit.mpt(
 	show.messages = TRUE,
 	model.type = c("easy", "eqn", "eqn2"),
 	multicore = c("none", "individual", "n.optim", "fia"), sfInit = FALSE, nCPU = 2,
-	control = list(), args.fia = list()
+	control = list(), args.fia = list(), numDeriv = TRUE
 )
 }
 
@@ -82,6 +82,9 @@ list containing control arguments passed on to \code{\link{nlminb}}. See there.
   \item{args.fia}{
 named list of further arguments passed to \code{\link{get.mpt.fia}}, such as \code{mConst} to avoid numerical problems in the FIA function.
 }
+  \item{numDeriv}{
+logical. Should the Hessian matrix of the optimum be estimated numerically using \code{numDeriv::hessian)} in case it cannot be estimated analytically? This can be extremely time and memory consuming for larger models. Default is TRUE.
+  }
 }
 \details{
 The model file is either of the easy format (see \url{http://www.psychologie.uni-freiburg.de/Members/singmann/R/mptinr}) or the "classical" EQN format (see below).\cr

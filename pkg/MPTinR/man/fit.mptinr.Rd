@@ -31,6 +31,7 @@ fit.mptinr(
 	restrictions = NULL,	
 	multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2,
 	control = list(),
+    numDeriv = TRUE,
 	...
 )
 }
@@ -115,6 +116,9 @@ Scalar. Only relevant if \code{multicore} is not \code{"none"} and \code{sfInit}
   \item{control}{
 list containing control arguments passed on to \code{\link{nlminb}}. See there.
 }
+  \item{numDeriv}{
+logical. Should the Hessian matrix of the optimum be estimated numerically using \code{numDeriv::hessian)} in case it cannot be estimated analytically? This can be extremely time and memory consuming for larger models. Default is TRUE.
+  }
   \item{...}{
 arguments passed on to the objective function, the gradient function, the hessian function and the prediction function.
 }
