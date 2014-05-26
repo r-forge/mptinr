@@ -336,7 +336,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	
 	if (use.gradient & counter.fit.anew > 1) {
 		mapping.fit.anew <- mapping.fit.anew[seq_len(counter.fit.anew-1)]
-		new.fits <- suppressWarnings(fit.mptinr(data[mapping.fit.anew,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia.df = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, show.messages = FALSE, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = multicore, sfInit = FALSE, nCPU = 2, control = control, ...))
+		new.fits <- suppressWarnings(fit.mptinr(data[mapping.fit.anew,,drop = FALSE], objective = objective, param.names = param.names, categories.per.type = categories.per.type, gradient = gradient, use.gradient = FALSE, hessian = hessian, use.hessian = FALSE, prediction = prediction, n.optim = n.optim, fia.df = NULL, ci = ci, starting.values = starting.values, lower.bound = lower.bound, upper.bound = upper.bound, output = "full", sort.param = sort.param, show.messages = FALSE, use.restrictions = use.restrictions, orig.params = orig.params, restrictions = restrictions, multicore = multicore, sfInit = FALSE, nCPU = 2, control = control, numDeriv = numDeriv, ...))
 		if (length(mapping.fit.anew) > 1) {
 			for (c.n in seq_along(mapping.fit.anew)) {
 				optim.runs[[mapping.fit.anew[c.n]]] <- c(optim.runs[[mapping.fit.anew[c.n]]], new.fits[["optim.runs"]][["individual"]][[c.n]])
