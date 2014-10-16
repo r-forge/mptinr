@@ -1,9 +1,28 @@
 
                     **************************
+                    ** MPTinR VERSION 1.6.x **
+                    **************************
+                    Changes in MPTinR Version 1.6.x
+                    Released October 2014
+
+    Significant User Visible Changes and new Features
+    
+    o   
+    
+    Bugfixes
+    
+    o   calculating FIA via fit.model did not work for individual data  
+		sets.
+		
+	o	get.mpt.fia: added examples outside dontrun{} blocks running 
+		simple fia tests, with and without inequalities.
+    
+
+                    **************************
                     ** MPTinR VERSION 1.5.x **
                     **************************
                     Changes in MPTinR Version 1.5.x
-                    Released XXX 2014
+                    Released August 2014
 
     Significant User Visible Changes and new Features
     

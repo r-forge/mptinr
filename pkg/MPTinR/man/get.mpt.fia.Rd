@@ -75,7 +75,7 @@ calls \code{\link{bmpt.fia}}\cr
 is called by \code{\link{fit.mpt}}, the main function for fitting MPT models
 }
 \examples{
-\dontrun{
+
 # Get the FIA for the 40 datasets from Broeder & Schuetz (2009, Experiment 3)
 # for the 2HTM model with inequality restrictions
 # (Can take a while.)
@@ -84,11 +84,13 @@ data(d.broeder)
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 i.2htm <- system.file("extdata", "broeder.2htm.ineq", package = "MPTinR")
 
-get.mpt.fia(d.broeder, m.2htm, i.2htm)
+get.mpt.fia(d.broeder, m.2htm, Sample = 1000) # Way too little samples
+get.mpt.fia(d.broeder, m.2htm, i.2htm, Sample = 1000)
 
+\dontrun{
 # should produce very similar results:
+get.mpt.fia(d.broeder, m.2htm, i.2htm)
 get.mpt.fia(d.broeder, m.2htm, i.2htm, mConst = 2L^8)
-
 }
   }
 
