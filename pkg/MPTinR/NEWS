@@ -7,11 +7,18 @@
 
     Significant User Visible Changes and new Features
     
-    o   
+    o   numDeriv is now only imported and not attached.
     
     Bugfixes
     
-    o   calculating FIA via fit.model did not work for individual data  
+    o	C++ code now uses Rcpp attributes.
+
+	o	A bug prohibiting computation of FIA for models without 
+		inequality restrictions and with DEBUG flags enabled when 
+		compiling should now be resolved. The computation causing it is
+		skipped when no inequalities are present.
+	
+	o   calculating FIA via fit.model did not work for individual data  
 		sets.
 		
 	o	get.mpt.fia: added examples outside dontrun{} blocks running 
