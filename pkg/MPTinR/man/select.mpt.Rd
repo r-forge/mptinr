@@ -40,7 +40,7 @@ Note that the values in the returned \code{data.frame} are rounded to the \code{
 }
 \value{
 A \code{data.frame} containing the model selection values:\cr
-\code{model}: Name or number of model (names are taken from \code{mpt.results}).\cr
+\code{model}: Name or number of model (names are either taken from \code{mpt.results} or obtained via \code{match.call}).\cr
 \code{n.parameters}: Number of parameters for each model.\cr
 \code{G.Squared}: G.Squared values of the model (from summed fits for multiple datasets).\cr
 \code{df}: df values of the model (from summed fits for multiple datasets).\cr
@@ -84,7 +84,7 @@ r.equal <- fit.mpt(rb.fig2.data, model2, model2r.r.eq)
 # All c equal
 c.equal <- fit.mpt(rb.fig2.data, model2, model2r.c.eq)
 
-select.mpt(list(reference = ref.model, r.equal = r.equal, c.equal = c.equal))
+select.mpt(list(ref.model, r.equal, c.equal))
 
 
 

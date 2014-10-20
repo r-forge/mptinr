@@ -8,6 +8,9 @@
     Significant User Visible Changes and new Features
     
     o   numDeriv is now only imported and not attached.
+	
+	o	names for models passed to select.mpt are now automatically 
+		determined via match.call().
     
     Bugfixes
     
