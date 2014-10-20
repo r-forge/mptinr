@@ -23,6 +23,9 @@
 		
 	o	get.mpt.fia: added examples outside dontrun{} blocks running 
 		simple fia tests, with and without inequalities.
+		
+	o	all calls to snowfall prefaced with snowfall:: to avoid CRAN 
+		NOTEs.
     
 
                     **************************
