@@ -11,6 +11,8 @@
 	
 	o	names for models passed to select.mpt are now automatically 
 		determined via match.call().
+		
+	o	changed the maintainer email address.
     
     Bugfixes
     

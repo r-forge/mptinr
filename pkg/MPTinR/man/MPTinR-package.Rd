@@ -24,13 +24,13 @@ For model selection use \code{\link{select.mpt}}.
 A helper function for writing model files is \code{\link{check.mpt}}
 }
 \author{
-Henrik Singmann (for bug reports and feature requests): \email{henrik.singmann@psychologie.uni-freiburg.de}\cr
+Henrik Singmann (for bug reports and feature requests): \email{singmann+mptinr@gmail.com}\cr
 David Kellen\cr
 Quentin Gronau\cr
 Franz Dietrich\cr
 Christian Mueller
 
-Maintainer: Henrik Singmann <henrik.singmann@psychologie.uni-freiburg.de>
+Maintainer: Henrik Singmann <singmann+mptinr@gmail.com>
 
 }
 \references{
