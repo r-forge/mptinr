@@ -15,7 +15,7 @@ select.mpt(mpt.results, output = c("standard", "full"), round.digit = 6, dataset
 A \code{list} containing results from \code{\link{fit.mpt}}.
 }
   \item{output}{
-\code{"standard"} or \code{"full"}. If \code{"full"} additionally returns original FIA, AIC, and BIC values, and, for multi-indivdual fits, compares the model-selection criteria for the aggregated data.
+\code{"standard"} or \code{"full"}. If \code{"full"} additionally returns original FIA, AIC, and BIC values, and, for multi-individual fits, compares the model-selection criteria for the aggregated data.
 }
   \item{round.digit}{
 Integer specifying to which decimal place the results should be rounded. Default is 6. Is also used for rounding FIA, AIC, and BIC values before counting the best fitting values per individual datasets.
@@ -33,7 +33,7 @@ For AIC and BIC, AIC and BIC weights are reported as \code{wAIC} and \code{wBIC}
 
 For multi-individual fit, \code{select.mpt} will additionally return how often each model provided the best fit (e.g., \code{FIA.best}). Values are rounded before determining which is the best fitting model. Note that there can be ties so that two models provide the best fit. Furthermore, if \code{output} is \code{"standard"}, only results for the summed information criteria are returned (indicated by the postfix \code{.sum}). To obtain model selection results for the aggregated data (indicated by postfix \code{.aggregated}), \code{output} needs to be set to \code{"full"}.
 
-select.mpt will check if the data of the results retruned from \code{fit.mpt} are equal. (If they are not equal model selection can not be done.)
+select.mpt will check if the data of the results returned from \code{fit.mpt} are equal. (If they are not equal model selection can not be done.)
 
 Note that the values in the returned \code{data.frame} are rounded to the \code{round.digit}th decimal place.
 
