@@ -1,5 +1,22 @@
 
                     **************************
+                    ** MPTinR VERSION 1.7.x **
+                    **************************
+                    Changes in MPTinR Version 1.7.x
+                    Released XXX 2014
+
+    Significant User Visible Changes and new Features
+    
+    o   
+    
+    Bugfixes
+    
+    o	removed note in documentation that gen. functions are rather 
+        new. They are in contrast well tested.
+    
+
+
+                    **************************
                     ** MPTinR VERSION 1.6.x **
                     **************************
                     Changes in MPTinR Version 1.6.x
