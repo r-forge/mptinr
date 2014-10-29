@@ -261,7 +261,7 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 				multiFit <- TRUE
 			} else stop("data is neither vector, nor matrix, nor data.frame!")
 	
-	if (ci != 95) message(paste("Confidence intervals represent ", ci, "% intervals.", sep = ""))
+	if (ci != 95 && show.messages) message(paste("Confidence intervals represent ", ci, "% intervals.", sep = ""))
 	
 	n.params <- length(param.names)
 	length.param.names <- length(param.names)
@@ -370,14 +370,16 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 			warning(paste("Optimization routine for dataset(s) ", not.converged[not.converged != 0], " did not converge succesfully.
   Error code(s): ", sort(unique(vapply(minim, "[[", 0, i = "convergence")))[-1], ". Try use.gradient == TRUE or use output = 'full' for more information.", sep =""))
 		} else {
-			message(paste("Optimization routine for dataset(s) ", paste(not.converged[not.converged != 0], collapse = " "), "
+      if (show.messages) {
+  			message(paste("Optimization routine for dataset(s) ", paste(not.converged[not.converged != 0], collapse = " "), "
   did not converge succesfully. Tried again with use.gradient == FALSE.", sep =""))
-			if (sum(better.approx) != 0) message(paste("Optimization for dataset(s) ", paste(better.approx[better.approx != 0], collapse = " "), "
+	  		if (sum(better.approx) != 0) message(paste("Optimization for dataset(s) ", paste(better.approx[better.approx != 0], collapse = " "), "
   using numerically estimated gradients produced better results. Using those results.
   Old results saved in output == 'full' [['optim.runs']].", sep =""))
-			if (sum(better.analytic) != 0) message(paste("Optimization for dataset(s) ", paste(better.analytic[better.analytic != 0], collapse = " "), "
+		  	if (sum(better.analytic) != 0) message(paste("Optimization for dataset(s) ", paste(better.analytic[better.analytic != 0], collapse = " "), "
   using numerical estimated gradients did NOT produce better results.
   Keeping original results. Use output = 'full' for more details.", sep =""))
+      }
 			if (sum(error.codes) != 0) {
 				warning(paste("Error code(s) in final results: ", paste(sort(unique(error.codes)), collapse = " "),  ". The following dataset(s) did not converge succesfully in the best fitting optimization run:
 ", paste(which(error.codes != 0), collapse = " "), sep =""))
@@ -394,20 +396,20 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 	
 	hessian.list <- vector("list", n.data)
 	
-	if (is.null(hessian)) message("No function for computing Hessian Matrix specified or it failed. Hessian Matrix is estimated numerically. Validity of CIs is questionable.")
+	if (is.null(hessian) & show.messages) message("No function for computing Hessian Matrix specified or it failed. Hessian Matrix is estimated numerically. Validity of CIs is questionable.")
 	
 	for (c in 1:n.data) {
 		for (d in seq_along(data[c,])) assign(paste("hank.data.", d, sep = ""), data[c,d], envir = tmpllk.env)
 		if (!is.null(hessian)) hessian.list[[c]] <- tryCatch(do.call(hessian, args  = list(minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... )), error = function(e) NA)
 		else {
             if (numDeriv) {
-                message("Note: CIs are based on the numerically estimated Hessian matrix")
+              if (show.messages) message("Note: CIs are based on the numerically estimated Hessian matrix")
                 hessian.list[[c]] <- tryCatch(numDeriv::hessian(func = objective, x = minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ), error = function(e) NA)
             } else hessian.list[[c]] <- NA
         }
 	}
     if (numDeriv && all(vapply(hessian.list, function(x) all(is.na(x)), NA))) {
-        message("Note: CIs are based on the numerically estimated Hessian matrix")
+      if (show.messages) message("Note: CIs are based on the numerically estimated Hessian matrix")
         for (c in 1:n.data) {
             for (d in seq_along(data[c,])) assign(paste("hank.data.", d, sep = ""), data[c,d], envir = tmpllk.env)
             hessian.list[[c]] <- tryCatch(numDeriv::hessian(func = objective, x = minim[[c]][["par"]], data = data[c,], upper.bound = upper.bound, lower.bound = lower.bound, param.names = param.names, n.params = length.param.names, tmp.env = tmpllk.env, ... ), error = function(e) NA)

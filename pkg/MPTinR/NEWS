@@ -7,7 +7,7 @@
 
     Significant User Visible Changes and new Features
     
-    o   
+    o   less messages if show.messages == FALSE.
     
     Bugfixes
     
