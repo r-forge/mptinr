@@ -3,14 +3,11 @@
                     ** MPTinR VERSION 1.7.x **
                     **************************
                     Changes in MPTinR Version 1.7.x
-                    Released XXX 2015
+                    Released XXX 2014
 
     Significant User Visible Changes and new Features
     
     o   less messages if show.messages == FALSE.
-    
-    o   corrected description of allowed inequality restrictions in 
-        fit.mpt help page (i.e., "a < b" and "b = 0.5").
     
     Bugfixes
     
