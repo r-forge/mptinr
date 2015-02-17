@@ -2,7 +2,7 @@
 
 #rules for restriction files:
 # 1. inequalities first
-# 2. If a variable appears in an inequality restriction, it can not be on a LHS of any restriction
+# 2. If a variable appears in an inequality restriction, it can not be on a LHS of any restriction (unless it is the rightmost element of an inequality).
 # 3. If a variable appears on RHS of an equality restriction, it can not appear on LHS of an equality restriction,
 # 4. Parameters can only be restricted to certain numbers.
 
@@ -101,7 +101,7 @@
 					}
 				}
 				for (ci in 1:(pos.ref-1)) {
-						if (tmpStr[ci] %in% usedParams) stop("Error getting Restrictions: In equality restrictions, no variable can appear on RHS of restrtcitons and then on LHS of restriction.")
+						if (tmpStr[ci] %in% usedParams) stop("Error getting Restrictions: In equality restrictions, no variable can appear on RHS of restriction and then on LHS of restriction.")
 				}
 				alsoUsed <- c(alsoUsed, tmpStr[pos.ref])
 				for (ci in 1:(pos.ref-1)) {

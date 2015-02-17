@@ -97,7 +97,7 @@ Note that names of parameters in the model file should not start with \code{hank
 
 The restrictions file may contain (sequential) equality (i.e., =) and inequality (i.e., <) restrictions and must adhere to the following rules:\cr
 	1. Inequalities first.\cr
-	2. If a variable appears in an inequality restriction, it can not be on the left hand side (LHS) of any further restriction.\cr
+	2. If a variable appears in an inequality restriction, it can not be on the left hand side (LHS) of any further restriction (unless it is the rightmost element of an inequality restriction).\cr
 	3. If a variable appears on the right hand side (RHS) of an equality restriction, it can not appear on LHS of an equality restriction.\cr
 Note that only "<" is supported as inequality operator but not ">"!\cr
 Examples of restrictions are (the following could all appear in one restrictions file):\cr
