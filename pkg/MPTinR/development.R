@@ -1,3 +1,4 @@
+require(devtools)
 load_all()
 
 data(rb.fig1.data, package = "MPTinR")
@@ -7,11 +8,21 @@ fit.mpt(rb.fig1.data[1,], model1, n.optim = 1, fia = 100)
 fit.model(rb.fig1.data[1,], model1, n.optim = 1, fia = 100)
 
 
+m1 <- fit.mpt(rb.fig1.data, model1, fia = 100000)
+m1$information.criteria$sum
+colSums(m1$information.criteria$individual)
+
+select.mpt(list(m1, m1), dataset = 2)
+
+help(package = "MPTinR")
 require("MPTinR")
 data(d.broeder)
+require(snowfall)
 m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
 get.mpt.fia(d.broeder, m.2htm)
 
 
 require(Rcpp)
-compileAttributes()
+compileAttributes() # DO NOT RUN THIS. It changes the names to determinant (without leading .) which needs to be changed by hand!
+
+

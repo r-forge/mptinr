@@ -432,8 +432,16 @@ fit.mptinr <- function(data, objective, param.names, categories.per.type, gradie
 		summed.goodness.of.fit <- data.frame(t(apply(goodness.of.fit, 2, sum)))
 		summed.goodness.of.fit[1,4] <- pchisq(summed.goodness.of.fit[1,2], summed.goodness.of.fit[1,3], lower.tail = FALSE)
 		goodness.of.fit <- list(individual = goodness.of.fit, sum = summed.goodness.of.fit)
-		information.criteria <- list(individual = information.criteria, sum = data.frame(t(apply(information.criteria, 2, sum))))
 		parameters <- get.parameter.table.multi(minim, param.names, n.params, n.data, use.restrictions, inv.hess.list, ci, orig.params)
+    #browser()
+    # added correct calculations of BIC sum and FIA sum (March 2015)
+    BIC_sum <- summed.goodness.of.fit$G.Squared + (n.params*nrow(data))*log(sum(n_items))
+    AIC_sum <- sum(information.criteria$AIC)
+  	information.criteria <- list(individual = information.criteria, sum = data.frame(AIC = AIC_sum, BIC = BIC_sum))
+    if (!is.null(fia)) {
+      FIA_penalty_sum <- sum(fia.df.tmp[[1]]$lnInt) + sum(fia.df.tmp[[1]]$lnconst) + (n.params*nrow(data))/2*log(sum(n_items)/2/pi)
+      information.criteria$sum <- data.frame(FIA = summed.goodness.of.fit$G.Squared + FIA_penalty_sum, information.criteria$sum, FIA.penalty = FIA_penalty_sum)
+    }
 		model.info <- list(individual = model.info)
 		if (fit.aggregated) {
 			data.pooled <- apply(data,2,sum)
