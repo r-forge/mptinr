@@ -2,10 +2,11 @@
 fit.mptinr <- function(data, objective, param.names, categories.per.type, gradient = NULL, use.gradient = TRUE, hessian = NULL, use.hessian = FALSE, prediction = NULL, n.optim = 5, fia.df = NULL, ci = 95, starting.values = NULL, lower.bound = 0, upper.bound = 1, output = c("standard", "fia", "full"), fit.aggregated = TRUE, sort.param = TRUE, show.messages = TRUE, use.restrictions = FALSE, orig.params = NULL, restrictions = NULL, multicore = c("none", "individual", "n.optim"), sfInit = FALSE, nCPU = 2, control = list(), numDeriv = TRUE, ...) {
 	
 	if (multicore[1] != "none" & sfInit) {
-		require(snowfall)
+		eval(call("require", package = "snowfall", character.only = TRUE))
+        #require(snowfall)
 		sfInit( parallel=TRUE, cpus=nCPU )
 	} else if (multicore[1] != "none") {
-	  if (!require(snowfall)) stop("multicore needs snowfall")
+	  if (!eval(call("require", package = "snowfall", character.only = TRUE))) stop("multicore needs snowfall")
 	}
 	
 	n.items.per.type <- function(categories.per.type, data) {
