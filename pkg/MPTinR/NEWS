@@ -16,9 +16,9 @@
         to the non-linear nature of the log(n) term). This is now
         corrected for both the output of fit.mpt (et al.) and 
         select.mpt (for which now summed BIC and FIA are always 
-        calculated anew for for multiple data sets).
+        calculated anew for multiple data sets).
     
-    o   removed note in documentation that gen... functions are rather 
+    o   removed note in documentation that gen.X functions are rather 
         new. They are well tested by now.
         
     o   bmpt.fia should now work without snowfall without throwing a
