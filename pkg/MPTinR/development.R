@@ -25,21 +25,6 @@ get.mpt.fia(d.broeder, m.2htm)
 require(Rcpp)
 compileAttributes() # DO NOT RUN THIS. It changes the names to determinant (without leading .) which needs to be changed by hand!
 
-data(d.broeder, package = "MPTinR")
-m.2htm <- system.file("extdata", "5points.2htm.model", package = "MPTinR")
-r.2htm <- system.file("extdata", "broeder.2htm.restr", package = "MPTinR")
-r.1htm <- system.file("extdata", "broeder.1htm.restr", package = "MPTinR")
+devtools::use_vignette("introduction")
 
-br.2htm.fia <- fit.mpt(d.broeder, m.2htm, fia = 50000, fit.aggregated = FALSE)
-br.2htm.res.fia <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 50000, fit.aggregated = FALSE)
-br.1htm.fia <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 50000, fit.aggregated = FALSE)
-
-select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia), output = "full")
-select.mpt(list("2htm" = br.2htm.fia, "2htm.r" = br.2htm.res.fia, "1htm" = br.1htm.fia), output = "standard")
-
-
-br.2htm.fia2 <- fit.mpt(d.broeder, m.2htm, fia = 50000, fit.aggregated = TRUE)
-br.2htm.res.fia2 <- fit.mpt(d.broeder, m.2htm, r.2htm, fia = 50000, fit.aggregated = TRUE)
-br.1htm.fia2 <- fit.mpt(d.broeder, m.2htm, r.1htm, fia = 50000, fit.aggregated = TRUE)
-
-select.mpt(list("2htm" = br.2htm.fia2, "2htm.r" = br.2htm.res.fia2, "1htm" = br.1htm.fia2), output = "full")
+devtools::build_vignettes()
