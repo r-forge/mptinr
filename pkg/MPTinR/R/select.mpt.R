@@ -93,7 +93,7 @@ select.mpt <- function(mpt.results, output = c("standard", "full"), round.digit 
 		  FIA.penalty.sum <- vapply(mpt.results, function(x) {
 		    if (any(grepl("^FIA.penalty$", colnames(x[["information.criteria"]][["individual"]])))) {
           summed_lnInt <- x[["information.criteria"]][["individual"]][["FIA.penalty"]] - x$model.info$individual$n.parameters/2 * log(rowSums(observed.data[[1]]$individual)/2/pi)
-          sum(summed_lnInt) + sum(x$model.info$individual$n.parameters)/2 * log(sum(rowSums(observed.data[[1]]$individual))/2/pi)          
+          sum(summed_lnInt) + sum(x$model.info$individual$n.parameters)/2 + log(sum(rowSums(observed.data[[1]]$individual))/2/pi)          
 		    }
 		    else NA
 		  }, 0)

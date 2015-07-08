@@ -1,5 +1,23 @@
 
                     **************************
+                    ** MPTinR VERSION 1.10.x **
+                    **************************
+                    Changes in MPTinR Version 1.8.x
+                    Released July 2015
+
+    Significant User Visible Changes and new Features
+    
+    o   
+    
+    Bugfixes
+    
+    o   select.mpt was *still* giving wrong FIA values for multiple 
+        data sets (multiplied ln(N) instead of added). 
+        Results are now guaranteed to be correct.
+    
+    
+    
+                    **************************
                     ** MPTinR VERSION 1.9.x **
                     **************************
                     Changes in MPTinR Version 1.8.x
