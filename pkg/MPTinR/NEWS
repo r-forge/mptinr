@@ -16,6 +16,9 @@
         Results are now guaranteed to be correct.
 
     o   all function from default packages imported.
+
+    o   FIA for first data set was sometimes incorrectly treated
+        separately from get.mpt.fia (or fit.mpt).
     
     
     
