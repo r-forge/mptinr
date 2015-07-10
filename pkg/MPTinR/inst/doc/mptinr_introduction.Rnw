@@ -464,7 +464,7 @@ Given we now have four models, we again use \texttt{select.mpt} for a model sele
 select.mpt(list(br.2htm, br.2htm.ineq, br.2htmr, br.2htmr.ineq), output = "full")
 @
 
-Overall the FIA results clearly favor the two models including the inequality restrictions on $g$. At the level of the individual data, the restricted 2HTM seems to be preferred given as its summed FIA value is clearly smaller by around 64 and additionally it provided the best account for more participants (22/23 versus 17/18 for the unrestricted 2HTM). On the level of the aggregated data the pattern is the same although the difference between restricted and unrestricted 2HTM is minimal (0.16). 
+Overall the FIA results clearly favor the two models including the inequality restrictions on $g$. At the level of the individual data, the restricted 2HTM seems to be preferred given as its summed FIA value is clearly smaller by around 64 and additionally it provided the best account for more participants (23/22 versus 17/18 for the unrestricted 2HTM). On the level of the aggregated data the pattern is the same although the difference between restricted and unrestricted 2HTM is minimal (0.16). 
 
 As a final results let us now consider the individual parameter estimates of the two best models. The parameter values of the individual data are contained in a three-dimensional array in which the first dimension corresponds to the parameter, with the second dimension we can either obatin the parameter estimates (\texttt{"estimates"}), the confidence intervals, or an indicator variable whether or not a given parameters is restricted or free to vary.
 

@@ -14,6 +14,8 @@
     o   select.mpt was *still* giving wrong FIA values for multiple 
         data sets (multiplied ln(N) instead of added). 
         Results are now guaranteed to be correct.
+
+    o   all function from default packages imported.
     
     
     
