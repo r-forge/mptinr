@@ -16,12 +16,12 @@
         correspond to FIA when these data sets were fitted in a super-model 
         (with separate parameters for each data set). Consequently, the old 
         behavior of simply summing FIA was restored in both fit.mpt et al. and
-        select.mpt.
+        select.mpt. Vignette was updated to show this.
 
     o   all functions from default packages imported.
 
     o   FIA for first data set was sometimes incorrectly treated
-        separately from get.mpt.fia (or fit.mpt).
+        as different from get.mpt.fia (or fit.mpt).
     
     
     
