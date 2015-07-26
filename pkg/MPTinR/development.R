@@ -12,6 +12,7 @@ m1 <- fit.mpt(rb.fig1.data, model1, fia = 100000)
 m1$information.criteria$sum
 colSums(m1$information.criteria$individual)
 
+select.mpt(list(m1, m1))
 select.mpt(list(m1, m1), dataset = 2)
 
 help(package = "MPTinR")
