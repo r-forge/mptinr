@@ -82,77 +82,82 @@ check.mpt(textConnection(htm))
 check.mpt(textConnection(htm), list("dn2 = do2", "gn2 = go2"))
 
 
+
 # UVSD (unequal variance signal detection model)
 uvsd <- "
-pnorm(c1, mu, sigma)
-pnorm(c1+c2, mu, sigma) - pnorm(c1, mu, sigma)
-pnorm(c3+c2+c1, mu, sigma) - pnorm(c2+c1, mu, sigma)
-pnorm(c4+c3+c2+c1, mu, sigma) - pnorm(c3+c2+c1, mu, sigma)
-pnorm(c5+c4+c3+c2+c1, mu, sigma) - pnorm(c4+c3+c2+c1, mu, sigma)
-1 - pnorm(c5+c4+c3+c2+c1, mu, sigma)
+pnorm(cr1, mu, sigma)
+pnorm(cr1+cr2, mu, sigma) - pnorm(cr1, mu, sigma)
+pnorm(cr3+cr2+cr1, mu, sigma) - pnorm(cr2+cr1, mu, sigma)
+pnorm(cr4+cr3+cr2+cr1, mu, sigma) - pnorm(cr3+cr2+cr1, mu, sigma)
+pnorm(cr5+cr4+cr3+cr2+cr1, mu, sigma) - pnorm(cr4+cr3+cr2+cr1, mu, sigma)
+1 - pnorm(cr5+cr4+cr3+cr2+cr1, mu, sigma)
   
-pnorm(c1)
-pnorm(c2+c1) - pnorm(c1)
-pnorm(c3+c2+c1) - pnorm(c2+c1)
-pnorm(c4+c3+c2+c1) - pnorm(c3+c2+c1)
-pnorm(c5+c4+c3+c2+c1) - pnorm(c4+c3+c2+c1)
-1 - pnorm(c5+c4+c3+c2+c1)
+pnorm(cr1)
+pnorm(cr2+cr1) - pnorm(cr1)
+pnorm(cr3+cr2+cr1) - pnorm(cr2+cr1)
+pnorm(cr4+cr3+cr2+cr1) - pnorm(cr3+cr2+cr1)
+pnorm(cr5+cr4+cr3+cr2+cr1) - pnorm(cr4+cr3+cr2+cr1)
+1 - pnorm(cr5+cr4+cr3+cr2+cr1)
 "
 
 # confidence criteria are parameterized as increments:
 check.mpt(textConnection(uvsd))
-# c1 = [-Inf, Inf]
-# c2, c3, c4, c5 = [0, Inf]
+# cr1 = [-Inf, Inf]
+# cr2, cr3, cr4, cr5 = [0, Inf]
 # mu = [-Inf, Inf]
 # sigma = [0, Inf]
 
 
-# MSD (mixture signal detection model):
-msd <- "
-l*(pnorm(c1-m))  +  (1 - l) * (pnorm(c1-m2))
-l*(pnorm(c1+c2-m) - pnorm(c1-m)) + (1 - l) * (pnorm(c1+c2-m2) - pnorm(c1-m2))
-l*(pnorm(c1+c2+c3-m)-pnorm(c1+c2-m)) + (1-l)*(pnorm(c1+c2+c3-m2)-pnorm(c1+c2-m2))
-l*(pnorm(c1+c2+c3+c4-m)-pnorm(c1+c2+c3-m)) + (1-l)*(pnorm(c1+c2+c3+c4-m2)-pnorm(c1+c2+c3-m2))
-l*(pnorm(c1+c2+c3+c4+c5-m)-pnorm(c1+c2+c3+c4-m))+(1-l)*(pnorm(c1+c2+c3+c4+c5-m2)-pnorm(c1+c2+c3+c4-m2))
-l*(1-pnorm(c1+c2+c3+c4+c5-m))  +  (1 - l) * (1-pnorm(c1+c2+c3+c4+c5-m2))
-
-pnorm(c1)
-pnorm(c1+c2) - pnorm(c1)
-pnorm(c1+c2+c3) - pnorm(c1+c2)
-pnorm(c1+c2+c3+c4) - pnorm(c1+c2+c3)
-pnorm(c1+c2+c3+c4+c5) - pnorm(c1+c2+c3+c4)
-1-pnorm(c1+c2+c3+c4+c5)
+# MSD (mixture signal detection model): 
+# NOTE: To follow CRAN rules restricting examples to a width of 100 characters, 
+# the following example is splitted into multiple strings concatenated by paste().
+# To view the full model use: cat(msd)
+msd <- paste(c("
+l*(pnorm(cr1-mu))  +  (1 - l) * (pnorm(cr1-mu2))
+l*(pnorm(cr1+cr2-mu) - pnorm(cr1-mu)) + (1 - l)*(pnorm(cr1+cr2-mu2)-pnorm(cr1-mu2))
+l*(pnorm(cr1+cr2+cr3-mu)-pnorm(cr1+cr2-mu)) + (1-l)*(pnorm(cr1+cr2+cr3-mu2)-pnorm(cr1+cr2-mu2))
+",
+"l*(pnorm(cr1+cr2+cr3+cr4-mu) - pnorm(cr1+cr2+cr3-mu)) + ",
+"(1 - l)*(pnorm(cr1+cr2+cr3+cr4-mu2)-pnorm(cr1+cr2+cr3-mu2))",
 "
+l*(pnorm(cr1+cr2+cr3+cr4+cr5-mu)-pnorm(cr1+cr2+cr3+cr4-mu)) + ",
+"(1 - l)*(pnorm(cr1+cr2+cr3+cr4+cr5-mu2)-pnorm(cr1+cr2+cr3+cr4-mu2))",
+"
+l * (1-pnorm(cr1+cr2+cr3+cr4+cr5-mu))  +  (1 - l)*(1-pnorm(cr1+cr2+cr3+cr4+cr5-mu2))
+
+pnorm(cr1)
+pnorm(cr1+cr2) - pnorm(cr1)
+pnorm(cr1+cr2+cr3) - pnorm(cr1+cr2)
+pnorm(cr1+cr2+cr3+cr4) - pnorm(cr1+cr2+cr3)
+pnorm(cr1+cr2+cr3+cr4+cr5) - pnorm(cr1+cr2+cr3+cr4)
+1-pnorm(cr1+cr2+cr3+cr4+cr5)
+"), collapse = "") 
+cat(msd)
+
 # confidence criteria are again parameterized as increments:
 check.mpt(textConnection(msd))
-# c1 = [-Inf, Inf]
-# c2, c3, c4, c5 = [0, Inf]
+# cr1 = [-Inf, Inf]
+# cr2, cr3, cr4, cr5 = [0, Inf]
 # lambda = [0, 1]
-# m, m2 = [-Inf, Inf]
+# mu, mu2 = [-Inf, Inf]
 
 
 # DPSD (dual-process signal detection model)
 dpsd <- "
-(1-R)*pnorm(c1- mu)
-(1-R)*(pnorm(c1 + c2 - mu) - pnorm(c1 - mu))
-(1-R)*(pnorm(c1 + c2 + c3 - mu) - pnorm(c1 + c2 - mu))
-(1-R)*(pnorm(c1 + c2 + c3 + c4 - mu) - pnorm(c1 + c2 + c3 - mu))
-(1-R)*(pnorm(c1 + c2 + c3 + c4 + c5 - mu) - pnorm(c1 + c2 + c3 + c4 - mu))
-R + (1-R)*(1 - pnorm(c1 + c2 + c3 + c4 + c5 - mu))
+(1-R)*pnorm(cr1- mu)
+(1-R)*(pnorm(cr1 + cr2 - mu) - pnorm(cr1 - mu))
+(1-R)*(pnorm(cr1 + cr2 + cr3 - mu) - pnorm(cr1 + cr2 - mu))
+(1-R)*(pnorm(cr1 + cr2 + cr3 + cr4 - mu) - pnorm(cr1 + cr2 + cr3 - mu))
+(1-R)*(pnorm(cr1 + cr2 + cr3 + cr4 + cr5 - mu) - pnorm(cr1 + cr2 + cr3 + cr4 - mu))
+R + (1-R)*(1 - pnorm(cr1 + cr2 + cr3 + cr4 + cr5 - mu))
 
-pnorm(c1)
-pnorm(c1 + c2) - pnorm(c1)
-pnorm(c1 + c2 + c3) - pnorm(c1 + c2)
-pnorm(c1 + c2 + c3 + c4) - pnorm(c1 + c2 + c3)
-pnorm(c1 + c2 + c3 + c4 + c5) - pnorm(c1 + c2 + c3 + c4)
-1 - pnorm(c1 + c2 + c3 + c4 + c5)
+pnorm(cr1)
+pnorm(cr1 + cr2) - pnorm(cr1)
+pnorm(cr1 + cr2 + cr3) - pnorm(cr1 + cr2)
+pnorm(cr1 + cr2 + cr3 + cr4) - pnorm(cr1 + cr2 + cr3)
+pnorm(cr1 + cr2 + cr3 + cr4 + cr5) - pnorm(cr1 + cr2 + cr3 + cr4)
+1 - pnorm(cr1 + cr2 + cr3 + cr4 + cr5)
 "
-
-check.mpt(textConnection(dpsd))
-# c1 = [-Inf, Inf]
-# c2, c3, c4, c5 = [0, Inf]
-# mu, mu2 = [-Inf, Inf]
-# R = [0, 1]
 
 uvsd_fit <- fit.model(roc6[,1:12], textConnection(uvsd),
             lower.bound=c(-Inf, rep(0, 5), 0.001), upper.bound=Inf)
