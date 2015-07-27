@@ -84,73 +84,73 @@ check.mpt(textConnection(htm), list("dn2 = do2", "gn2 = go2"))
 
 # UVSD (unequal variance signal detection model)
 uvsd <- "
-pnorm(cr1, mu, sigma)
-pnorm(cr1+cr2, mu, sigma) - pnorm(cr1, mu, sigma)
-pnorm(cr3+cr2+cr1, mu, sigma) - pnorm(cr2+cr1, mu, sigma)
-pnorm(cr4+cr3+cr2+cr1, mu, sigma) - pnorm(cr3+cr2+cr1, mu, sigma)
-pnorm(cr5+cr4+cr3+cr2+cr1, mu, sigma) - pnorm(cr4+cr3+cr2+cr1, mu, sigma)
-1 - pnorm(cr5+cr4+cr3+cr2+cr1, mu, sigma)
+pnorm(c1, mu, sigma)
+pnorm(c1+c2, mu, sigma) - pnorm(c1, mu, sigma)
+pnorm(c3+c2+c1, mu, sigma) - pnorm(c2+c1, mu, sigma)
+pnorm(c4+c3+c2+c1, mu, sigma) - pnorm(c3+c2+c1, mu, sigma)
+pnorm(c5+c4+c3+c2+c1, mu, sigma) - pnorm(c4+c3+c2+c1, mu, sigma)
+1 - pnorm(c5+c4+c3+c2+c1, mu, sigma)
   
-pnorm(cr1)
-pnorm(cr2+cr1) - pnorm(cr1)
-pnorm(cr3+cr2+cr1) - pnorm(cr2+cr1)
-pnorm(cr4+cr3+cr2+cr1) - pnorm(cr3+cr2+cr1)
-pnorm(cr5+cr4+cr3+cr2+cr1) - pnorm(cr4+cr3+cr2+cr1)
-1 - pnorm(cr5+cr4+cr3+cr2+cr1)
+pnorm(c1)
+pnorm(c2+c1) - pnorm(c1)
+pnorm(c3+c2+c1) - pnorm(c2+c1)
+pnorm(c4+c3+c2+c1) - pnorm(c3+c2+c1)
+pnorm(c5+c4+c3+c2+c1) - pnorm(c4+c3+c2+c1)
+1 - pnorm(c5+c4+c3+c2+c1)
 "
 
 # confidence criteria are parameterized as increments:
 check.mpt(textConnection(uvsd))
-# cr1 = [-Inf, Inf]
-# cr2, cr3, cr4, cr5 = [0, Inf]
+# c1 = [-Inf, Inf]
+# c2, c3, c4, c5 = [0, Inf]
 # mu = [-Inf, Inf]
 # sigma = [0, Inf]
 
 
 # MSD (mixture signal detection model):
 msd <- "
-l*(pnorm(cr1-mu))  +  (1 - l) * pnorm(cr1-mu2))
-l*(pnorm(cr1+cr2-mu) - pnorm(cr1-mu)) + (1 - l) * (pnorm(cr1+cr2-mu2) - pnorm(cr1-mu2))
-l*(pnorm(cr1+cr2+cr3-mu)-pnorm(cr1+cr2-mu)) + (1-l)*(pnorm(cr1+cr2+cr3-mu2)-pnorm(cr1+cr2-mu2))
-l*(pnorm(cr1+cr2+cr3+cr4-mu)-pnorm(cr1+cr2+cr3-mu)) + (1-l)*(pnorm(cr1+cr2+cr3+cr4-mu2)-pnorm(cr1+cr2+cr3-mu2))
-l*(pnorm(cr1+cr2+cr3+cr4+cr5-mu)-pnorm(cr1+cr2+cr3+cr4-mu)) + (1-l)*(pnorm(cr1+cr2+cr3+cr4+cr5-mu2)-pnorm(cr1+cr2+cr3+cr4-mu2))
-l*(1-pnorm(cr1+cr2+cr3+cr4+cr5-mu))   +   (1 - l) * (1-pnorm(cr1+cr2+cr3+cr4+cr5-mu2))
+l*(pnorm(c1-m))  +  (1 - l) * (pnorm(c1-m2))
+l*(pnorm(c1+c2-m) - pnorm(c1-m)) + (1 - l) * (pnorm(c1+c2-m2) - pnorm(c1-m2))
+l*(pnorm(c1+c2+c3-m)-pnorm(c1+c2-m)) + (1-l)*(pnorm(c1+c2+c3-m2)-pnorm(c1+c2-m2))
+l*(pnorm(c1+c2+c3+c4-m)-pnorm(c1+c2+c3-m)) + (1-l)*(pnorm(c1+c2+c3+c4-m2)-pnorm(c1+c2+c3-m2))
+l*(pnorm(c1+c2+c3+c4+c5-m)-pnorm(c1+c2+c3+c4-m))+(1-l)*(pnorm(c1+c2+c3+c4+c5-m2)-pnorm(c1+c2+c3+c4-m2))
+l*(1-pnorm(c1+c2+c3+c4+c5-m))  +  (1 - l) * (1-pnorm(c1+c2+c3+c4+c5-m2))
 
-pnorm(cr1)
-pnorm(cr1+cr2) - pnorm(cr1)
-pnorm(cr1+cr2+cr3) - pnorm(cr1+cr2)
-pnorm(cr1+cr2+cr3+cr4) - pnorm(cr1+cr2+cr3)
-pnorm(cr1+cr2+cr3+cr4+cr5) - pnorm(cr1+cr2+cr3+cr4)
-1-pnorm(cr1+cr2+cr3+cr4+cr5)
+pnorm(c1)
+pnorm(c1+c2) - pnorm(c1)
+pnorm(c1+c2+c3) - pnorm(c1+c2)
+pnorm(c1+c2+c3+c4) - pnorm(c1+c2+c3)
+pnorm(c1+c2+c3+c4+c5) - pnorm(c1+c2+c3+c4)
+1-pnorm(c1+c2+c3+c4+c5)
 "
 # confidence criteria are again parameterized as increments:
 check.mpt(textConnection(msd))
-# cr1 = [-Inf, Inf]
-# cr2, cr3, cr4, cr5 = [0, Inf]
+# c1 = [-Inf, Inf]
+# c2, c3, c4, c5 = [0, Inf]
 # lambda = [0, 1]
-# mu, mu2 = [-Inf, Inf]
+# m, m2 = [-Inf, Inf]
 
 
 # DPSD (dual-process signal detection model)
 dpsd <- "
-(1-R)*pnorm(cr1- mu)
-(1-R)*(pnorm(cr1 + cr2 - mu) - pnorm(cr1 - mu))
-(1-R)*(pnorm(cr1 + cr2 + cr3 - mu) - pnorm(cr1 + cr2 - mu))
-(1-R)*(pnorm(cr1 + cr2 + cr3 + cr4 - mu) - pnorm(cr1 + cr2 + cr3 - mu))
-(1-R)*(pnorm(cr1 + cr2 + cr3 + cr4 + cr5 - mu) - pnorm(cr1 + cr2 + cr3 + cr4 - mu))
-R + (1-R)*(1 - pnorm(cr1 + cr2 + cr3 + cr4 + cr5 - mu))
+(1-R)*pnorm(c1- mu)
+(1-R)*(pnorm(c1 + c2 - mu) - pnorm(c1 - mu))
+(1-R)*(pnorm(c1 + c2 + c3 - mu) - pnorm(c1 + c2 - mu))
+(1-R)*(pnorm(c1 + c2 + c3 + c4 - mu) - pnorm(c1 + c2 + c3 - mu))
+(1-R)*(pnorm(c1 + c2 + c3 + c4 + c5 - mu) - pnorm(c1 + c2 + c3 + c4 - mu))
+R + (1-R)*(1 - pnorm(c1 + c2 + c3 + c4 + c5 - mu))
 
-pnorm(cr1)
-pnorm(cr1 + cr2) - pnorm(cr1)
-pnorm(cr1 + cr2 + cr3) - pnorm(cr1 + cr2)
-pnorm(cr1 + cr2 + cr3 + cr4) - pnorm(cr1 + cr2 + cr3)
-pnorm(cr1 + cr2 + cr3 + cr4 + cr5) - pnorm(cr1 + cr2 + cr3 + cr4)
-1 - pnorm(cr1 + cr2 + cr3 + cr4 + cr5)
+pnorm(c1)
+pnorm(c1 + c2) - pnorm(c1)
+pnorm(c1 + c2 + c3) - pnorm(c1 + c2)
+pnorm(c1 + c2 + c3 + c4) - pnorm(c1 + c2 + c3)
+pnorm(c1 + c2 + c3 + c4 + c5) - pnorm(c1 + c2 + c3 + c4)
+1 - pnorm(c1 + c2 + c3 + c4 + c5)
 "
 
 check.mpt(textConnection(dpsd))
-# cr1 = [-Inf, Inf]
-# cr2, cr3, cr4, cr5 = [0, Inf]
+# c1 = [-Inf, Inf]
+# c2, c3, c4, c5 = [0, Inf]
 # mu, mu2 = [-Inf, Inf]
 # R = [0, 1]
 
@@ -168,6 +168,16 @@ htm_fit <- fit.mpt(roc6[,1:12], textConnection(htm),
 
 select.mpt(list(uvsd_fit, dpsd_fit, msd_fit, htm_fit))
 # Note that the AIC and BIC results do not adequately take model flexibility into account.
+##      model n.parameters G.Squared.sum df.sum p.sum p.smaller.05
+## 1 uvsd_fit            7      1820.568   1377     0           50
+## 2 dpsd_fit            7      2074.188   1377     0           64
+## 3  msd_fit            8      1345.595    918     0           51
+## 4  htm_fit            9      1994.217    459     0          138
+##   delta.AIC.sum wAIC.sum AIC.best delta.BIC.sum wBIC.sum BIC.best
+## 1        0.0000        1      230        0.0000        1      273
+## 2      253.6197        0      161      253.6197        0      183
+## 3      443.0270        0       16     4996.8517        0        3
+## 4     2009.6489        0       56    11117.2982        0        4
 }
 }
 \keyword{datasets}
